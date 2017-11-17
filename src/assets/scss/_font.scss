@@ -1,0 +1,19 @@
+*:not(#footer) {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  a,
+  p,
+  ul,
+  li,
+  input,
+  span {
+    font-family: 'monaco', 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: 3px;
+  }
+}

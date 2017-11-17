@@ -1,0 +1,45 @@
+const mongoose = require('mongoose')
+const mongooseUniqueValidator = require('mongoose-unique-validator')
+
+const Schema = mongoose.Schema
+const uri = 'mongodb://192.168.2.150/decade'
+
+mongoose.Promise = global.Promise
+
+const userSchema = new Schema({
+  token: String,
+  username: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  pwd: {
+    type: String,
+    required: true
+  },
+  role: {
+    type: Number,
+    required: true
+  },
+  state: {
+    type: Number,
+    required: true
+  },
+  cid: {
+    type: Number,
+    required: true
+  }
+})
+
+userSchema.plugin(mongooseUniqueValidator)
+
+const db = {
+  User: mongoose.model('User', userSchema)
+}
+
+mongoose.connect(uri, {
+  user: 'decade',
+  pass: 'd3cad3',
+  useMongoClient: true
+})
+module.exports = db
