@@ -14,8 +14,11 @@ route.get('/api/user/:id', (req, res) => {
       res.json(
         {
           result: 0,
+          uid: doc._id,
           username: doc.username,
-          meta: doc.meta
+          role: doc.role,
+          cid: doc.cid,
+          state: doc.state
         }
       )
     }
@@ -32,7 +35,9 @@ route.post('/api/user', (req, res) => {
         result: 0,
         uid: doc._id,
         username: doc.username,
-        meta: doc.meta
+        role: doc.role,
+        cid: doc.cid,
+        state: doc.state
       })
     }
   })
