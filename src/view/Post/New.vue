@@ -100,6 +100,7 @@ export default {
           res => {
             if (res.data.result === 0) {
               this.addHTML += `<img src="${res.data.path}">`
+              this.image = ''
               this.uploadFile = false
             }
           }

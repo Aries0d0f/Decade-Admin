@@ -33,7 +33,7 @@ module.exports = {
         changeOrigin: true
       },
       '/upload': {
-        target: 'http://localhost:3002/',
+        target: 'http://60.249.179.125:3002/',
         changeOrigin: true
       }
     },
