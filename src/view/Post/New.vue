@@ -15,8 +15,10 @@
     </div>
     <div class="imgUpload" v-if="uploadFile">
       <div class="upload-container">
-        <input type="file" id="upload" accept="image/*" style="display:none" @change="handleFiles">
-        <div class="button" @click="img()">Upload Image</div>
+        <input type="file" name="upload" id="upload" accept="image/*" style="display:none" @change="handleFiles">
+        <img class="preview" :src="image">
+        <div class="button" v-if="!image" @click="img()">Select Image</div>
+        <div class="button" v-if="image" @click="imgUpload()">Upload Image</div>
       </div>
     </div>
     <div class="toolbox">
@@ -49,7 +51,8 @@ export default {
         paragraph: `<textarea name="" id="content" rows='10' placeholder="文章段落"></textarea>`
       },
       addHTML: '',
-      uploadFile: false
+      uploadFile: false,
+      image: ''
     }
   },
   computed: {
@@ -77,15 +80,28 @@ export default {
     img () {
       document.querySelector('#upload').click()
     },
-    handleFiles () {
-      var img = document.querySelectorAll('#upload')[0]
-      var file = img
-      var fileData = img.files
-      console.log(file, fileData, img)
-      this.$http.put('/upload', fileData)
+    handleFiles (e) {
+      var files = e.target.files || e.dataTransfer.files
+      this.createImage(files[0])
+    },
+    createImage(file) {
+      // var image = new Image()
+      var reader = new FileReader()
+      reader.onload = (e) => {
+        this.image = e.target.result
+      }
+      reader.readAsDataURL(file)
+    },
+    imgUpload () {
+      var data = new FormData()
+      data.append('file', document.querySelector('#upload').files[0])
+      this.$http.put('/upload', data, { 'Content-Type': 'multipart/form-data' })
         .then(
           res => {
-            console.log(res)
+            if (res.data.result === 0) {
+              this.addHTML += `<img src="${res.data.path}">`
+              this.uploadFile = false
+            }
           }
         )
     }

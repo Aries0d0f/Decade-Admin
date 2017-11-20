@@ -28,6 +28,11 @@
         overflow: hidden;
         box-sizing: border-box;
       }
+      img {
+        width: auto;
+        height: 100%;
+        max-height: 15rem;
+      }
       #title {
         font-size: 2rem;
       }
@@ -93,6 +98,11 @@
       background: $white;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
+      .preview {
+        max-height: 20rem;
+        margin: .5rem;
+      }
       .button {
         height: 2rem;
         width: auto;
