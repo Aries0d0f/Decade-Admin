@@ -1,0 +1,73 @@
+<template>
+  <div class="posts">
+    <div class="editor">
+      <h1>新增文章</h1>
+      <div class="editor-container">
+        <input id="title" type="text" placeholder="標題" v-model="post.title">
+        <div class="classBar">
+          <ul>
+            <li v-for="(types, i) in classType" @click="classSelect(types, i)"><span class="uppercase soli">{{ types }}</span></li>
+          </ul>
+        </div>
+        <textarea name="" id="content" rows='10' placeholder="文章段落"></textarea>
+        <div v-html="addHTML"></div>
+      </div>
+    </div>
+    <div class="toolbox">
+      <ul>
+        <li @click="addHTML += tools.subtitle"><div>h2</div><div>副標題</div></li>
+        <li @click="addHTML += tools.microtitle"><div>h3</div><div>小標題</div></li>
+        <li @click="addHTML += tools.paragraph"><div><font-awesome-icon icon="paragraph" /></div><div>文章段落</div></li>
+        <li @click="addHTML += tools.subtitle"><div><font-awesome-icon icon="image" /></div><div>圖片</div></li>
+        <li @click="addHTML += tools.subtitle"><div><font-awesome-icon :icon="['fab', 'youtube']" /></div><div>Youtube 影片嵌入</div></li>
+        <li @click="addHTML += tools.subtitle"><div><font-awesome-icon icon="list-ul" /></div><div>清單</div></li>
+      </ul>
+    </div>
+  </div>
+</template>
+
+<script>
+import { mapGetters } from 'vuex'
+export default {
+  data () {
+    return {
+      classType: ['classic', 'beauty', 'lifestyle', 'fasion', 'theme', 'talk', 'shop'],
+      post: {
+        title: '',
+        category: -1,
+        author: ''
+      },
+      tools: {
+        subtitle: `<input id="subtitle" type="text" placeholder="副標題">`,
+        microtitle: `<input id="microtitle" type="text" placeholder="小標題">`,
+        paragraph: `<textarea name="" id="content" rows='10' placeholder="文章段落"></textarea>`
+      },
+      addHTML: ''
+    }
+  },
+  computed: {
+    ...mapGetters([ 'user' ])
+  },
+  mounted () {
+    this.post.author = this.user.uid
+    document.querySelectorAll('textarea').forEach(e => {
+      e.addEventListener('keyup', this.autosize)
+    })
+  },
+  methods: {
+    autosize (el) {
+      el.srcElement.style.cssText = 'height:auto'
+      el.srcElement.style.cssText = 'height:' + el.srcElement.scrollHeight + 'px'
+    },
+    classSelect (types, i) {
+      this.post.category = i
+      document.querySelectorAll('.classBar>ul>li').forEach(e => {
+        e.className = ''
+      })
+      document.querySelectorAll('.classBar>ul>li')[this.post.category].className = 'active'
+      return this.post.category
+    }
+  }
+}
+</script>
+
