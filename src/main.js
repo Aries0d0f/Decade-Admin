@@ -10,15 +10,16 @@ import store        from './store'
 
 import FontAwesomeIcon                from '@fortawesome/vue-fontawesome'
 import FontAwesome                    from '@fortawesome/fontawesome'
-import brands                         from '@fortawesome/fontawesome-free-brands'
-import {
-         faAngleLeft,
-         faAngleRight,
-         faCircle,
-         faCircleNotch
-       }            from '@fortawesome/fontawesome-free-solid'
+import { faYoutube }                  from '@fortawesome/fontawesome-free-brands'
+import  {
+          faListUl,
+          faHashtag,
+          faParagraph,
+          faLink,
+          faImage
+        }            from '@fortawesome/fontawesome-free-solid'
 
-FontAwesome.library.add(brands, faAngleLeft, faAngleRight, faCircle, faCircleNotch)
+FontAwesome.library.add(faYoutube, faListUl, faHashtag, faParagraph, faLink, faImage)
 Vue.component('FontAwesomeIcon', FontAwesomeIcon)
 
 Vue.router = router
