@@ -10,7 +10,9 @@
           </ul>
         </div>
         <textarea name="" id="content" rows='10' placeholder="文章段落"></textarea>
-        <div v-html="addHTML"></div>
+        <div v-for="(html, i) in addHTML">
+          <span class="icon" @click="addHTML.splice(i, 1)"><font-awesome-icon icon="minus-circle" /></span><span :id="`block-${i}`" v-html="html"></span>
+        </div>
       </div>
     </div>
     <div class="imgUpload" v-if="uploadFile">
@@ -23,12 +25,13 @@
     </div>
     <div class="toolbox">
       <ul>
-        <li @click="addHTML += tools.subtitle"><div>h2</div><div>副標題</div></li>
-        <li @click="addHTML += tools.microtitle"><div>h3</div><div>小標題</div></li>
-        <li @click="addHTML += tools.paragraph"><div><font-awesome-icon icon="paragraph" /></div><div>文章段落</div></li>
+        <li @click="addHTML.push(tools.subtitle)"><div>h2</div><div>副標題</div></li>
+        <li @click="addHTML.push(tools.microtitle)"><div>h3</div><div>小標題</div></li>
+        <li @click="addHTML.push(tools.paragraph)"><div><font-awesome-icon icon="paragraph" /></div><div>文章段落</div></li>
         <li @click="uploadFile = true"><div><font-awesome-icon icon="image" /></div><div>圖片</div></li>
-        <li @click="addHTML += tools.subtitle"><div><font-awesome-icon :icon="['fab', 'youtube']" /></div><div>Youtube 影片嵌入</div></li>
-        <li @click="addHTML += tools.subtitle"><div><font-awesome-icon icon="list-ul" /></div><div>清單</div></li>
+        <li @click="addHTML.push(tools.subtitle)"><div><font-awesome-icon :icon="['fab', 'youtube']" /></div><div>影片嵌入</div></li>
+        <li @click="addHTML.push(tools.subtitle)"><div><font-awesome-icon icon="list-ul" /></div><div>清單</div></li>
+        <li @click="onRemove = true"><div><font-awesome-icon icon="times" /></div><div>刪除區塊</div></li>
       </ul>
     </div>
   </div>
@@ -50,9 +53,10 @@ export default {
         microtitle: `<input id="microtitle" type="text" placeholder="小標題">`,
         paragraph: `<textarea name="" id="content" rows='10' placeholder="文章段落"></textarea>`
       },
-      addHTML: '',
+      addHTML: [],
       uploadFile: false,
-      image: ''
+      image: '',
+      onRemove: false
     }
   },
   computed: {
@@ -99,7 +103,7 @@ export default {
         .then(
           res => {
             if (res.data.result === 0) {
-              this.addHTML += `<img src="${res.data.path}">`
+              this.addHTML.push(`<img src="${res.data.path}">`)
               this.image = ''
               this.uploadFile = false
             }

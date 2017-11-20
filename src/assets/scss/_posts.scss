@@ -13,6 +13,7 @@
       display: flex;
       flex-direction: column;
       position: relative;
+      margin-bottom: 6rem;
       input,
       textarea {
         -webkit-appearance: none;
@@ -75,10 +76,18 @@
           }
         }
       }
-      div {
+      div, div>span {
         display: flex;
         width: 100%;
         flex-direction: column;
+      }
+      > div .icon {
+        align-items: center;
+        position: absolute;
+        left: -50%;
+        margin: .5rem 0;
+        color: $red;
+        cursor: pointer;
       }
     }
   }
@@ -137,6 +146,7 @@
       flex-direction: row;
       justify-content: space-around;
       li {
+        width: 7rem;
         cursor: pointer;
         display: flex;
         justify-content: space-around;
