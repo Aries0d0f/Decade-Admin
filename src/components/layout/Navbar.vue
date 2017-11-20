@@ -1,10 +1,16 @@
 <template>
   <div id="nav">
     <div class="profile">
-      <div class="photo" v-if="user.meta"><img :src="user.meta.photo" alt=""></div>
+      <div class="photo" :style="{ background: `url(${user.meta ? user.meta.photo : require('../../assets/images/icon/user.svg')})`}"></div>
       <div class="content">
-        <p>{{ role[user.role] }} {{ user.username }}</p>
+        <h1>{{ user.username }}</h1>
+        <p class="tag">{{ role[user.role] }}</p>
       </div>
+    </div>
+    <div class="menu">
+      <ul>
+        <li><router-link to="/posts/new">新增文章</router-link></li>
+      </ul>
     </div>
   </div>
 </template>
