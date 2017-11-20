@@ -2,7 +2,10 @@ const express =       require('express')
 const path =          require('path')
 
 const db = require('../model/db')
+const post = require('../model/post')
 const route = express.Router()
+
+route.use('/api/post', post)
 
 route.use('/', (express.static(path.join(__dirname, '/../../dist'))))
 

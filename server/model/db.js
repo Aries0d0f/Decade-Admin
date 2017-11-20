@@ -31,10 +31,49 @@ const userSchema = new Schema({
   }
 })
 
+const postSchema = new Schema({
+  category: {
+    type: Number,
+    required: true
+  },
+  region: {
+    type: Number,
+    required: true
+  },
+  tag: {
+    type: [String]
+  },
+  title: {
+    type: String,
+    required: true
+  },
+  content: {
+    type: String,
+    required: true
+  },
+  related: {
+    type: [String]
+  },
+  author: {
+    type: String,
+    required: true
+  },
+  meta: {
+    link: {
+      type: String
+    },
+    image: {
+      type: String
+    }
+  }
+
+})
+
 userSchema.plugin(mongooseUniqueValidator)
 
 const db = {
-  User: mongoose.model('User', userSchema)
+  User: mongoose.model('User', userSchema),
+  Post: mongoose.model('Post', postSchema)
 }
 
 mongoose.connect(uri, {
