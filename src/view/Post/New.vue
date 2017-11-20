@@ -33,7 +33,7 @@
         <li @click="addHTML.push(tools.subtitle)"><div><font-awesome-icon icon="list-ul" /></div><div>清單</div></li>
         <li @click="onRemove = !onRemove"><div><font-awesome-icon icon="times" /></div><div>刪除區塊</div></li>
         <li @click="preview"><div><font-awesome-icon icon="eye" /></div><div>預覽</div></li>
-        <li @click="onRemove = !onRemove"><div><font-awesome-icon icon="paper-plane" /></div><div>發佈</div></li>
+        <li @click="submit"><div><font-awesome-icon icon="paper-plane" /></div><div>發佈</div></li>
       </ul>
     </div>
   </div>
@@ -137,6 +137,27 @@ export default {
       tmp.forEach(e => {
         this.post.content += e
       })
+    },
+    submit () {
+      this.preview()
+      this.$http.post('/api/post', {
+        title: this.post.title,
+        content: this.post.content,
+        author: this.post.author
+      }).then(
+        res => {
+          if (res.data.result === 0) {
+            this.$http.put(`/api/post/${res.data.pid}`, {
+              category: this.post.category,
+              image: document.querySelectorAll('img')[0].src
+            })
+              .then()
+            window.open(`http://60.249.179.125:3000/magazine/${res.data.pid}`)
+          } else {
+            console.log(res.data)
+          }
+        }
+      )
     }
   }
 }
