@@ -6,7 +6,7 @@
   margin-left: 20rem;
   flex-direction: column;
   .editor {
-    width: calc(100% - 1rem);
+    width: calc(100% - 2rem);
     padding: 1rem;
     .editor-container {
       padding: 1rem;
@@ -82,10 +82,11 @@
         flex-direction: column;
       }
       > div .icon {
+        width: 1rem;
         align-items: center;
         position: absolute;
-        left: -50%;
-        margin: .5rem 0;
+        left: -.5rem;
+        margin: .75rem 0;
         color: $red;
         cursor: pointer;
       }
