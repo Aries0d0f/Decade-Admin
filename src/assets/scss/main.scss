@@ -2,12 +2,14 @@
 @import "font";
 @import "color";
 
-@import "login";
-@import "home";
 @import "menu";
 
+@import "login";
+@import "home";
+@import "posts";
+
 body {
-  background: $black;
+  background: $white;
 }
 
 #app {
