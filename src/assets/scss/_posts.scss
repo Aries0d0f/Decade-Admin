@@ -28,6 +28,7 @@
         resize : none;
         overflow: hidden;
         box-sizing: border-box;
+        font-size: 1rem;
       }
       img {
         display: flex;
@@ -110,6 +111,16 @@
       justify-content: center;
       align-items: center;
       flex-direction: column;
+      input {
+        -webkit-appearance: none;
+        background: none;
+        border: 1px solid $gray;
+        border-radius: 5px;
+        outline: none;
+        padding: 3px 1rem;
+        margin-bottom: .5rem;
+        font-size: 1.2rem;
+      }
       .preview {
         max-height: 20rem;
         margin: .5rem;

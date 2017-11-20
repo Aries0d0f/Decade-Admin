@@ -23,16 +23,22 @@
         <div class="button" v-if="image" @click="imgUpload()">Upload Image</div>
       </div>
     </div>
+    <div class="imgUpload" v-if="addIframe">
+      <div class="upload-container">
+        <input type="text" name="iframe">
+        <div class="button" @click="Iframe()">OK</div>
+      </div>
+    </div>
     <div class="toolbox">
       <ul>
         <li @click="addHTML.push(tools.subtitle)"><div>h2</div><div>副標題</div></li>
         <li @click="addHTML.push(tools.microtitle)"><div>h3</div><div>小標題</div></li>
         <li @click="addHTML.push(tools.paragraph)"><div><font-awesome-icon icon="paragraph" /></div><div>文章段落</div></li>
         <li @click="uploadFile = true"><div><font-awesome-icon icon="image" /></div><div>圖片</div></li>
-        <li @click="addHTML.push(tools.subtitle)"><div><font-awesome-icon :icon="['fab', 'youtube']" /></div><div>影片嵌入</div></li>
-        <li @click="addHTML.push(tools.subtitle)"><div><font-awesome-icon icon="list-ul" /></div><div>清單</div></li>
+        <li @click="addIframe = true"><div><font-awesome-icon :icon="['fab', 'youtube']" /></div><div>影片嵌入</div></li>
+        <!-- <li @click="addHTML.push(tools.subtitle)"><div><font-awesome-icon icon="list-ul" /></div><div>清單</div></li> -->
         <li @click="onRemove = !onRemove"><div><font-awesome-icon icon="times" /></div><div>刪除區塊</div></li>
-        <li @click="preview"><div><font-awesome-icon icon="eye" /></div><div>預覽</div></li>
+        <li @click="submit"><div><font-awesome-icon icon="eye" /></div><div>預覽</div></li>
         <li @click="submit"><div><font-awesome-icon icon="paper-plane" /></div><div>發佈</div></li>
       </ul>
     </div>
@@ -58,6 +64,7 @@ export default {
       },
       addHTML: [],
       uploadFile: false,
+      addIframe: false,
       image: '',
       onRemove: false
     }
@@ -86,6 +93,10 @@ export default {
     },
     img () {
       document.querySelector('#upload').click()
+    },
+    Iframe () {
+      this.addHTML.push(`${document.querySelector('input[name="iframe"]').value}`)
+      this.addIframe = false
     },
     handleFiles (e) {
       var files = e.target.files || e.dataTransfer.files
