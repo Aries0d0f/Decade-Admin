@@ -19,6 +19,7 @@
     "axios": "^0.17.0",
     "body-parser": "^1.18.2",
     "cookie-parser": "^1.4.3",
+    "express-fileupload": "^0.3.0",
     "js-md5": "^0.7.2",
     "mongoose": "^4.13.0",
     "mongoose-unique-validator": "^1.0.6",

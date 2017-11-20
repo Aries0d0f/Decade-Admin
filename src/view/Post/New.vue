@@ -13,12 +13,18 @@
         <div v-html="addHTML"></div>
       </div>
     </div>
+    <div class="imgUpload" v-if="uploadFile">
+      <div class="upload-container">
+        <input type="file" id="upload" accept="image/*" style="display:none" @change="handleFiles">
+        <div class="button" @click="img()">Upload Image</div>
+      </div>
+    </div>
     <div class="toolbox">
       <ul>
         <li @click="addHTML += tools.subtitle"><div>h2</div><div>副標題</div></li>
         <li @click="addHTML += tools.microtitle"><div>h3</div><div>小標題</div></li>
         <li @click="addHTML += tools.paragraph"><div><font-awesome-icon icon="paragraph" /></div><div>文章段落</div></li>
-        <li @click="addHTML += tools.subtitle"><div><font-awesome-icon icon="image" /></div><div>圖片</div></li>
+        <li @click="uploadFile = true"><div><font-awesome-icon icon="image" /></div><div>圖片</div></li>
         <li @click="addHTML += tools.subtitle"><div><font-awesome-icon :icon="['fab', 'youtube']" /></div><div>Youtube 影片嵌入</div></li>
         <li @click="addHTML += tools.subtitle"><div><font-awesome-icon icon="list-ul" /></div><div>清單</div></li>
       </ul>
@@ -42,7 +48,8 @@ export default {
         microtitle: `<input id="microtitle" type="text" placeholder="小標題">`,
         paragraph: `<textarea name="" id="content" rows='10' placeholder="文章段落"></textarea>`
       },
-      addHTML: ''
+      addHTML: '',
+      uploadFile: false
     }
   },
   computed: {
@@ -66,6 +73,21 @@ export default {
       })
       document.querySelectorAll('.classBar>ul>li')[this.post.category].className = 'active'
       return this.post.category
+    },
+    img () {
+      document.querySelector('#upload').click()
+    },
+    handleFiles () {
+      var img = document.querySelectorAll('#upload')[0]
+      var file = img
+      var fileData = img.files
+      console.log(file, fileData, img)
+      this.$http.put('/upload', fileData)
+        .then(
+          res => {
+            console.log(res)
+          }
+        )
     }
   }
 }

@@ -1,10 +1,19 @@
 const express =       require('express')
 const path =          require('path')
+const fileUpload =    require('express-fileupload')
 
 const db = require('../model/db')
 const route = express.Router()
 
 route.use('/', (express.static(path.join(__dirname, '/../../dist'))))
+
+route.use(fileUpload())
+
+route.put('/upload', (req, res) => {
+  var file = req.body.file
+  console.log(file)
+  file.mv(path.join(__dirname, '/../upload/', fileName, '.jpg'))
+})
 
 route.get('/api/user/:id', (req, res) => {
   db.User.findOne({ token: req.params.id }, (err, doc) => {

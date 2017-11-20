@@ -76,6 +76,39 @@
       }
     }
   }
+  .imgUpload {
+    display: flex;
+    position: fixed;
+    width: calc(100% - 20rem);
+    height: 100%;
+    background: rgba($black, .3);
+    justify-content: center;
+    align-items: center;
+    .upload-container {
+      display: flex;
+      border-radius: 5px;
+      position: relative;
+      width: 30rem;
+      height: 30rem;
+      background: $white;
+      justify-content: center;
+      align-items: center;
+      .button {
+        height: 2rem;
+        width: auto;
+        padding: 3px;
+        font-size: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: $tone;
+        color: $white;
+        border-radius: 5px;
+        padding: 0 5px;
+        cursor: pointer;
+      }
+    }
+  }
   .toolbox {
     display: flex;
     width: calc(100% - 20rem);
