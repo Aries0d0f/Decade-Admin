@@ -15,6 +15,11 @@ const router = new Router({
       component: Home,
       children: [
         {
+          path: '/posts',
+          name: 'Post',
+          component: Post.List
+        },
+        {
           path: '/posts/new',
           name: 'New Post',
           component: Post.New

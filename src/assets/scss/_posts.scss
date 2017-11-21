@@ -5,7 +5,7 @@
   width: calc(100% - 20rem);
   margin-left: 20rem;
   flex-direction: column;
-  .editor {
+  .editor, .list {
     width: calc(100% - 2rem);
     padding: 1rem;
     .editor-container {
@@ -90,6 +90,71 @@
         margin: .75rem 0;
         color: $red;
         cursor: pointer;
+      }
+    }
+  }
+  .list-container {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin-bottom: 6rem;
+    .table {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      .column {
+        width: 100%;
+        height: 3rem;
+        position: relative;
+        align-items: center;
+        flex-direction: row;
+        display: flex;
+        justify-content: space-around;
+        &:nth-child(odd) {
+          background: rgba($tone, .3);
+        }
+        &.title {
+          background: lighten($dark, 10) !important;
+          p {
+            color: $white !important;
+          }
+        }
+        div {
+          height: calc(100% - 3px * 2);
+          position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: .8rem;
+          line-height: 1.4;
+          padding: 0 1rem;
+          &:nth-child(1), &:nth-child(3) {
+            width: 35%;
+          }
+          &:nth-child(2) {
+            width: 10%;
+          }
+          &:nth-child(4) {
+            width: 20%;
+            p {
+              &:hover {
+              cursor: pointer;
+              color: $tone;
+              }
+            }
+          }
+          p {
+            text-align: left;
+            width: 100%;
+            transition: all .3s;
+            text-decoration: none;
+            color: $black;
+            svg {
+              padding-right: 3px;
+            }
+          }
+        }
       }
     }
   }

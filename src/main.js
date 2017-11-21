@@ -20,10 +20,11 @@ import  {
           faTimes,
           faMinusCircle,
           faPaperPlane,
-          faEye
+          faEye,
+          faEdit
         }            from '@fortawesome/fontawesome-free-solid'
 
-FontAwesome.library.add(faYoutube, faListUl, faHashtag, faParagraph, faLink, faImage, faTimes, faMinusCircle, faPaperPlane, faEye)
+FontAwesome.library.add(faYoutube, faListUl, faHashtag, faParagraph, faLink, faImage, faTimes, faMinusCircle, faPaperPlane, faEye, faEdit)
 Vue.component('FontAwesomeIcon', FontAwesomeIcon)
 
 Vue.router = router

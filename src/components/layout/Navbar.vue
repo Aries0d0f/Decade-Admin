@@ -10,6 +10,7 @@
     <div class="menu">
       <ul>
         <li><router-link to="/posts/new">新增文章</router-link></li>
+        <li><router-link to="/posts">文章管理</router-link></li>
       </ul>
     </div>
   </div>

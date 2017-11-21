@@ -10,7 +10,8 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   strict: true,
   state: {
-    user: {}
+    user: {},
+    allPost: []
   },
   mutations,
   actions,
