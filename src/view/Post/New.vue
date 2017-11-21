@@ -19,8 +19,8 @@
       <div class="upload-container">
         <input type="file" name="upload" id="upload" accept="image/*" style="display:none" @change="handleFiles">
         <img class="preview" :src="image">
-        <div class="button" v-if="!image" @click="img()">Select Image</div>
-        <div class="button" v-if="image" @click="imgUpload()">Upload Image</div>
+        <div class="button" v-if="!image" @click="img()">上傳圖片</div>
+        <div class="button" v-if="image" @click="imgUpload()">確定</div>
       </div>
     </div>
     <div class="imgUpload" v-if="addIframe">
@@ -143,6 +143,10 @@ export default {
           tmp[index] = `<h3>${element.value}</h3>`
         } else if (type === 'paragraph') {
           tmp[index] = `<p>${element.value}</p>`
+        } else {
+          var spam = document.createElement('div')
+          spam.appendChild(element.cloneNode())
+          tmp[index] = spam.innerHTML
         }
       }
       tmp.forEach(e => {
@@ -160,7 +164,7 @@ export default {
           if (res.data.result === 0) {
             this.$http.put(`/api/post/${res.data.pid}`, {
               category: this.post.category,
-              image: document.querySelectorAll('img')[0].src
+              image: document.querySelectorAll('img')[0] ? document.querySelectorAll('img')[0].src : null
             })
               .then()
             window.open(`http://60.249.179.125:3000/magazine/${res.data.pid}`)
