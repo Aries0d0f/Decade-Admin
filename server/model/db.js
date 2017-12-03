@@ -29,6 +29,8 @@ const userSchema = new Schema({
     type: Number,
     required: true
   }
+}, {
+  collection: 'user'
 })
 
 const postSchema = new Schema({
@@ -67,13 +69,15 @@ const postSchema = new Schema({
     }
   }
 
+}, {
+  collection: 'post'
 })
 
 userSchema.plugin(mongooseUniqueValidator)
 
 const db = {
-  User: mongoose.model('User', userSchema),
-  Post: mongoose.model('Post', postSchema)
+  User: mongoose.model('user', userSchema),
+  Post: mongoose.model('post', postSchema)
 }
 
 mongoose.connect(uri, {
