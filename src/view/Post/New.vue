@@ -50,7 +50,7 @@ import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
-      classType: ['classic', 'beauty', 'lifestyle', 'fasion', 'theme', 'talk', 'shop'],
+      classType: ['classic', 'beauty', 'lifestyle', 'fashion', 'feature', 'talk', 'shop'],
       post: {
         title: '',
         category: -1,
