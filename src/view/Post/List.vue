@@ -15,7 +15,7 @@
             <!-- <p>{{ post.author }}</p> -->
             <div><p>decade</p></div>
             <div><p>{{ `${post.content.split('>')[1].slice(0,17).split('<')[0]}...` }}</p></div>
-            <div><p @click="openLink(`http://60.249.179.125:3000/magazine/${post._id}`)"><font-awesome-icon icon="eye" /><span>檢視</span></p><p><font-awesome-icon icon="edit" /><span>編輯</span></p><p @click="deletePost(post._id)"><font-awesome-icon icon="minus-circle" /><span>刪除</span></p></div>
+            <div><p @click="openLink(`http://60.249.179.125/magazine/${post._id}`)"><font-awesome-icon icon="eye" /><span>檢視</span></p><p><font-awesome-icon icon="edit" /><span>編輯</span></p><p @click="deletePost(post._id)"><font-awesome-icon icon="minus-circle" /><span>刪除</span></p></div>
           </div>
         </div>
       </div>

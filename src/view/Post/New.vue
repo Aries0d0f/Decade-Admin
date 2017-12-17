@@ -167,7 +167,7 @@ export default {
               image: document.querySelectorAll('img')[0] ? document.querySelectorAll('img')[0].src : null
             })
               .then()
-            window.open(`http://60.249.179.125:3000/magazine/${res.data.pid}`)
+            window.open(`http://60.249.179.125/magazine/${res.data.pid}`)
           } else {
             console.log(res.data)
           }
