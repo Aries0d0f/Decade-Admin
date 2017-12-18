@@ -3,10 +3,11 @@
 @import "color";
 
 @import "menu";
+@import "plugin";
 
 @import "login";
 @import "home";
-@import "posts";
+@import "editor";
 
 body {
   background: $white;

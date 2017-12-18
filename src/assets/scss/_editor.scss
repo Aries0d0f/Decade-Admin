@@ -1,4 +1,4 @@
-.posts {
+.posts, .stock {
   position: relative;
   display: flex;
   min-height: 100vh;
@@ -14,6 +14,9 @@
       flex-direction: column;
       position: relative;
       margin-bottom: 6rem;
+      h2 {
+        margin: 1rem 0;
+      }
       input,
       textarea {
         -webkit-appearance: none;

@@ -13,6 +13,12 @@
         <li><router-link to="/posts">文章管理</router-link></li>
       </ul>
     </div>
+    <div class="menu">
+      <ul>
+        <li><router-link to="/stock/new">商品上架</router-link></li>
+        <li><router-link to="/stock">商品管理</router-link></li>
+      </ul>
+    </div>
   </div>
 </template>
 
