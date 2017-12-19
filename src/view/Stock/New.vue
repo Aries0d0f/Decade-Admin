@@ -3,7 +3,7 @@
     <div class="editor">
       <h1>新增商品</h1>
       <div class="editor-container">
-        <input id="title" type="text" placeholder="商品名稱" v-model="post.title">
+        <input id="title" type="text" placeholder="商品名稱" v-model="stock.title">
         <div class="classBar">
           <ul>
             <li v-for="(types, i) in classType" @click="classSelect(types, i)"><span class="uppercase soli">{{ types }}</span></li>
@@ -72,7 +72,7 @@ export default {
   data () {
     return {
       classType: ['體驗活動', '肌膚保養', '居家空間', '生活品味', '味蕾饗宴', '時尚藝術'],
-      post: {
+      stock: {
         title: '',
         category: -1,
         author: '',
@@ -95,7 +95,7 @@ export default {
     ...mapGetters([ 'user' ])
   },
   mounted () {
-    this.post.author = this.user.uid
+    this.stock.author = this.user.uid
     document.querySelectorAll('textarea').forEach(e => {
       e.addEventListener('keyup', this.autosize)
     })
@@ -106,12 +106,12 @@ export default {
       el.srcElement.style.cssText = 'height:' + el.srcElement.scrollHeight + 'px'
     },
     classSelect (types, i) {
-      this.post.category = i
+      this.stock.category = i
       document.querySelectorAll('.classBar>ul>li').forEach(e => {
         e.className = ''
       })
-      document.querySelectorAll('.classBar>ul>li')[this.post.category].className = 'active'
-      return this.post.category
+      document.querySelectorAll('.classBar>ul>li')[this.stock.category].className = 'active'
+      return this.stock.category
     },
     img () {
       document.querySelector('#upload').click()
@@ -161,16 +161,16 @@ export default {
         )
     },
     preview () {
-      this.post.content = `<p>${document.querySelectorAll('#first')[0].value}</p>`
+      this.stock.content = `<p>${document.querySelectorAll('#first')[0].value}</p>`
       var tmp = []
       var blocks = document.querySelectorAll('.block')
       blocks.forEach(e => {
         var element = e.children[0]
         var index = parseInt(e.id.replace('block-', ''))
         var type = e.children[0].id
-        postGeneractor(element, index, type)
+        stockGeneractor(element, index, type)
       })
-      function postGeneractor (element, index, type) {
+      function stockGeneractor (element, index, type) {
         if (type === 'image') {
           tmp[index] = `<img src="${element.src}">`
         } else if (type === 'subtitle') {
@@ -186,24 +186,24 @@ export default {
         }
       }
       tmp.forEach(e => {
-        this.post.content += e
+        this.stock.content += e
       })
     },
     submit () {
       this.preview()
-      this.$http.post('/api/post', {
-        title: this.post.title,
-        content: this.post.content,
-        author: this.post.author
+      this.$http.post('/api/stock', {
+        title: this.stock.title,
+        content: this.stock.content,
+        author: this.stock.author
       }).then(
         res => {
           if (res.data.result === 0) {
-            this.$http.put(`/api/post/${res.data.pid}`, {
-              category: this.post.category,
+            this.$http.put(`/api/stock/${res.data.pid}`, {
+              category: this.stock.category,
               image: document.querySelectorAll('img')[0] ? document.querySelectorAll('img')[0].src : null
             })
               .then()
-            window.open(`http://60.249.179.125:3000/magazine/${res.data.pid}`)
+            window.open(`http://60.249.179.125/stock/${res.data.pid}`)
           } else {
             console.log(res.data)
           }
