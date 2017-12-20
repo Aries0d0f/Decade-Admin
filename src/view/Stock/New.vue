@@ -13,8 +13,8 @@
         <div class="stock-img">
           <div class="upload-container" v-show="stockImg.length < 4">
             <input type="file" name="upload" id="upload" accept="image/*" style="display:none" @change="handleFiles">
-            <div class="button" v-if="!image" @click="img()"><font-awesome-icon icon="camera" /><span>上傳圖片</span></div>
-            <div class="button" v-if="image" @click="imgUploadStock()">送出</div>
+            <div class="button" v-if="!image" @click="img()"><font-awesome-icon icon="camera" /><span>選擇圖片</span></div>
+            <div class="button pre" v-if="image" @click="imgUploadStock()" :style="{ 'background-image': `url(${image})` }"><span>確定上傳</span></div>
           </div>
           <div class="upload-container" v-for="(img, i) in stockImg">
             <div class="close" @click="stockImg.splice(i, 1)"><font-awesome-icon icon="times"/></div>
@@ -23,7 +23,6 @@
         </div>
         <h2>商品資料</h2>
         <textarea name="" rows='5' placeholder="商品簡介"></textarea>
-        <input name="" rows='5' placeholder="適用優惠（代碼）">
         <h2>商品描述</h2>
         <textarea name="" id="first" rows='10' placeholder="文章段落"></textarea>
         <div v-for="(html, i) in addHTML" class="blocks">

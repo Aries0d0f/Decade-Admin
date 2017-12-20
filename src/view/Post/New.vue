@@ -17,6 +17,7 @@
     </div>
     <div class="imgUpload" v-if="uploadFile">
       <div class="upload-container">
+        <div class="close" @click="uploadFile = false"><font-awesome-icon icon="times"/></div>
         <input type="file" name="upload" id="upload" accept="image/*" style="display:none" @change="handleFiles">
         <img class="preview" :src="image">
         <div class="button" v-if="!image" @click="img()">上傳圖片</div>
@@ -25,6 +26,7 @@
     </div>
     <div class="imgUpload" v-if="addIframe">
       <div class="upload-container">
+        <div class="close" @click="addIframe = false"><font-awesome-icon icon="times"/></div>
         <input type="text" name="iframe">
         <div class="button" @click="Iframe()">OK</div>
       </div>
