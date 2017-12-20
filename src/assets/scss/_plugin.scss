@@ -1,3 +1,13 @@
+@keyframes loadIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    // transform: translateY(0em);
+    opacity: 1;
+  }
+}
+
 .stock-img {
   display: flex;
   height: 200px;
@@ -13,6 +23,7 @@
     width: 180px !important;
     margin: 1rem;
     position: relative;
+    animation: loadIn .3s;
     .button {
       background-size: cover !important;
       background-position: center !important;
@@ -51,23 +62,8 @@
         margin: .5rem 0;
       }
     }
-    .close {
-      cursor: pointer;
-      display: flex;
-      height: 1.2rem;
-      width: 1.2rem !important;
-      color: $red;
-      justify-content: center;
-      align-items: center;
-      top: -.5rem;
-      left: -.5rem;
-      box-shadow: 0 0 5px rgba($black, .5);
-      position: absolute;
-      font-size: 1rem;
-      border-radius: 100%;
-      background-color: $white;
-    }
     .image {
+      animation: loadIn .3s;
       display: flex !important;
       height: 100%;
       width: 100%;
@@ -84,7 +80,7 @@
   display: flex;
   height: 1.2rem;
   width: 1.2rem !important;
-  color: $red;
+  color: $white;
   justify-content: center;
   align-items: center;
   top: -.5rem;
@@ -93,5 +89,5 @@
   position: absolute;
   font-size: 1rem;
   border-radius: 100%;
-  background-color: $white;
+  background-color: $red;
 }
