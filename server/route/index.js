@@ -1,5 +1,6 @@
-const express =       require('express')
-const path =          require('path')
+const express         = require('express')
+const path            = require('path')
+const md5             = require('js-md5')
 
 const db = require('../model/db')
 const post = require('../model/post')
@@ -11,7 +12,7 @@ route.use('/', (express.static(path.join(__dirname, '/../../dist'))))
 
 route.put('/upload', (req, res) => {
   var file = req.files.file
-  var fileName = file.name
+  var fileName = `decade_${md5(file.name)}_${file.type.replace('/', '.')}`
   // console.log(file, fileName)
   file.mv(path.join(__dirname, '/../../upload/', fileName), err => {
     if (err) return res.status(500).json({ result: 0 }, err)
