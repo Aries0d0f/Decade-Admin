@@ -164,7 +164,7 @@ export default {
         .then(
           res => {
             if (res.data.result === 0) {
-              this.stock.img.push(res.data.path)
+              this.stock.img.push(`http://60.249.179.125:3002${res.data.path}`)
               this.image = ''
               this.uploadFile = false
             }
