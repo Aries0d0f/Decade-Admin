@@ -199,7 +199,7 @@ export default {
         }
       }
       tmp.forEach(e => {
-        this.pre.content += e
+        this.pre.discription += e
       })
       this.stock.info = JSON.stringify(this.pre)
     },
