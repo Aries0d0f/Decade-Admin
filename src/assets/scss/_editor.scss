@@ -48,6 +48,9 @@
       #microtitle {
         font-size: 1.2rem;
       }
+      #list {
+        font-size: 1rem;
+      }
       .classBar {
         display: flex;
         width: 100%;
@@ -209,42 +212,10 @@
       }
     }
   }
+}
+
+.stock {
   .toolbox {
-    display: flex;
-    width: calc(100% - 20rem);
-    height: 3rem;
-    padding: 1rem 0;
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    justify-content: center;
-    background: rgba($white, .8);
-    ul {
-      width: 100%;
-      position: relative;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-around;
-      li {
-        width: 7rem;
-        cursor: pointer;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        transition: all .3s;
-        &:hover {
-          color: $tone;
-        }
-        :first-child {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-size: 12pt;
-          margin-bottom: .5rem;
-        }
-        flex-direction: column;
-        font-size: 8pt;
-      }
-    }
+    position: relative;
   }
 }
