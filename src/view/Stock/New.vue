@@ -141,7 +141,7 @@
               <div>刪除區塊</div>
             </li>
             <!-- <li @click="submit"><div><font-awesome-icon icon="eye" /></div><div>預覽</div></li> -->
-            <li @click="render()">
+            <li @click="previewN()">
               <div>
                 <font-awesome-icon icon="paper-plane" />
               </div>
@@ -328,7 +328,7 @@ export default {
         this.pre.discription += e
       })
     },
-    render () {
+    previewN () {
       this.pre.note = `<p>${document.querySelectorAll('#note')[0].value}</p>`
       var tmpN = []
       var blockNote = document.querySelectorAll('.blockNote')
@@ -357,7 +357,7 @@ export default {
     },
     submit () {
       this.preview()
-      this.render()
+      this.previewN()
       this.stock.info = JSON.stringify(this.pre)
       this.$http.post('http://60.249.179.125:3001/stock', this.stock).then(
         res => {
