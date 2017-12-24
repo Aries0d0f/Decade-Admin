@@ -7,7 +7,7 @@ const state = {
 }
 
 const getters = {
-  allCoupon: state => state.orders,
+  allOrder: state => state.orders,
   order: state => state.order
 }
 
@@ -26,7 +26,7 @@ const actions = {
       const res = await axios.get(`order/${id}`)
       commit(types.GET_ORDER, res.data)
     }
-    return state.coupon
+    return state.order
   }
 }
 

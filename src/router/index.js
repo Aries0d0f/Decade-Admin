@@ -74,10 +74,10 @@ const router = new Router({
               component: Transaction.List
             },
             {
-              name: 'Transaction-ID',
+              name: 'TransactionItem',
               meta: { title: '訂單資訊' },
               path: ':id',
-              component: Transaction.Order
+              component: Transaction.Item
             }
           ]
         }

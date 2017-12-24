@@ -3,7 +3,7 @@ export const SET_USER = 'USER'
 export const ALL_POST = 'ALL_POST'
 
 export const GET_ORDER = 'GET_ORDER'
-export const GET_ORDERS = 'GET_ORDERS'
+export const GET_ALL_ORDERS = 'GET_ALL_ORDERS'
 
 export const GET_ALL_COUPONS = 'GET_ALL_COUPONS'
 export const GET_COUPON = 'GET_COUPON'

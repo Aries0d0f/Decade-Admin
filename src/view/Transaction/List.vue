@@ -2,26 +2,25 @@
   <div class="order-list">
     <div class="order-container">
       <div class="row list-title">
-        <div class="col">名稱</div>
-        <div class="col">使用總數</div>
-        <div class="col">類型</div>
-        <div class="col">代碼</div>
+        <div class="col">日期</div>
+        <div class="col">狀態</div>
+        <div class="col">金額</div>
         <div class="col">動作</div>
       </div>
+      
       <div v-if="allOrder.length === 0" class="no-result">查無資料</div>
-      <!-- <div class="row list-body" v-for="coupon in allOrder" :key="coupon.id">
-        <div class="col">{{coupon.name}}</div>
-        <div class="col">{{coupon.count}}</div>
-        <div class="col">{{coupon.discount.type === 0 ? '折價' : '折%數'}}</div>
-        <div class="col">{{coupon.code}}</div>
+      <div class="row list-body" v-for="order in allOrder" :key="order.id">
+        <div class="col">{{formatDate(order.createdAt)}}</div>
+        <div class="col">{{status[order.status]}}</div>
+        <div class="col">{{order.price.orderTotal}}</div>
         <div class="col">
           <div class="list-btn">
-            <router-link :to="{ name: 'Order-ID', params: { id: order.id } }" tag="p">
+            <router-link :to="{ name: 'TransactionItem', params: { id: order.id } }" tag="p">
               <font-awesome-icon icon="edit" /> 查看
             </router-link>
           </div>
         </div>
-      </div> -->
+      </div>
     </div>
   </div>
 </template>
@@ -31,7 +30,8 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
-      loading: true
+      loading: true,
+      status: ['已產生', '已付款', '已發貨', '訂單完成', '訂單失敗']
     }
   },
   computed: {
@@ -41,7 +41,10 @@ export default {
     await this.getAllOrder()
   },
   methods: {
-    ...mapActions(['getAllOrder'])
+    ...mapActions(['getAllOrder']),
+    formatDate(date) {
+      return new Date(date).toISOString().substr(0, 10)
+    }
   }
 }
 </script>
