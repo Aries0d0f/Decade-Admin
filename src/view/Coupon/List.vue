@@ -3,23 +3,23 @@
     <div class="coupon-container">
       <div class="row list-title">
         <div class="col">名稱</div>
-        <div class="col">使用次數</div>
+        <div class="col">使用總數</div>
         <div class="col">類型</div>
         <div class="col">代碼</div>
         <div class="col">動作</div>
       </div>
       <div v-if="allCoupon.length === 0" class="no-result">查無資料</div>
-      <div class="row list-body" v-for="coupon in allCoupon" :key="coupon._id">
+      <div class="row list-body" v-for="coupon in allCoupon" :key="coupon.id">
         <div class="col">{{coupon.name}}</div>
         <div class="col">{{coupon.count}}</div>
-        <div class="col">{{coupon.discount.type}}</div>
+        <div class="col">{{coupon.discount.type === 0 ? '折價' : '折%數'}}</div>
         <div class="col">{{coupon.code}}</div>
         <div class="col">
           <div class="list-btn">
-            <router-link :to="{ name: 'Coupon-ID', params: { id: coupon._id } }" tag="p">
+            <router-link :to="{ name: 'Coupon-ID', params: { id: coupon.id } }" tag="p">
               <font-awesome-icon icon="edit" /> 編輯
             </router-link>
-            <p><font-awesome-icon icon="minus-circle" /> 刪除</p>
+            <p @click="handleDelete(coupon.id)"><font-awesome-icon icon="minus-circle" /> 刪除</p>
           </div>
         </div>
       </div>
@@ -30,32 +30,28 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 export default {
+  data () {
+    return {
+      loading: true
+    }
+  },
   computed: {
-    ...mapGetters([ 'allCoupon', 'destroyCoupon' ])
+    ...mapGetters([ 'allCoupon' ])
   },
   async created() {
     await this.getAllCoupon()
-    // this.handleDelete(1)
   },
   methods: {
-    ...mapActions(['getAllCoupon']),
-    handleDelete(id) {
-      confirm('確定要刪除這篇文章？此動作不可回復')
-    },
-    deletePost (pid) {
-      var ans = confirm('確定要刪除這篇文章？此動作不可回復')
-      if (ans) {
-        this.$http.delete(`/api/post/${pid}`)
-          .then(
-            res => {
-              if (res.data.result) {
-                console.log(res)
-              } else {
-                window.location = '/posts'
-              }
-            }
-          )
+    ...mapActions(['getAllCoupon', 'destroyCoupon']),
+    async handleDelete(id) {
+      if (this.loading) return
+      this.loading = true
+      const check = confirm('確定要刪除？此動作不可回復')
+      if (check) {
+        await this.destroyCoupon(id)
+        await this.getAllCoupon()
       }
+      this.loading = false
     }
   }
 }

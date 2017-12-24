@@ -19,6 +19,12 @@
         <li><router-link to="/stock">商品管理</router-link></li>
       </ul>
     </div>
+    <div class="menu">
+      <ul>
+        <li><router-link :to="{ name: 'CreateCoupon', force: true, query: { type: 1 } }">新增優待券</router-link></li>
+        <li><router-link :to="{ name: 'CouponList', force: true }">優待券管理</router-link></li>
+      </ul>
+    </div>
   </div>
 </template>
 

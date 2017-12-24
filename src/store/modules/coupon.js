@@ -1,34 +1,52 @@
-import axios from 'axios'
+import axios from '../../plugins/axios'
 import * as types from '../mutation-types'
 
-// initial state
-// shape: [{ id, quantity }]
 const state = {
+  coupon: '',
   coupons: []
 }
 
-// getters
 const getters = {
-  allCoupon: state => state.coupons
+  allCoupon: state => state.coupons,
+  coupon: state => state.coupon
 }
 
-// actions
 const actions = {
   async getAllCoupon({ commit }) {
     try {
-      const res = await axios.get('http://60.249.179.125:1337/coupon')
-      commit(types.GET_ALL_COUPONS, res.data.data)
+      const res = await axios.get('coupon')
+      commit(types.GET_ALL_COUPONS, res.data)
     } catch (error) {
       return false
     }
   },
-  async getCoupon({ commit }, _id) {
-    const res = await axios.get(`http://60.249.179.125:1337/coupon/${_id}`)
-    return res.data.coupon
-  },
-  async destroyCoupon({ commit }, _id) {
+  async createCoupon({ commit }, data) {
     try {
-      await axios.delete(`http://60.249.179.125:1333/coupon/${_id}`)
+      const res = await axios.post('coupon', data)
+      return res
+    } catch (e) {
+      throw e
+    }
+  },
+  async updateCoupon({ commit }, data) {
+    try {
+      await axios.put(`coupon/${data.id}`, data)
+      return true
+    } catch (e) {
+      throw e
+    }
+  },
+  async getCoupon({ commit }, cid) {
+    const reload = cid.reload ? 1 : 0
+    if (state.coupon.id !== cid || reload) {
+      const res = await axios.get(`coupon/${cid}`)
+      commit(types.GET_COUPON, res.data)
+    }
+    return state.coupon
+  },
+  async destroyCoupon({ commit }, cid) {
+    try {
+      await axios.delete(`coupon/${cid}`)
       return true
     } catch (e) {
       return false
@@ -39,6 +57,9 @@ const actions = {
 const mutations = {
   [types.GET_ALL_COUPONS] (state, coupons) {
     state.coupons = coupons
+  },
+  [types.GET_COUPON] (state, coupon) {
+    state.coupon = coupon
   }
 }
 
