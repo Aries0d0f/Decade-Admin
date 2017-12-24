@@ -25,6 +25,11 @@
         <li><router-link :to="{ name: 'CouponList', force: true }">優待券管理</router-link></li>
       </ul>
     </div>
+    <div class="menu">
+      <ul>
+        <li><router-link :to="{ name: 'TransactionList', force: true }">訂單列表</router-link></li>
+      </ul>
+    </div>
   </div>
 </template>
 

@@ -5,7 +5,7 @@ import Login        from '@/view/Login.vue'
 import * as Post    from '@/view/Post'
 import * as Stock   from '@/view/Stock'
 import * as Coupon   from '@/view/Coupon'
-import * as Order   from '@/view/Order'
+import * as Transaction   from '@/view/Transaction'
 
 Vue.use(Router)
 
@@ -63,9 +63,23 @@ const router = new Router({
           ]
         },
         {
+          name: 'Transaction',
           path: '/transaction',
-          name: 'OrderList',
-          component: Order.List
+          component: Transaction.Index,
+          children: [
+            {
+              name: 'TransactionList',
+              meta: { title: '訂單列表' },
+              path: '/',
+              component: Transaction.List
+            },
+            {
+              name: 'Transaction-ID',
+              meta: { title: '訂單資訊' },
+              path: ':id',
+              component: Transaction.Order
+            }
+          ]
         }
       ]
     },
