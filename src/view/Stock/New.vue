@@ -45,7 +45,7 @@
           <div class="close" @click="stock.spec.splice(i - 1, 1); specCount = stock.spec.length + 1" v-if="i !== 1">
             <font-awesome-icon icon="times" />
           </div>
-          <input id="subtitle" type="text" placeholder="規格" v-model="stock.spec[i - 1]" @click="specCount === i && stock.spec.length === i - 1 ? specCount = stock.spec.length + 2 : null">
+          <input id="subtitle" type="text" placeholder="可選規格" v-model="stock.spec[i - 1]" @click="specCount === i && stock.spec.length === i - 1 ? specCount = stock.spec.length + 2 : null">
         </div>
         <h2>商品描述</h2>
         <div class="toolbox">
