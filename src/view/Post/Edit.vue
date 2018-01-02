@@ -113,6 +113,9 @@ export default {
       document.querySelectorAll('textarea').forEach(e => {
         e.value = e.placeholder
       })
+      document.querySelectorAll('title').forEach(e => {
+        e.value = e.placeholder
+      })
     },
     autosize (el) {
       el.srcElement.style.cssText = 'height:auto'
