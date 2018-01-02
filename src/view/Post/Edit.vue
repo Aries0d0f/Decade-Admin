@@ -164,6 +164,7 @@ export default {
         )
     },
     preview () {
+      this.post.content = ''
       var tmp = []
       var blocks = document.querySelectorAll('.block')
       this.post.image = document.querySelectorAll('#image')[0].src
