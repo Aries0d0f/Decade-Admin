@@ -28,6 +28,11 @@ const router = new Router({
           component: Post.New
         },
         {
+          path: '/posts/edit/:id',
+          name: 'Edit',
+          component: Post.Edit
+        },
+        {
           path: '/stock',
           name: 'Stock',
           component: Stock.List
