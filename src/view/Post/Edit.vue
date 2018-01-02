@@ -89,9 +89,9 @@ export default {
     unZip: async function() {
       var tmp = document.createElement('div')
       tmp.innerHTML = this.post.content
-      console.log(tmp.childNodes)
+      // console.log(tmp.childNodes)
       await tmp.childNodes.forEach(ele => {
-        console.log(ele)
+        // console.log(ele)
         switch (ele.nodeName) {
           case 'P':
             this.addHTML.push(`<textarea id="paragraph" name="" rows='10' placeholder="${ele.innerText}"></textarea>`)
@@ -108,12 +108,13 @@ export default {
           case 'IFRAME':
             this.addHTML.push(ele.outerHTML)
             break
+          default: break
         }
       })
       document.querySelectorAll('textarea').forEach(e => {
         e.value = e.placeholder
       })
-      document.querySelectorAll('title').forEach(e => {
+      document.querySelectorAll('.block>input').forEach(e => {
         e.value = e.placeholder
       })
     },
