@@ -89,7 +89,7 @@ export default {
     unZip: async function() {
       var tmp = document.createElement('div')
       tmp.innerHTML = this.post.content
-      // console.log(tmp.childNodes)
+      console.log(tmp.childNodes)
       await tmp.childNodes.forEach(ele => {
         // console.log(ele)
         switch (ele.nodeName) {
@@ -103,7 +103,7 @@ export default {
             this.addHTML.push(`<input id="microtitle" type="text" placeholder="${ele.innerText}">`)
             break
           case 'IMG':
-            this.addHTML.push(`<img id="image" src="${ele.currentSrc}">`)
+            this.addHTML.push(`<img id="image" src="${ele.src}">`)
             break
           case 'IFRAME':
             this.addHTML.push(ele.outerHTML)
@@ -111,10 +111,10 @@ export default {
           default: break
         }
       })
-      document.querySelectorAll('textarea').forEach(e => {
+      await document.querySelectorAll('textarea').forEach(e => {
         e.value = e.placeholder
       })
-      document.querySelectorAll('.block>input').forEach(e => {
+      await document.querySelectorAll('.block>input').forEach(e => {
         e.value = e.placeholder
       })
     },
