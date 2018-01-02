@@ -43,6 +43,11 @@ const router = new Router({
           component: Stock.New
         },
         {
+          path: '/stock/edit/:id',
+          name: 'Edit',
+          component: Stock.Edit
+        },
+        {
           name: 'Coupon',
           path: '/coupon',
           component: Coupon.Index,
