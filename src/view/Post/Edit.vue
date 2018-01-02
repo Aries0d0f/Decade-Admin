@@ -162,6 +162,7 @@ export default {
     preview () {
       var tmp = []
       var blocks = document.querySelectorAll('.block')
+      this.post.image = document.querySelectorAll('#image')[0].src
       blocks.forEach(e => {
         var element = e.children[0]
         var index = parseInt(e.id.replace('block-', ''))
