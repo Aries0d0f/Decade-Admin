@@ -368,13 +368,10 @@ export default {
       this.preview()
       this.previewN()
       this.stock.info = JSON.stringify(this.pre)
+      console.log(this.stock)
       this.$http.post('http://60.249.179.125:1337/stock', this.stock).then(
         res => {
-          if (res.data.result === 0) {
-            window.open(`http://60.249.179.125/shop/${res.data.sid}`)
-          } else {
-            console.log(res.data)
-          }
+          window.open(`http://60.249.179.125/shop/${res.data.id}`)
         }
       )
     }
