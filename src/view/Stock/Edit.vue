@@ -13,7 +13,7 @@
         </div>
         <div class="classBar">
           <ul>
-            <li v-for="(types, i) in subClass[pre.type]" @click="stock.category = i" :class="{ 'active': stock.category === i }">
+            <li v-for="(types, i) in subClass[pre.type]" @click="stock.catalog = i" :class="{ 'active': stock.catalog === i }">
               <span class="uppercase soli">{{ types }}</span>
             </li>
           </ul>

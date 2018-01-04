@@ -13,7 +13,7 @@
         </div>
         <div class="classBar">
           <ul>
-            <li v-for="(types, i) in subClass[pre.type]" @click="stock.category = i" :class="{ 'active': stock.category === i }">
+            <li v-for="(types, i) in subClass[pre.type]" @click="stock.catalog = i" :class="{ 'active': stock.catalog === i }">
               <span class="uppercase soli">{{ types }}</span>
             </li>
           </ul>
@@ -202,7 +202,7 @@ export default {
       classType: ['體驗活動', '肌膚保養', '居家空間', '生活品味', '味蕾饗宴', '時尚藝術'],
       subClass: ['', '', ['個人用品', '肌膚保養', '時尚配飾'], '', ['美食', '餐皿', '廚具', '茶具酒器'], ''],
       stock: {
-        category: 0,
+        catalog: 0,
         type: 1,
         comboList: [],
         img: [],
