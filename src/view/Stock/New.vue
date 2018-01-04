@@ -148,12 +148,12 @@
               <div>刪除區塊</div>
             </li>
             <!-- <li @click="submit"><div><font-awesome-icon icon="eye" /></div><div>預覽</div></li> -->
-            <li @click="previewN()">
+            <!-- <li @click="previewN()">
               <div>
                 <font-awesome-icon icon="paper-plane" />
               </div>
               <div>發佈</div>
-            </li>
+            </li> -->
             <li @click="submit()">
               <div>
                 <font-awesome-icon icon="paper-plane" />
