@@ -1,12 +1,12 @@
 <template>
-  <Detail :is-edit='false'></Detail>
+  <Detail :is-edit='true'></Detail>
 </template>
 
 <script>
 import Detail from './components/detail'
 
 export default {
-  name: 'createPost',
+  name: 'CouponEdit',
   components: { Detail }
 }
 </script>

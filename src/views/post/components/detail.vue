@@ -196,16 +196,10 @@ export default {
       this.loading = true
       try {
         const res = await createPost(this.postForm)
-        console.log(res)
+        this.$notify({ title: '成功', message: '發布成功', type: 'success', duration: 2000 })
       } catch (err) {
         console.log(err)
       }
-      // this.$notify({
-      //   title: '成功',
-      //   message: '发布文章成功',
-      //   type: 'success',
-      //   duration: 2000
-      // })
       this.loading = false
     },
     async queryStock(queryString, cb) {

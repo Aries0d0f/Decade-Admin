@@ -6,7 +6,7 @@
 import Detail from './components/detail'
 
 export default {
-  name: 'createPost',
+  name: 'CouponCreate',
   components: { Detail }
 }
 </script>

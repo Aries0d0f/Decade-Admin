@@ -37,7 +37,7 @@ export const constantRouterMap = [
       path: 'dashboard',
       component: _import('dashboard/index'),
       name: 'dashboard',
-      meta: { title: 'dashboard', icon: 'dashboard', noCache: true }
+      meta: { title: '首頁', icon: 'dashboard', noCache: true }
     }]
   },
   {
@@ -90,17 +90,26 @@ export const constantRouterMap = [
       {
         path: 'stock-list',
         component: _import('stock/list'),
-        name: 'stockList',
+        name: 'StockList',
         meta: {
           title: '商品列表'
         }
       },
       {
         path: 'stock-create',
-        component: _import('example/table/complexTable'),
-        name: 'stockCreate',
+        component: _import('stock/create'),
+        name: 'StockCreate',
         meta: {
           title: '新增商品'
+        }
+      },
+      {
+        path: ':id',
+        component: _import('stock/edit'),
+        hidden: true,
+        name: 'StockEdit',
+        meta: {
+          title: '商品編輯'
         }
       }
     ]
@@ -109,7 +118,7 @@ export const constantRouterMap = [
     path: '/coupone',
     component: Layout,
     redirect: '/coupon/coupone-list',
-    name: 'coupon',
+    name: 'Coupon',
     meta: {
       title: '優惠券',
       icon: 'example'
@@ -118,17 +127,26 @@ export const constantRouterMap = [
       {
         path: 'coupon-list',
         component: _import('coupon/list'),
-        name: 'couponList',
+        name: 'CouponList',
         meta: {
           title: '優惠券列表'
         }
       },
       {
         path: 'coupon-create',
-        component: _import('example/table/complexTable'),
-        name: 'couponCreate',
+        component: _import('coupon/create'),
+        name: 'CouponCreate',
         meta: {
           title: '新增優惠券'
+        }
+      },
+      {
+        path: ':id',
+        component: _import('coupon/edit'),
+        hidden: true,
+        name: 'CouponEdit',
+        meta: {
+          title: '優惠券編輯'
         }
       }
     ]

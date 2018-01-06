@@ -2,7 +2,7 @@
   <div class="app-container calendar-list-container">
     <h3 class="form-title">文章列表</h3>
     <div class="filter-container">
-      <el-input @keyup.enter.native="handleFilter" style="width: 250px;" class="filter-item" placeholder="訂單編號" v-model="listQuery.id"></el-input>
+      <el-input @keyup.enter.native="handleFilter" style="width: 250px;" class="filter-item" placeholder="文章標題" v-model="listQuery.id"></el-input>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜尋</el-button>
     </div>
     <el-table :key='tableKey' :data="list" v-loading="listLoading" header-row-style="background-color: #ebeef5;" empty-text="查無資料" element-loading-text="載入中..." fit style="width: 100%">
@@ -40,7 +40,7 @@
       <el-table-column label="動作" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button size="mini">分享</el-button>
-          <el-button size="mini" @click="$router.push({ name: 'postItem', params: { id: scope.row.id } })">編輯</el-button>
+          <el-button size="mini" @click="$router.push({ name: 'postEdit', params: { id: scope.row.id } })">編輯</el-button>
           <el-button size="mini">檢視</el-button>
           <el-button size="mini" type="danger">刪除</el-button>
         </template>
@@ -70,10 +70,7 @@ export default {
       listQuery: {
         page: 1,
         limit: 30,
-        status: undefined,
-        date: '',
-        id: undefined,
-        type: undefined,
+        title: '',
         sort: '+id'
       },
       statusType: [
