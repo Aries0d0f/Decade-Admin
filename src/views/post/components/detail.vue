@@ -195,7 +195,7 @@ export default {
       this.postForm.related = this.relatedItems.map(x => x.key)
       this.loading = true
       try {
-        const res = await createPost(this.postForm)
+        await createPost(this.postForm)
         this.$notify({ title: '成功', message: '發布成功', type: 'success', duration: 2000 })
       } catch (err) {
         console.log(err)

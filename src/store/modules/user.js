@@ -1,134 +1,75 @@
-import { loginByUsername, logout, getUserInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { loginByUsername, fetchUser } from '@/api/user'
 
 const user = {
   state: {
-    user: '',
-    status: '',
-    code: '',
-    token: getToken(),
-    name: '',
-    avatar: '',
-    introduction: '',
-    roles: [],
-    setting: {
-      articlePlatform: []
-    }
+    id: '',
+    cid: '',
+    role: '',
+    state: '',
+    username: ''
   },
 
   mutations: {
-    SET_CODE: (state, code) => {
-      state.code = code
+    SET_ID: (state, id) => {
+      state.id = id
     },
-    SET_TOKEN: (state, token) => {
-      state.token = token
+    SET_CID: (state, cid) => {
+      state.cid = cid
     },
-    SET_INTRODUCTION: (state, introduction) => {
-      state.introduction = introduction
+    SET_ROLE: (state, role) => {
+      state.role = role
     },
-    SET_SETTING: (state, setting) => {
-      state.setting = setting
+    SET_STATE: (state, states) => {
+      state.state = states
     },
-    SET_STATUS: (state, status) => {
-      state.status = status
-    },
-    SET_NAME: (state, name) => {
-      state.name = name
-    },
-    SET_AVATAR: (state, avatar) => {
-      state.avatar = avatar
-    },
-    SET_ROLES: (state, roles) => {
-      state.roles = roles
+    SET_USERNAME: (state, username) => {
+      state.username = username
     }
   },
 
   actions: {
     // 用户名登录
-    LoginByUsername({ commit }, userInfo) {
-      const username = userInfo.username.trim()
-      return new Promise((resolve, reject) => {
-        loginByUsername(username, userInfo.password).then(response => {
-          const data = response.data
-          commit('SET_TOKEN', data.token)
-          setToken(response.data.token)
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
-      })
+    async LoginByUsername({ commit }, userInfo) {
+      try {
+        const data = await loginByUsername(userInfo.username, userInfo.password)
+        if (!data.success) {
+          throw new Error(data.err.message)
+        }
+        commit('SET_ID', data.result.id)
+        commit('SET_CID', data.result.cid)
+        commit('SET_ROLE', data.result.role)
+        commit('SET_STATE', data.result.state)
+        commit('SET_USERNAME', data.result.username)
+        localStorage.uid = data.result.id
+      } catch (err) {
+        throw err
+      }
     },
 
-    // 获取用户信息
-    GetUserInfo({ commit, state }) {
-      return new Promise((resolve, reject) => {
-        getUserInfo(state.token).then(response => {
-          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
-            reject('error')
-          }
-          const data = response.data
-          commit('SET_ROLES', data.roles)
-          commit('SET_NAME', data.name)
-          commit('SET_AVATAR', data.avatar)
-          commit('SET_INTRODUCTION', data.introduction)
-          resolve(response)
-        }).catch(error => {
-          reject(error)
-        })
-      })
+    async checkAuth({ commit }) {
+      if (!localStorage.uid) return false
+      try {
+        const res = await fetchUser(localStorage.uid)
+        commit('SET_ID', res.id)
+        commit('SET_CID', res.cid)
+        commit('SET_ROLE', res.role)
+        commit('SET_STATE', res.state)
+        commit('SET_USERNAME', res.username)
+        return true
+      } catch (err) {
+        console.log(err)
+        return false
+      }
     },
-
-    // 第三方验证登录
-    // LoginByThirdparty({ commit, state }, code) {
-    //   return new Promise((resolve, reject) => {
-    //     commit('SET_CODE', code)
-    //     loginByThirdparty(state.status, state.email, state.code).then(response => {
-    //       commit('SET_TOKEN', response.data.token)
-    //       setToken(response.data.token)
-    //       resolve()
-    //     }).catch(error => {
-    //       reject(error)
-    //     })
-    //   })
-    // },
 
     // 登出
     LogOut({ commit, state }) {
-      return new Promise((resolve, reject) => {
-        logout(state.token).then(() => {
-          commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
-          removeToken()
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
-      })
-    },
-
-    // 前端 登出
-    FedLogOut({ commit }) {
-      return new Promise(resolve => {
-        commit('SET_TOKEN', '')
-        removeToken()
-        resolve()
-      })
-    },
-
-    // 动态修改权限
-    ChangeRoles({ commit }, role) {
-      return new Promise(resolve => {
-        commit('SET_TOKEN', role)
-        setToken(role)
-        getUserInfo(role).then(response => {
-          const data = response.data
-          commit('SET_ROLES', data.roles)
-          commit('SET_NAME', data.name)
-          commit('SET_AVATAR', data.avatar)
-          commit('SET_INTRODUCTION', data.introduction)
-          resolve()
-        })
-      })
+      commit('SET_ID', '')
+      commit('SET_CID', '')
+      commit('SET_ROLE', '')
+      commit('SET_STATE', '')
+      commit('SET_USERNAME', '')
+      delete localStorage.uid
     }
   }
 }

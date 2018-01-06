@@ -5,7 +5,27 @@
 </template>
 
 <script>
-  export default{
-    name: 'APP'
+  import { mapActions } from 'vuex'
+  export default {
+    name: 'APP',
+    async created() {
+      await this.checkUser()
+    },
+    watch: {
+      $route: async function () {
+        await this.checkUser()
+      }
+    },
+    methods: {
+      ...mapActions(['checkAuth']),
+      async checkUser() {
+        if (this.$route.meta.auth === false) return
+        console.log('check Auth')
+        const isLogin = await this.checkAuth()
+        if (!isLogin) {
+          this.$router.push({ name: 'login' })
+        }
+      }
+    }
   }
 </script>

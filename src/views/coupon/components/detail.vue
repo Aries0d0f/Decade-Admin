@@ -234,8 +234,11 @@ export default {
         try {
           if (this.isEdit) {
             const data = {}
-            Object.keys(defaultForm).map(x => data[x] = this.postForm[x])
-            await updateCoupon(this.postForm.id, data)            
+            Object.keys(defaultForm).map(x => {
+              data[x] = this.postForm[x]
+              return true
+            })
+            await updateCoupon(this.postForm.id, data)
           } else {
             await createCoupon(this.postForm)
           }
