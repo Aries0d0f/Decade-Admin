@@ -1,44 +1,41 @@
-import Vue          from 'vue'
-import { sync }     from 'vuex-router-sync'
-import axios        from 'axios'
-import VueAxios     from 'vue-axios'
-import VueCookie    from 'vue-cookie'
+import Vue from 'vue'
 
-import App          from './App'
-import router       from './router'
-import store        from './store'
+import 'normalize.css/normalize.css'// A modern alternative to CSS resets
 
-import FontAwesomeIcon                from '@fortawesome/vue-fontawesome'
-import FontAwesome                    from '@fortawesome/fontawesome'
-import { faYoutube }                  from '@fortawesome/fontawesome-free-brands'
-import  {
-          faListUl,
-          faHashtag,
-          faParagraph,
-          faLink,
-          faImage,
-          faTimes,
-          faMinusCircle,
-          faPaperPlane,
-          faEye,
-          faEdit,
-          faCamera
-        }            from '@fortawesome/fontawesome-free-solid'
+import Element from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 
-FontAwesome.library.add(faYoutube, faCamera, faListUl, faHashtag, faParagraph, faLink, faImage, faTimes, faMinusCircle, faPaperPlane, faEye, faEdit)
-Vue.component('FontAwesomeIcon', FontAwesomeIcon)
+import '@/styles/index.scss' // global css
 
-Vue.router = router
-Vue.use(VueAxios, axios)
-Vue.use(VueCookie)
-Vue.config.devtools = true
+import App from './App'
+import router from './router'
+import store from './store'
 
-sync(store, router)
+import i18n from './lang' // Internationalization
+import './icons' // icon
+import './errorLog'// error log
+import './permission' // permission control
+import './mock' // simulation data
 
-const app = new Vue({
+import * as filters from './filters' // global filters
+
+Vue.use(Element, {
+  size: 'medium', // set element-ui default size
+  i18n: (key, value) => i18n.t(key, value)
+})
+
+// register global utility filters.
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
+
+Vue.config.productionTip = false
+
+new Vue({
+  el: '#app',
   router,
   store,
-  ...App
-}).$mount('#app')
-
-export { app, router, store, FontAwesome }
+  i18n,
+  template: '<App/>',
+  components: { App }
+})

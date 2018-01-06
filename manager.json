@@ -1,8 +1,0 @@
-{
-	"apps": [
-	{
-		"name": "decade-manager",
-		"script": "./server/app.js",
-		"watch": true
-	}]
-}
