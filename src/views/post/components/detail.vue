@@ -1,7 +1,6 @@
 <template>
   <div class="createPost-container">
     <el-form class="form-container" :model="postForm" :rules="rules" ref="postForm">
-
       <sticky :className="'sub-navbar '+postForm.status">
         <template v-if="fetchSuccess">
           <el-button v-loading="loading" style="margin-left: 10px;" type="info">草稿</el-button>
@@ -25,10 +24,10 @@
             </div>
           </el-col>
           <el-col :span="18">
-            <el-form-item style="margin-bottom: 40px;" label-width="60px" label="分類:">
+            <el-form-item style="margin-bottom: 40px;" label-width="60px" label="分類">
               <el-cascader :options="options" v-model="postForm.categoryT"></el-cascader>
             </el-form-item>
-            <el-form-item style="margin-bottom: 40px;" label-width="60px" label="關鍵字:">
+            <el-form-item style="margin-bottom: 40px;" label-width="60px" label="關鍵字">
               <el-select v-model="postForm.tag" style="width: 100%" multiple filterable :allow-create="postForm.tag.length < 5" default-first-option placeholder="請輸入關鍵字" no-data-text="請輸入關鍵字" no-match-text="已達 5 組關鍵字">
                 <el-option v-for="item in postForm.tag" :key="item.value" :label="item.value" :value="item.value"></el-option>
               </el-select>
