@@ -1,6 +1,6 @@
 <template>
 	<div class="singleImageUpload2 upload-container">
-		<el-upload class="image-uploader" :data="dataObj" drag :multiple="false" :show-file-list="false" action="http://60.249.179.125:3002/upload"
+		<el-upload class="image-uploader" :data="dataObj" drag :multiple="false" :show-file-list="false" :action="`${uploadUrl}/upload`"
 		  :on-success="handleImageScucess">
 			<i class="el-icon-upload"></i>
 			<div class="el-upload__text">Drag或<em>點擊上傳</em></div>
@@ -17,8 +17,6 @@
 </template>
 
 <script>
-import { getToken } from '@/api/qiniu'
-
 export default {
   name: 'singleImageUpload2',
   props: {
@@ -32,7 +30,8 @@ export default {
   data() {
     return {
       tempUrl: '',
-      dataObj: { token: '', key: '' }
+      dataObj: { token: '', key: '' },
+			uploadUrl: 'http://60.249.179.125:3002',
     }
   },
   methods: {
@@ -42,23 +41,8 @@ export default {
     emitInput(val) {
       this.$emit('input', val)
     },
-    handleImageScucess() {
-      this.emitInput(this.tempUrl)
-    },
-    beforeUpload() {
-      const _self = this
-      return new Promise((resolve, reject) => {
-        getToken().then(response => {
-          const key = response.data.qiniu_key
-          const token = response.data.qiniu_token
-          _self._data.dataObj.token = token
-          _self._data.dataObj.key = key
-          this.tempUrl = response.data.qiniu_url
-          resolve(true)
-        }).catch(() => {
-          reject(false)
-        })
-      })
+    handleImageScucess(response) {
+      this.emitInput(`${this.uploadUrl}${response.path}`)
     }
   }
 }

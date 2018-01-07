@@ -12,7 +12,7 @@
       await this.checkUser()
     },
     watch: {
-      $route: async function () {
+      $route: async function() {
         await this.checkUser()
       }
     },

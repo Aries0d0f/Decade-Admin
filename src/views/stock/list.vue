@@ -23,7 +23,7 @@
       </el-table-column>
       <el-table-column label="廠商" width="150">
         <template slot-scope="scope">
-          <span>{{scope.row}}</span>
+          <span>{{scope.row.seller}}</span>
         </template>
       </el-table-column>
       <el-table-column label="分類" width="200">

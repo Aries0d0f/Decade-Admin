@@ -20,25 +20,29 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <div style="margin-bottom: 20px;">
-              <Upload style="height: 100%;" v-model="postForm.meta.image"></Upload>
+              <el-form-item prop="image">
+                <Upload style="height: 100%;" v-model="postForm.meta.image"></Upload>
+              </el-form-item>
             </div>
           </el-col>
           <el-col :span="18">
-            <el-form-item style="margin-bottom: 40px;" label-width="60px" label="分類">
-              <el-cascader :options="options" v-model="postForm.categoryT"></el-cascader>
+            <el-form-item style="margin-bottom: 40px;" label-width="60px" label="分類" prop="category">
+              <el-cascader :options="options" v-model="categoryTypes" placeholder="請選擇分類" @change="handleSelectCategory"></el-cascader>
             </el-form-item>
-            <el-form-item style="margin-bottom: 40px;" label-width="60px" label="關鍵字">
-              <el-select v-model="postForm.tag" style="width: 100%" multiple filterable :allow-create="postForm.tag.length < 5" default-first-option placeholder="請輸入關鍵字" no-data-text="請輸入關鍵字" no-match-text="已達 5 組關鍵字">
-                <el-option v-for="item in postForm.tag" :key="item.value" :label="item.value" :value="item.value"></el-option>
+            <el-form-item style="margin-bottom: 40px;" label-width="60px" label="關鍵字" prop="keyword">
+              <el-select v-model="postForm.meta.keyword" style="width: 100%" multiple filterable :allow-create="postForm.meta.keyword && postForm.meta.keyword.length < 5" default-first-option placeholder="請輸入關鍵字" no-data-text="請輸入關鍵字" no-match-text="已達 5 組關鍵字">
+                <el-option v-for="item in postForm.meta.keyword" :key="item.value" :label="item.value" :value="item.value"></el-option>
               </el-select>
-              <span>(已輸入 {{postForm.tag.length}} 組，還可以增加 {{ 5 - postForm.tag.length}} 組)</span>
+              <!-- <span>(已輸入 {{postForm.meta.keyword.length || 0}} 組，還可以增加 {{ 5 - (postForm.meta.keyword.length || 0)}} 組)</span> -->
             </el-form-item>
           </el-col>
         </el-row>
 
-        <div class="editor-container">
-          <tinymce :height=400 ref="editor" v-model="postForm.content"></tinymce>
-        </div>
+        <el-form-item prop="content">
+          <div class="editor-container">
+            <tinymce :height=400 ref="editor" v-model="postForm.content"></tinymce>
+          </div>
+        </el-form-item>
 
         <hr>
 
@@ -67,7 +71,7 @@
 
               <el-form-item>
                 <el-button @click="addDomain">新增商品</el-button>
-                <span>(已輸入 {{relatedItems.length}} 組，還可以增加 {{ 6 - relatedItems.length}} 組)</span>
+                <span>(已輸入 {{relatedItems.length || 0}} 組，還可以增加 {{ 6 - relatedItems.length || 0}} 組)</span>
               </el-form-item>
             </el-card>
           </el-col>
@@ -84,20 +88,22 @@ import Tinymce from '@/components/Tinymce'
 import Upload from '@/components/Upload/singleImage2'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky'
-import { fetchPost, createPost } from '@/api/post'
+import { fetchPost, createPost, updatePost } from '@/api/post'
 import { querySearch } from '@/api/search'
+import { mapGetters } from 'vuex'
 
 const defaultForm = {
   title: '',
   content: '',
-  id: undefined,
   category: undefined,
+  subCategory: undefined,
   author: undefined,
   region: undefined,
   related: [],
   tag: [],
   meta: {
     image: '',
+    keyword: [],
     link: undefined
   }
 }
@@ -116,66 +122,69 @@ export default {
       postForm: Object.assign({}, defaultForm),
       fetchSuccess: true,
       loading: false,
-      relatedItems: [
-        { key: '' },
-        { key: '' },
-        { key: '' },
-        { key: '' }
-      ],
+      categoryTypes: [],
+      relatedItems: [],
       rules: {},
       options: [
         {
-          value: 'classic',
+          value: 0,
           label: '經典',
           children: [
-            { value: '3', label: '音樂' },
-            { value: '46', label: '藝術' }
+            { value: 0, label: '音樂' },
+            { value: 1, label: '藝術' }
           ]
         },
         {
-          value: 'beauty',
+          value: 1,
           label: '色蘊',
           children: [
-            { value: '444', label: '美妝' },
-            { value: '416', label: '美肌' },
-            { value: '43', label: '美體' }
+            { value: 0, label: '美妝' },
+            { value: 1, label: '美肌' },
+            { value: 2, label: '美體' }
           ]
         },
         {
-          value: 'lifestyle',
+          value: 2,
           label: '生活',
           children: [
-            { value: '444', label: '旅行' },
-            { value: '416', label: '居家' },
-            { value: '43', label: '味蕾' },
-            { value: '43', label: '纖體' }
+            { value: 0, label: '旅行' },
+            { value: 1, label: '居家' },
+            { value: 2, label: '味蕾' },
+            { value: 3, label: '纖體' }
           ]
         },
         {
-          value: 'fashion',
+          value: 3,
           label: '時尚',
           children: [
-            { value: '444', label: '設計師' },
-            { value: '416', label: '品牌' }
+            { value: 0, label: '設計師' },
+            { value: 1, label: '品牌' }
           ]
         },
         {
-          value: 'feature',
+          value: 4,
           label: '主題'
         },
         {
-          value: 'talk',
+          value: 5,
           label: '人物'
         }
       ]
     }
   },
-  created() {
+  async created() {
     if (this.isEdit) {
-      this.fetchData()
+      await this.fetchData()
+      this.categoryTypes = [this.postForm.category, this.postForm.subCategory]
+      this.postForm.related.map(x => {
+        this.relatedItems.push({ key: x })
+      })
     } else {
       this.postForm = Object.assign({}, defaultForm)
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     async fetchData() {
@@ -187,15 +196,23 @@ export default {
       }
     },
     async submitForm() {
-      this.postForm.author = '59f34d33b806294fe794041a'
-      this.postForm.category = 0
+      this.postForm.author = this.userInfo.id
       this.postForm.region = 0
-      delete this.postForm.categoryT
       this.postForm.related = this.relatedItems.map(x => x.key)
       this.loading = true
       try {
-        await createPost(this.postForm)
+        if (this.isEdit) {
+          const data = {}
+          Object.keys(defaultForm).map(x => {
+            data[x] = this.postForm[x]
+            return true
+          })
+          await updatePost(this.postForm.id, data)
+        } else {
+          await createPost(this.postForm)
+        }
         this.$notify({ title: '成功', message: '發布成功', type: 'success', duration: 2000 })
+        this.$router.push({ name: 'postList' })
       } catch (err) {
         console.log(err)
       }
@@ -225,6 +242,10 @@ export default {
         return
       }
       this.relatedItems.push({ key: '' })
+    },
+    handleSelectCategory(type) {
+      this.postForm.category = type[0]
+      this.postForm.subCategory = type[1]
     }
   }
 }

@@ -34,7 +34,7 @@
       </el-table-column>
       <el-table-column label="人氣" width="120">
         <template slot-scope="scope">
-          <span>{{scope.row.meta.pageview || 0}}</span>
+          <span>{{scope.row.pageview || 0}}</span>
         </template>
       </el-table-column>
       <el-table-column label="動作" class-name="small-padding fixed-width">

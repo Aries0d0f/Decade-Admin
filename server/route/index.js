@@ -6,7 +6,7 @@ const route = express.Router()
 
 route.use('/', (express.static(path.join(__dirname, '/../../dist'))))
 
-route.put('/upload', (req, res) => {
+route.post('/upload', (req, res) => {
   var file = req.files.file
   var fileName = `decade_${md5(file.name)}_${file.mimetype.replace('/', '.')}`
   // console.log(file, fileName)
