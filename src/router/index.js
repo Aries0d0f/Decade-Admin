@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import { fetchUser } from '@/api/user'
 
 const _import = require('./_import_' + process.env.NODE_ENV)
 
@@ -165,26 +164,10 @@ export const constantRouterMap = [
   }
 ]
 const router = new Router({
-  mode: 'history',
+  // mode: 'history',
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRouterMap
 })
-
-// router.beforeEach(async(to, from, next) => {
-//   if (to.meta.auth || to.meta.auth !== false) {
-//     if (!localStorage.uid) {
-//       console.log('unauth!')
-//       next({ name: 'login' })
-//     }
-//     try {
-//       await fetchUser(localStorage.uid)
-//     } catch (err) {
-//       console.log('unauth!')
-//       next({ name: 'login' })
-//     }
-//   }
-//   next()
-// })
 
 export default router
 

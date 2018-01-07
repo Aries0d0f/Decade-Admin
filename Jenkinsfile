@@ -30,7 +30,7 @@ node {
 				ls | grep -v package.zip | xargs rm;\
 				unzip -o package.zip;\
 				npm install;\
-				npm run build;\
+				npm run build:prod;\
 				pm2 restart manager.json;\
 				rm package.zip;\
 				ls; \
