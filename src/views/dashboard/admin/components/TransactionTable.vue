@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/transaction'
+// import { fetchList } from '@/api/transaction'
 
 export default {
   data() {
@@ -40,11 +40,11 @@ export default {
     this.fetchData()
   },
   methods: {
-    fetchData() {
-      fetchList().then(response => {
-        this.list = response.data.items.slice(0, 7)
-      })
-    }
+    // fetchData() {
+    //   fetchList().then(response => {
+    //     this.list = response.data.items.slice(0, 7)
+    //   })
+    // }
   }
 }
 </script>

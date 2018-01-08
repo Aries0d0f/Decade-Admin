@@ -23,7 +23,7 @@
         console.log('check Auth')
         const isLogin = await this.checkAuth()
         if (!isLogin) {
-          this.$router.push({ name: 'login' })
+          // this.$router.push({ name: 'login' })
         }
       }
     }
