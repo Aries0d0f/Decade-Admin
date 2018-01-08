@@ -32,6 +32,7 @@
           <el-upload
             :action="`${uploadUrl}/upload`"
             list-type="picture-card"
+            :on-success="handleImageScucess"
             v-model="postForm.img"
             :on-preview="handlePictureCardPreview"
             :on-remove="handleRemove">
@@ -265,7 +266,8 @@ export default {
       }
     },
     async submitForm() {
-      this.postForm.seller.push(this.userInfo.id)
+      this.postForm.seller.push('5a531f46418f6102cc971035')
+      // this.postForm.seller.push(this.userInfo.id)
       this.postForm.catalog = this.categoryClass[0]
       this.postForm.info.type = this.categoryClass[1]
       this.postForm.info = JSON.stringify(this.postForm.info)
@@ -318,6 +320,9 @@ export default {
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
       this.dialogVisible = true
+    },
+    handleImageScucess(res) {
+      this.postForm.img.push(res.path)
     }
   }
 }

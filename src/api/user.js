@@ -6,6 +6,11 @@ export const fetchUser = async(id) => {
   return res.data
 }
 
+export const fetchUserQuery = async(query) => {
+  const res = await request({ url: `/user?${query}`, method: 'get' })
+  return res.data
+}
+
 export const loginByUsername = async(username, pwd) => {
   const res = await request({
     url: '/user/login',

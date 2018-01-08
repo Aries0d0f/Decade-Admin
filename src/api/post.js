@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
-export const fetchPostList = async(id) => {
-  const res = await request({ url: '/post?limit=9999', method: 'GET' })
+export const fetchPostList = async(query = '') => {
+  const res = await request({ url: `/post/${query}?limit=9999`, method: 'GET' })
   return res.data
 }
 

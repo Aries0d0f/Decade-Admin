@@ -1,6 +1,6 @@
 <template>
   <div class="createPost-container">
-    <el-form class="form-container" :model="postForm" :rules="rules" ref="postForm">
+    <el-form class="form-container" :model="postForm" ref="postForm">
       <sticky :className="'sub-navbar '+postForm.status">
         <template v-if="fetchSuccess">
           <el-button v-loading="loading" style="margin-left: 10px;" type="info">草稿</el-button>
@@ -11,7 +11,7 @@
           <el-tag>獲取失敗，請重新整理頁面</el-tag>
         </template>
       </sticky>
-      <div class="createPost-main-container">
+      <div class="createPost-main-container" v-loading="loading">
         <el-form-item style="margin-bottom: 40px;" prop="title">
           <MDinput name="name" v-model="postForm.title" required :maxlength="100">
             標題
@@ -188,15 +188,17 @@ export default {
   },
   methods: {
     async fetchData() {
+      this.loading = true
       try {
         this.postForm = await fetchPost(this.$route.params.id)
       } catch (err) {
         this.fetchSuccess = false
         console.log(err)
       }
+      this.loading = false
     },
     async submitForm() {
-      this.postForm.author = this.userInfo.id
+      this.postForm.author = '5a531f46418f6102cc971035'
       this.postForm.region = 0
       this.postForm.related = this.relatedItems.map(x => x.key)
       this.loading = true

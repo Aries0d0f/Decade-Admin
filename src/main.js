@@ -11,7 +11,7 @@ import App from './App'
 import router from './router'
 import store from './store'
 
-import i18n from './lang' // Internationalization
+// import i18n from './lang' // Internationalization
 import './icons' // icon
 
 import * as filters from './filters' // global filters
@@ -31,7 +31,7 @@ new Vue({
   el: '#app',
   router,
   store,
-  i18n,
+  // i18n,
   template: '<App/>',
   components: { App }
 })

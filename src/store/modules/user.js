@@ -33,8 +33,10 @@ const user = {
       try {
         const data = await loginByUsername(userInfo.username, userInfo.password)
         if (!data.success) {
+          console.log(data.success)
           throw new Error(data.err.message)
         }
+        console.log('object')
         commit('SET_ID', data.result.id)
         commit('SET_CID', data.result.cid)
         commit('SET_ROLE', data.result.role)

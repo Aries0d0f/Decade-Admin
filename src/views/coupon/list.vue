@@ -44,11 +44,11 @@
       </el-table-column>
     </el-table>
 
-    <div class="pagination-container">
+    <!-- <div class="pagination-container">
       <el-pagination background @current-change="handleCurrentChange" :current-page.sync="listQuery.page"
         :page-sizes="30" layout="total, sizes, prev, pager, next, jumper" :total="total">
       </el-pagination>
-    </div>
+    </div> -->
   </div>
 </template>
 
