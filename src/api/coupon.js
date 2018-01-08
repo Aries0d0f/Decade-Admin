@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 export const fetchCouponList = async() => {
-  const res = await request({ url: '/coupon', method: 'GET' })
+  const res = await request({ url: '/coupon?limit=9999', method: 'GET' })
   return res.data
 }
 

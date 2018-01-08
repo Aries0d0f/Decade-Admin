@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 export const fetchStockList = async() => {
-  const res = await request({ url: '/stock', method: 'GET' })
+  const res = await request({ url: '/stock?limit=9999', method: 'GET' })
   return res.data
 }
 

@@ -1,6 +1,6 @@
 <template>
   <div class="createStock-container">
-    <el-form class="form-container" :model="postForm" :rules="rules" ref="postForm">
+    <el-form class="form-container" :model="postForm">
       <sticky :className="'sub-navbar '+postForm.status">
         <template v-if="fetchSuccess">
           <el-button v-loading="loading" style="margin-left: 10px;" type="info">草稿</el-button>
@@ -13,7 +13,7 @@
       </sticky>
       <div class="createStock-main-container">
         <el-form-item style="margin-bottom: 40px;" prop="title">
-          <MDinput name="name" v-model="postForm.title" required :maxlength="100">
+          <MDinput name="name" v-model="postForm.name" required :maxlength="100">
             商品名稱
           </MDinput>
         </el-form-item>
@@ -21,17 +21,18 @@
           <el-cascader :options="options" placeholder="請選擇分類" v-model="categoryClass" @change="handleSelectCategort"></el-cascader>
         </el-form-item>
 
-        <el-form-item style="margin-bottom: 40px;" label-width="60px" label="關鍵字">
+        <!-- <el-form-item style="margin-bottom: 40px;" label-width="60px" label="關鍵字">
           <el-select v-model="postForm.tag" style="width: 40%" multiple filterable :allow-create="postForm.tag.length < 5" default-first-option placeholder="請輸入關鍵字" no-data-text="請輸入關鍵字" no-match-text="已達 5 組關鍵字">
             <el-option v-for="item in postForm.tag" :key="item.value" :label="item.value" :value="item.value"></el-option>
           </el-select>
           <div>(已輸入 {{postForm.tag.length}} 組，還可以增加 {{ 5 - postForm.tag.length}} 組)</div>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item style="margin-bottom: 40px;" label-width="60px" label="照片">
           <el-upload
-            action="https://jsonplaceholder.typicode.com/posts/"
+            :action="`${uploadUrl}/upload`"
             list-type="picture-card"
+            v-model="postForm.img"
             :on-preview="handlePictureCardPreview"
             :on-remove="handleRemove">
             <i class="el-icon-plus"></i>
@@ -47,12 +48,15 @@
             <el-tab-pane label="價格">
               <span slot="label" class="item-detail-pane">價格</span>
               <el-form-item style="width:15rem" label-width="60px" label="售價">
-                <el-input v-model="postForm.price.orig" placeholder="">
+                <el-input v-model="postForm.price" placeholder="">
                   <span slot="prefix" style="margin: 0 .5rem;"> $</span>
                 </el-input>
-              </el-form-item>              
+              </el-form-item>
+              <el-form-item style="width:15rem" label-width="60px" label="數量">
+                <el-input v-model="postForm.count" placeholder=""></el-input>
+              </el-form-item>    
               <el-form-item label-width="60px">
-                <el-checkbox v-model="checked">服務體驗類若無預設金額請勾選</el-checkbox>
+                <el-checkbox v-model="isTicket">服務體驗類若無預設金額請勾選</el-checkbox>
                 <el-tooltip class="item" effect="dark" placement="bottom">
                   <div slot="content">服務體驗選項，將於售價顯示"獨家體驗服務無需預繳任何費用，<br>視體驗活動現場與商家線上核銷確認購買該組合套餐。"</div>
                   <span class="tooltip-btn">?</span>
@@ -63,8 +67,8 @@
             <el-tab-pane label="商品簡短說明">
               <span slot="label" class="item-detail-pane">商品簡短說明</span>
               <div>商品簡介</div>
-              <el-form-item style="width:40%">
-                <el-input type="textarea" :autosize="{ minRows: 4 }"></el-input>
+              <el-form-item style="width:100%">
+                <el-input type="textarea" v-model="postForm.info.summary" :autosize="{ minRows: 4 }"></el-input>
               </el-form-item>
             </el-tab-pane>
 
@@ -73,6 +77,7 @@
               <el-form-item
                 v-for="(item, index) in postForm.spec"
                 :label="'規格' + (index + 1)"
+                v-model="postForm.spec"
                 :key="index"
                 style="margin-left: 1rem;"
                 :prop="'item.' + index"
@@ -89,7 +94,7 @@
         <el-form-item style="margin-bottom: 40px;">
           <h4 class="form-subtitle">商品描述</h4>
           <div class="editor-container">
-            <tinymce :height=400 ref="editor" v-model="postForm.info.content"></tinymce>
+            <tinymce :height=400 ref="editor" v-model="postForm.info.discription"></tinymce>
           </div>
         </el-form-item>
 
@@ -99,7 +104,8 @@
             <el-tab-pane label="規格">
               <span slot="label" class="item-detail-pane">商品規格</span>
               <el-form-item
-                v-for="(item, index) in postForm.spec"
+                v-for="(item, index) in postForm.info.specInfo"
+                v-model="postForm.info.specInfo"
                 :label="'規格' + (index + 1)"
                 :key="index"
                 style="margin-left: 1rem;"
@@ -107,9 +113,9 @@
               >
                 <el-input v-model="item.name" placeholder="請輸入選項名稱" style="width: 15rem;margin-bottom: 1rem;"></el-input>
                 <el-input v-model.number="item.count" placeholder="數量" style="width: 8rem;"></el-input>
-                <el-button type="danger" icon="el-icon-delete" @click.prevent="removeSpec(index)"></el-button>
+                <el-button type="danger" icon="el-icon-delete" @click.prevent="removeSpecInfo(index)"></el-button>
               </el-form-item>
-              <el-button @click="addSpec">新增規格</el-button>
+              <el-button @click="addSpecInfo">新增規格</el-button>
             </el-tab-pane>
             
             <el-tab-pane label="購買須知">
@@ -117,7 +123,7 @@
               <div>購買須知</div>
               <el-form-item>
                 <div class="editor-container">
-                  <tinymce :height=400 ref="editor" v-model="postForm.info.content"></tinymce>
+                  <tinymce :height=400 ref="editor" v-model="postForm.info.note"></tinymce>
                 </div>
               </el-form-item>
             </el-tab-pane>
@@ -127,7 +133,7 @@
               <div>注意事項</div>
               <el-form-item>
                 <div class="editor-container">
-                  <tinymce :height=400 ref="editor" v-model="postForm.info.content"></tinymce>
+                  <tinymce :height=400 ref="editor" v-model="postForm.info.warn"></tinymce>
                 </div>
               </el-form-item>
             </el-tab-pane>
@@ -140,31 +146,39 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Tinymce from '@/components/Tinymce'
 import Upload from '@/components/Upload/singleImage2'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky'
-import { fetchPost, createPost } from '@/api/post'
+import { fetchStock, createStock, updateStock } from '@/api/stock'
 import { querySearch } from '@/api/search'
 
 const defaultForm = {
   type: undefined,
   catalog: undefined,
-  subCatalog: undefined,
+  // subCatalog: undefined,
   comboList: [],
   tag: [],
   img: [],
   name: undefined,
   info: {
-    type: '',
-    content: ''
+    type: undefined,
+    summary: undefined,
+    discription: undefined,
+    teacher: undefined,
+    time: undefined,
+    specInfo: [],
+    note: undefined,
+    warn: undefined
   },
   count: undefined,
   available: false,
-  price: {
-    orig: undefined,
-    onsale: undefined
-  },
+  price: undefined,
+  // price: {
+  //   orig: undefined,
+  //   onsale: undefined
+  // },
   spec: [],
   related: [],
   seller: []
@@ -184,8 +198,13 @@ export default {
       postForm: Object.assign({}, defaultForm),
       fetchSuccess: true,
       loading: false,
+      dialogImageUrl: '',
+      isTicket: false,
+      dialogVisible: false,
+      uploadUrl: 'http://localhost:3002',
       itemContent: '',
       categoryClass: [],
+      specInfo: [],
       rules: {},
       options: [
         {
@@ -223,26 +242,42 @@ export default {
       ]
     }
   },
-  created() {
+  async created() {
     if (this.isEdit) {
-      this.fetchData()
+      await this.fetchData()
+      this.categoryClass = [this.postForm.catalog, parseInt(this.postForm.info.type, 10)]
     } else {
       this.postForm = Object.assign({}, defaultForm)
     }
   },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   methods: {
     async fetchData() {
       try {
-        this.postForm = await fetchPost(this.$route.params.id)
+        const stock = await fetchStock(this.$route.params.id)
+        this.postForm = stock
+        this.postForm.info = JSON.parse(stock.info)
       } catch (err) {
         this.fetchSuccess = false
         console.log(err)
       }
     },
     async submitForm() {
+      this.postForm.seller.push(this.userInfo.id)
+      this.postForm.catalog = this.categoryClass[0]
+      this.postForm.info.type = this.categoryClass[1]
+      this.postForm.info = JSON.stringify(this.postForm.info)
+      this.postForm.type = this.isTicket ? 1 : 3
       try {
-        // await createPost(this.postForm)
+        if (this.isEdit) {
+          await updateStock(this.$route.params.id, this.postForm)
+        } else {
+          await createStock(this.postForm)
+        }
         this.$notify({ title: '成功', message: '發布成功', type: 'success', duration: 2000 })
+        this.$route.push({ name: 'StockList' })
       } catch (err) {
         console.log(err)
       }
@@ -262,13 +297,20 @@ export default {
       this.relatedItems[i].data = item.data
     },
     handleSelectCategort(category) {
-      console.log('category: ', category[0], ', subCategory', category[1])
+      this.postForm.catalog = category[0]
+      this.postForm.info.type = category[1]
+    },
+    addSpec() {
+      this.postForm.spec.push({ name: undefined, count: undefined })
     },
     removeSpec(index) {
       this.postForm.spec.splice(index, 1)
     },
-    addSpec() {
-      this.postForm.spec.push({ key: '' })
+    addSpecInfo() {
+      this.postForm.info.specInfo.push({ name: undefined, count: undefined })
+    },
+    removeSpecInfo(index) {
+      this.postForm.info.specInfo.splice(index, 1)
     },
     handleRemove(file, fileList) {
       console.log(file, fileList)
