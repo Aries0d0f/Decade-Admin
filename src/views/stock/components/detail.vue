@@ -28,8 +28,6 @@
           </el-select>
           <div>(已輸入 {{postForm.tag.length}} 組，還可以增加 {{ 5 - postForm.tag.length}} 組)</div>
         </el-form-item> -->
-       <div> {{postForm.img}}</div>
-        {{imgList}}
         <el-form-item style="margin-bottom: 40px;" label-width="60px" label="照片">
           <el-upload
             :action="`${uploadUrl}/upload`"
@@ -205,7 +203,7 @@ export default {
       dialogImageUrl: '',
       isTicket: false,
       dialogVisible: false,
-      uploadUrl: 'http://60.249.179.125:1337',
+      uploadUrl: 'http://60.249.179.125:3002',
       // uploadUrl: 'http://localhost:3002',
       itemContent: '',
       imgList: [],
