@@ -17,6 +17,7 @@
             商品名稱
           </MDinput>
         </el-form-item>
+
         <el-form-item style="margin-bottom: 40px;" prop="title" label-width="60px" label="分類">
           <el-cascader :options="options" placeholder="請選擇分類" v-model="categoryClass" @change="handleSelectCategort"></el-cascader>
         </el-form-item>
@@ -27,12 +28,14 @@
           </el-select>
           <div>(已輸入 {{postForm.tag.length}} 組，還可以增加 {{ 5 - postForm.tag.length}} 組)</div>
         </el-form-item> -->
-
+       <div> {{postForm.img}}</div>
+        {{imgList}}
         <el-form-item style="margin-bottom: 40px;" label-width="60px" label="照片">
           <el-upload
             :action="`${uploadUrl}/upload`"
             list-type="picture-card"
             :on-success="handleImageScucess"
+            :file-list="imgList"
             v-model="postForm.img"
             :on-preview="handlePictureCardPreview"
             :on-remove="handleRemove">
@@ -202,8 +205,10 @@ export default {
       dialogImageUrl: '',
       isTicket: false,
       dialogVisible: false,
-      uploadUrl: 'http://localhost:3002',
+      uploadUrl: 'http://60.249.179.125:1337',
+      // uploadUrl: 'http://localhost:3002',
       itemContent: '',
+      imgList: [],
       categoryClass: [],
       specInfo: [],
       rules: {},
@@ -260,18 +265,23 @@ export default {
         const stock = await fetchStock(this.$route.params.id)
         this.postForm = stock
         this.postForm.info = JSON.parse(stock.info)
+        this.postForm.img.map((img, i) => {
+          this.imgList.push({ name: i, url: img })
+        })
       } catch (err) {
         this.fetchSuccess = false
         console.log(err)
       }
     },
     async submitForm() {
-      this.postForm.seller.push('5a531f46418f6102cc971035')
-      // this.postForm.seller.push(this.userInfo.id)
+      // this.postForm.seller.push('5a531f46418f6102cc971035')
+      this.postForm.seller.push(this.userInfo.id)
       this.postForm.catalog = this.categoryClass[0]
       this.postForm.info.type = this.categoryClass[1]
       this.postForm.info = JSON.stringify(this.postForm.info)
       this.postForm.type = this.isTicket ? 1 : 3
+      this.postForm.img = []
+      this.imgList.map(x => this.postForm.img.push(x.url))
       try {
         if (this.isEdit) {
           await updateStock(this.$route.params.id, this.postForm)
@@ -315,14 +325,17 @@ export default {
       this.postForm.info.specInfo.splice(index, 1)
     },
     handleRemove(file, fileList) {
-      console.log(file, fileList)
+      console.log('file', file)
+      console.log('fileList', fileList)
+      this.imgList = fileList
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
       this.dialogVisible = true
     },
     handleImageScucess(res) {
-      this.postForm.img.push(res.path)
+      this.imgList.push({ name: this.imgList.length, url: `${this.uploadUrl}${res.path}` })
+      this.postForm.img.push(`${this.uploadUrl}${res.path}`)
     }
   }
 }
