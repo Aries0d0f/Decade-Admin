@@ -49,7 +49,7 @@
           <el-tabs tab-position="left">
             <el-tab-pane label="價格">
               <span slot="label" class="item-detail-pane">價格</span>
-              <el-form-item style="width:15rem" label-width="60px" label="售價">
+              <el-form-item style="width:15rem;margin-bottom:1rem" label-width="60px" label="售價">
                 <el-input v-model="postForm.price" placeholder="">
                   <span slot="prefix" style="margin: 0 .5rem;"> $</span>
                 </el-input>
@@ -90,6 +90,15 @@
               </el-form-item>
               <el-button @click="addSpec">新增規格</el-button>
             </el-tab-pane>
+            <el-tab-pane label="票券說明" v-if="categoryClass[0] === 0 || isTicket">
+              <span slot="label" class="item-detail-pane">票券說明</span>
+              <el-form-item style="width:15rem;margin-bottom:1rem" label-width="60px" label="講師">
+                <el-input v-model="postForm.info.teacher" placeholder=""></el-input>
+              </el-form-item>
+              <el-form-item style="width:15rem" label-width="60px" label="日期">
+                <el-date-picker v-model="postForm.info.time" type="datetime" placeholder=""></el-date-picker>
+              </el-form-item>
+            </el-tab-pane>
           </el-tabs>
         </el-form-item>
 
@@ -114,7 +123,7 @@
                 :prop="'item.' + index"
               >
                 <el-input v-model="item.name" placeholder="請輸入選項名稱" style="width: 15rem;margin-bottom: 1rem;"></el-input>
-                <el-input v-model.number="item.count" placeholder="數量" style="width: 8rem;"></el-input>
+                <el-input v-model.number="item.detail" placeholder="說明" style="width: 8rem;"></el-input>
                 <el-button type="danger" icon="el-icon-delete" @click.prevent="removeSpecInfo(index)"></el-button>
               </el-form-item>
               <el-button @click="addSpecInfo">新增規格</el-button>
@@ -278,7 +287,7 @@ export default {
       this.postForm.catalog = this.categoryClass[0]
       this.postForm.info.type = this.categoryClass[1]
       this.postForm.info = JSON.stringify(this.postForm.info)
-      this.postForm.type = this.isTicket ? 3 : 1
+      this.postForm.type = this.categoryClass[0] === 0 ? 3 : this.isTicket ? 3 : 1
       this.postForm.img = []
       this.imgList.map(x => this.postForm.img.push(x.url))
       try {
@@ -318,7 +327,7 @@ export default {
       this.postForm.spec.splice(index, 1)
     },
     addSpecInfo() {
-      this.postForm.info.specInfo.push({ name: undefined, count: undefined })
+      this.postForm.info.specInfo.push({ name: undefined, detail: undefined })
     },
     removeSpecInfo(index) {
       this.postForm.info.specInfo.splice(index, 1)
