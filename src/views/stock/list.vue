@@ -5,7 +5,7 @@
       <el-input @keyup.enter.native="handleFilter" class="filter-item filter-search-item" prefix-icon="el-icon-search" v-model="listQuery.name"></el-input>
       <el-button class="filter-item" plain @click="handleFilter">搜尋</el-button>
     </div>
-    <el-table :key='tableKey' :data="list" v-loading="listLoading" header-row-style="background-color: #f3f3f3;color: #424242" empty-text="查無資料" element-loading-text="載入中..." fit style="width: 100%">
+    <el-table :key='tableKey' :data="currentList.slice(pager.start, pager.end)" v-loading="listLoading" :header-row-style="{ 'background-color': '#ebeef5' }" empty-text="查無資料" element-loading-text="載入中..." fit style="width: 100%">
       <el-table-column label="商品編號" width="230">
         <template slot-scope="scope">
           <span>{{scope.row.id}}</span>
@@ -23,12 +23,12 @@
       </el-table-column>
       <el-table-column label="廠商" width="150">
         <template slot-scope="scope">
-          <span>{{scope.row.seller}}</span>
+          <span>{{scope.row.seller[0].username}}</span>
         </template>
       </el-table-column>
       <el-table-column label="分類" width="200">
         <template slot-scope="scope">
-          <span>{{scope.row.catalog}}</span>
+          <span>{{categoryLabel(scope.row.catalog, scope.row.subCategory)}}</span>
         </template>
       </el-table-column>
       <el-table-column label="狀態" width="120">
@@ -45,23 +45,23 @@
         <template slot-scope="scope">
           <el-button size="mini">分享</el-button>
           <el-button size="mini" @click="$router.push({ name: 'StockEdit', params: { id: scope.row.id } })">編輯</el-button>
-          <el-button size="mini">檢視</el-button>
+          <el-button size="mini" @click="openTo(scope.row.id)">檢視</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.row.id)">刪除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <!-- <div class="pagination-container">
+    <div class="pagination-container">      
       <el-pagination background @current-change="handleCurrentChange" :current-page.sync="listQuery.page"
-        :page-sizes="30" layout="total, sizes, prev, pager, next, jumper" :total="total">
+        :page-sizes="[listQuery.limit]" :page-size="listQuery.limit" layout="prev, pager, next, jumper" :total="total">
       </el-pagination>
-    </div> -->
+    </div>
   </div>
 </template>
 
 <script>
 import { fetchStockList, deleteStock } from '@/api/stock'
-import { fetchUser } from '@/api/user'
+import { fetchUserQuery } from '@/api/user'
 
 export default {
   name: 'Order-List',
@@ -70,13 +70,64 @@ export default {
       tableKey: 0,
       list: null,
       total: null,
+      currentList: [],
       listLoading: true,
       listQuery: {
         page: 1,
         limit: 30,
         name: '',
         sort: '+id'
-      }
+      },
+      stockClass: [
+        {
+          value: 0,
+          label: '服務體驗',
+          children: []
+        },
+        {
+          value: 1,
+          label: '肌膚保養',
+          children: [
+            { label: '身體保養', value: 0 },
+            { label: '臉部保養', value: 1 },
+            { label: '內在調理', value: 2 }
+          ]
+        },
+        {
+          value: 2,
+          label: '居家空間',
+          children: [
+            { label: '家具', value: 0 },
+            { label: '家飾', value: 1 },
+            { label: '家電', value: 2 }
+          ]
+        },
+        {
+          value: 3,
+          label: '生活品味',
+          children: [
+            { label: '個人用品', value: 0 },
+            { label: '旅行周邊', value: 1 }
+          ]
+        },
+        {
+          value: 4,
+          label: '時尚藝術',
+          children: [
+            { label: '穿搭配件', value: 0 },
+            { label: '生活藝術', value: 1 }
+          ]
+        },
+        {
+          value: 5,
+          label: '味蕾饗宴',
+          children: [
+            { label: '廚具', value: 0 },
+            { label: '餐皿', value: 1 },
+            { label: '茶具酒器', value: 2 }
+          ]
+        }
+      ]
     }
   },
   async created() {
@@ -87,26 +138,68 @@ export default {
       return status ? '販售中' : '待審核'
     }
   },
+  computed: {
+    pager: function() {
+      const page = this.listQuery.page
+      const limit = this.listQuery.limit
+      return {
+        start: (page - 1) * limit,
+        end: page * limit
+      }
+    }
+  },
   methods: {
     async getList() {
       this.listLoading = true
+      this.currentList = []
+      this.list = []
       const list = await fetchStockList()
       this.total = list.length
+
+      if (list.length === 0) return
+      const uidList = []
+      list.map(async(item, i) => uidList.push(item.seller[0]))
+      const userList = await this.queryUid(uidList)
       list.map(async(item, i) => {
-        const uid = item.seller[0]
-        try {
-          const user = await fetchUser(uid)
-          list[i].seller[0] = user.username
-        } catch (err) {
-          list[i].seller[0] = { username: 'unknow' }
-        }
+        const user = userList.filter(x => x.id === userList[0].id)
+        list[i].seller[0] = user[0] || { username: 'unknow' }
+        list[i].subCategory = JSON.parse(item.info).type
       })
       this.list = list
+      this.currentList = list
       this.listLoading = false
     },
     handleFilter() {
     },
     handleCurrentChange() {
+    },
+    categoryLabel(cate, subCate = -1) {
+      try {
+        const labelClass = this.stockClass.filter(x => cate === x.value)
+        const label = labelClass[0].label
+        if (labelClass[0].children) {
+          const subLabel = labelClass[0].children.filter(x => subCate === x.value)
+          if (subLabel.length > 0) {
+            return label + '/' + subLabel[0].label
+          } else {
+            return label
+          }
+        }
+        return label
+      } catch (error) {
+        return 'unknow'
+      }
+    },
+    async queryUid(uidList) {
+      if (uidList.length === 0) return false
+      const idList = [...(new Set(uidList))]
+      let idArrStr = ''
+      idList.map(x => {
+        idArrStr += `"${x}",`
+        return
+      })
+      const res = await fetchUserQuery(`where={"id":[${idArrStr}""]}`)
+      return res
     },
     async handleDelete(id) {
       try {
@@ -117,6 +210,9 @@ export default {
       } catch (err) {
         console.log(err)
       }
+    },
+    openTo(id) {
+      location.replace(`http://60.249.179.125/shop/stock/${id}`)
     }
   }
 }

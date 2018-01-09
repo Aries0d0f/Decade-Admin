@@ -41,7 +41,7 @@
         <template slot-scope="scope">
           <el-button size="mini">分享</el-button>
           <el-button size="mini" @click="$router.push({ name: 'postEdit', params: { id: scope.row.id } })">編輯</el-button>
-          <el-button size="mini">檢視</el-button>
+          <el-button size="mini" @click="openTo(scope.row.id)">檢視</el-button>
           <el-button size="mini" type="danger">刪除</el-button>
         </template>
       </el-table-column>
@@ -155,7 +155,7 @@ export default {
         const userList = await this.queryUid(uidList)
         list.map(async(item, i) => {
           const user = userList.filter(x => x.id === userList[0].id)
-          list[i].author = user[0]
+          list[i].author = user[0] || { username: 'unknow' }
         })
         this.list = list
         this.currentList = list
@@ -210,6 +210,9 @@ export default {
         type: 'success',
         duration: 2000
       })
+    },
+    openTo(id) {
+      location.replace(`http://60.249.179.125/magazine/post/${id}`)
     }
   }
 }
