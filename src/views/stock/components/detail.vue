@@ -287,7 +287,7 @@ export default {
           await createStock(this.postForm)
         }
         this.$notify({ title: '成功', message: '發布成功', type: 'success', duration: 2000 })
-        this.$route.push({ name: 'StockList' })
+        this.$router.push({ name: 'StockList' })
       } catch (err) {
         console.log(err)
       }
