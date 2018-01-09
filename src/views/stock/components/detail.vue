@@ -263,6 +263,7 @@ export default {
         const stock = await fetchStock(this.$route.params.id)
         this.postForm = stock
         this.postForm.info = JSON.parse(stock.info)
+        this.isTicket = this.postForm.type === 1 ? false : true
         this.postForm.img.map((img, i) => {
           this.imgList.push({ name: i, url: img })
         })
@@ -277,7 +278,7 @@ export default {
       this.postForm.catalog = this.categoryClass[0]
       this.postForm.info.type = this.categoryClass[1]
       this.postForm.info = JSON.stringify(this.postForm.info)
-      this.postForm.type = this.isTicket ? 1 : 3
+      this.postForm.type = this.isTicket ? 3 : 1
       this.postForm.img = []
       this.imgList.map(x => this.postForm.img.push(x.url))
       try {
