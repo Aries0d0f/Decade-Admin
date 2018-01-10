@@ -81,50 +81,34 @@ export default {
       stockClass: [
         {
           value: 0,
-          label: '服務體驗',
-          children: []
+          label: '服務體驗'
         },
         {
           value: 1,
-          label: '肌膚保養',
+          label: '居家空間',
           children: [
-            { label: '身體保養', value: 0 },
-            { label: '臉部保養', value: 1 },
-            { label: '內在調理', value: 2 }
+            { value: 0, label: '家具' },
+            { value: 1, label: '家飾' },
+            { value: 2, label: '家電' }
           ]
         },
         {
           value: 2,
-          label: '居家空間',
+          label: '生活品味',
           children: [
-            { label: '家具', value: 0 },
-            { label: '家飾', value: 1 },
-            { label: '家電', value: 2 }
+            { value: 0, label: '個人用品' },
+            { value: 1, label: '旅行周邊' },
+            { value: 2, label: '時尚配飾' }
           ]
         },
         {
           value: 3,
-          label: '生活品味',
-          children: [
-            { label: '個人用品', value: 0 },
-            { label: '旅行周邊', value: 1 }
-          ]
-        },
-        {
-          value: 4,
-          label: '時尚藝術',
-          children: [
-            { label: '穿搭配件', value: 0 },
-            { label: '生活藝術', value: 1 }
-          ]
-        },
-        {
-          value: 5,
           label: '味蕾饗宴',
           children: [
-            { label: '廚具', value: 0 },
-            { label: '餐皿', value: 1 },
-            { label: '茶具酒器', value: 2 }
+            { value: 0, label: '美食' },
+            { value: 1, label: '廚具' },
+            { value: 2, label: '餐皿' },
+            { value: 3, label: '茶具酒品' }
           ]
         }
       ]
