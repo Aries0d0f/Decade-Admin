@@ -18,7 +18,7 @@
       </el-date-picker>
       <el-button class="filter-item filter-search" type="info" icon="el-icon-search" @click="handleFilter">查詢</el-button>
     </div>
-    <el-table :key='tableKey' :data="list" v-loading="listLoading" header-row-style="background-color: #ebeef5;" empty-text="查無資料" element-loading-text="載入中..." fit style="width: 100%">
+    <el-table :key='tableKey' :data="currentList.slice(pager.start, pager.end)" v-loading="listLoading" :header-row-style="{ 'background-color': '#ebeef5' }" empty-text="查無資料" element-loading-text="載入中..." fit style="width: 100%">
       <el-table-column align="center" label="訂單編號" width="220">
         <template slot-scope="scope">
           <span>{{scope.row.id}}</span>
@@ -38,7 +38,7 @@
       <el-table-column align="center" label="商品" width="400">
         <template slot-scope="scope">
           <div v-for="item in scope.row.content.stock" :key="item.id">
-            {{item.sid}} x {{item.count}}
+            {{item.name}} x {{item.count}}
           </div>
         </template>
       </el-table-column>
@@ -80,9 +80,9 @@
       </el-table-column> -->
     </el-table>
 
-    <div class="pagination-container">
+    <div class="pagination-container">      
       <el-pagination background @current-change="handleCurrentChange" :current-page.sync="listQuery.page"
-        :page-sizes="30" layout="total, sizes, prev, pager, next, jumper" :total="total">
+        :page-sizes="[listQuery.limit]" :page-size="listQuery.limit" layout="prev, pager, next, jumper" :total="total">
       </el-pagination>
     </div>
   </div>
@@ -90,7 +90,7 @@
 
 <script>
 import { fetchOrderList } from '@/api/order'
-// import { fetchStock } from '@/api/stock'
+import { fetchStockQuery } from '@/api/stock'
 
 export default {
   name: 'Order-List',
@@ -99,14 +99,11 @@ export default {
       tableKey: 0,
       list: null,
       total: null,
+      currentList: [],
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20,
-        status: undefined,
-        date: '',
-        id: undefined,
-        type: undefined,
+        limit: 30,
         sort: '+id'
       },
       statusType: [
@@ -129,21 +126,61 @@ export default {
   async created() {
     await this.getList()
   },
+  computed: {
+    pager: function() {
+      const page = this.listQuery.page
+      const limit = this.listQuery.limit
+      return {
+        start: (page - 1) * limit,
+        end: page * limit
+      }
+    }
+  },
   methods: {
     async getList() {
       this.listLoading = true
+      this.currentList = []
       const list = await fetchOrderList()
       this.total = list.length
-      // list.map((item, i) => {
-      //   item.content.stock.map(async(stock, j) => {
-      //     list[i].content.stock[j].data = await fetchStock(stock.sid)
-      //   })
-      // })
+      if (list.length === 0) return
+      const sidList = []
+      list.map(async(item, i) => sidList.push(item.content.stock))
+      const stockList = await this.queryStockIdList(sidList)
+      list.map(async(item, i) => {
+        item.content.stock.map((x, j) => {
+          const element = list[i].content.stock[j]
+          const stock = stockList.find(y => list[i].content.stock[j].sid === y.id)
+          list[i].content.stock[j].name = stock.name
+        })
+        // if (list[i].content.stock.length > 1) {
+        // } else {
+        //   const stock = stockList.filter(x => {
+        //     x.id === stockList[0].sid
+        //   })
+        //   list[i].content.stock[0] = stock
+        // }
+      })
+      this.currentList = list
       this.list = list
       this.listLoading = false
     },
     testFilter(status) {
       return this.statusType.filter(x => status === x.key)[0].label
+    },
+    async queryStockIdList(list) {
+      if (list.length === 0) return false
+      const idList = [...(new Set(list))]
+      let idArrStr = ''
+      idList.map(x => {
+        if (x.length > 0) {
+          x.map(item => idArrStr += `"${item.sid}",`)
+        } else {
+          idArrStr += `"${x[0].sid}",`
+        }
+        return
+      })
+      const res = await fetchStockQuery(`where={"id":[${idArrStr}""]}`)
+      return res
     },
     handleFilter() {
     },

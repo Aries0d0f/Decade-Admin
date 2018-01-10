@@ -28,7 +28,7 @@
       </el-table-column>
       <el-table-column label="分類" width="200">
         <template slot-scope="scope">
-          <span>{{categoryLabel(scope.row.catalog, scope.row.subCategory)}}</span>
+          <span>{{categoryLabel(scope.row.info.type, scope.row.catalog)}}</span>
         </template>
       </el-table-column>
       <el-table-column label="狀態" width="120">
@@ -147,7 +147,7 @@ export default {
       list.map(async(item, i) => {
         const user = userList.filter(x => x.id === userList[0].id)
         list[i].seller[0] = user[0] || { username: 'unknow' }
-        list[i].subCategory = JSON.parse(item.info).type
+        list[i].info = JSON.parse(list[i].info)
       })
       this.list = list
       this.currentList = list
@@ -158,6 +158,7 @@ export default {
     handleCurrentChange() {
     },
     categoryLabel(cate, subCate = -1) {
+      console.log('cate', cate, ', subCate', subCate)
       try {
         const labelClass = this.stockClass.filter(x => cate === x.value)
         const label = labelClass[0].label

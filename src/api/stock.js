@@ -5,6 +5,11 @@ export const fetchStockList = async() => {
   return res.data
 }
 
+export const fetchStockQuery = async(query) => {
+  const res = await request({ url: `/stock?${query}`, method: 'get' })
+  return res.data
+}
+
 export const fetchStock = async(id) => {
   const res = await request({ url: `/stock/${id}`, method: 'GET' })
   return res.data

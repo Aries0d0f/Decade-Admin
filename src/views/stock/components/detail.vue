@@ -258,7 +258,7 @@ export default {
   async created() {
     if (this.isEdit) {
       await this.fetchData()
-      this.categoryClass = [this.postForm.catalog, parseInt(this.postForm.info.type, 10)]
+      this.categoryClass = [parseInt(this.postForm.info.type, 10), this.postForm.catalog]
     } else {
       this.postForm = Object.assign({}, defaultForm)
     }
@@ -272,7 +272,7 @@ export default {
         const stock = await fetchStock(this.$route.params.id)
         this.postForm = stock
         this.postForm.info = JSON.parse(stock.info)
-        this.isTicket = this.postForm.type === 1 ? false : true
+        this.isTicket = this.postForm.info.type === 1 ? false : true
         this.postForm.img.map((img, i) => {
           this.imgList.push({ name: i, url: img })
         })
@@ -284,8 +284,8 @@ export default {
     async submitForm() {
       // this.postForm.seller.push('5a531f46418f6102cc971035')
       this.postForm.seller.push(this.userInfo.id)
-      this.postForm.catalog = this.categoryClass[0]
-      this.postForm.info.type = this.categoryClass[1]
+      this.postForm.catalog = this.categoryClass[1]
+      this.postForm.info.type = this.categoryClass[0]
       this.postForm.info = JSON.stringify(this.postForm.info)
       this.postForm.type = this.categoryClass[0] === 0 ? 3 : this.isTicket ? 3 : 1
       this.postForm.img = []
@@ -317,8 +317,8 @@ export default {
       this.relatedItems[i].data = item.data
     },
     handleSelectCategort(category) {
-      this.postForm.catalog = category[0]
-      this.postForm.info.type = category[1]
+      this.postForm.info.type = category[0]
+      this.postForm.catalog = category[1]
     },
     addSpec() {
       this.postForm.spec.push({ name: undefined, count: undefined })
