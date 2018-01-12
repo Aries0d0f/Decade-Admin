@@ -158,7 +158,6 @@ export default {
     handleCurrentChange() {
     },
     categoryLabel(cate, subCate = -1) {
-      console.log('cate', cate, ', subCate', subCate)
       try {
         const labelClass = this.stockClass.filter(x => cate === x.value)
         const label = labelClass[0].label

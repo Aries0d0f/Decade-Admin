@@ -92,7 +92,7 @@
             </el-tab-pane>
             <el-tab-pane label="票券說明" v-if="categoryClass[0] === 0 || isTicket">
               <span slot="label" class="item-detail-pane">票券說明</span>
-              <el-form-item style="width:15rem;margin-bottom:1rem" label-width="60px" label="講師">
+              <el-form-item style="width:15rem;margin-bottom:1rem" label-width="60px" label="分店">
                 <el-input v-model="postForm.info.teacher" placeholder=""></el-input>
               </el-form-item>
               <el-form-item style="width:15rem" label-width="60px" label="日期">
