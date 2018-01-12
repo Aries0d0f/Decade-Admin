@@ -283,8 +283,8 @@ export default {
     },
     async submitForm() {
       // this.postForm.seller.push('5a531f46418f6102cc971035')
-      this.postForm.seller.push(this.userInfo.id)
-      this.postForm.catalog = this.categoryClass[1]
+      this.postForm.seller = [this.userInfo.id]
+      this.postForm.catalog = this.categoryClass[1] || -1
       this.postForm.info.type = this.categoryClass[0]
       this.postForm.info = JSON.stringify(this.postForm.info)
       this.postForm.type = this.categoryClass[0] === 0 ? 3 : this.isTicket ? 3 : 1
