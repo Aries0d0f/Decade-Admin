@@ -81,34 +81,44 @@ export default {
       stockClass: [
         {
           value: 0,
-          label: '服務體驗'
+          name: 'theme',
+          label: '服務體驗',
+          children: [
+            { label: '課程活動', name: 'lecture', value: 0 },
+            { label: '精選商店', name: 'special_shop', value: 1 },
+            { label: '旅遊', name: 'traveling', value: 2 }
+          ]
         },
         {
           value: 1,
+          name: 'life',
           label: '居家空間',
           children: [
-            { value: 0, label: '家具' },
-            { value: 1, label: '家飾' },
-            { value: 2, label: '家電' }
+            { label: '家飾', name: 'furnishings', value: 0 },
+            { label: '家具', name: 'furniture', value: 1 },
+            { label: '家電', name: 'appliances', value: 2 }
           ]
         },
         {
           value: 2,
+          name: 'brands',
           label: '生活品味',
           children: [
-            { value: 0, label: '個人用品' },
-            { value: 1, label: '旅行周邊' },
-            { value: 2, label: '時尚配飾' }
+            { label: '3C周邊', name: 'eletronics', value: 0 },
+            { label: '個人用品', name: 'personal', value: 1 },
+            { label: '肌膚保養', name: 'skin_care', value: 2 },
+            { label: '時尚配飾', name: 'fashion', value: 3 }
           ]
         },
         {
           value: 3,
-          label: '味蕾饗宴',
+          name: 'food',
+          label: '美食品味',
           children: [
-            { value: 0, label: '美食' },
-            { value: 1, label: '廚具' },
-            { value: 2, label: '餐皿' },
-            { value: 3, label: '茶具酒品' }
+            { label: '美食', name: 'ingredinents', value: 0 },
+            { label: '餐具', name: 'tableware', value: 1 },
+            { label: '廚具', name: 'kitchenware', value: 2 },
+            { label: '茶具酒器', name: 'tea_set', value: 3 }
           ]
         }
       ]

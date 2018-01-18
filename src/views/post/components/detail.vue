@@ -128,46 +128,61 @@ export default {
       options: [
         {
           value: 0,
-          label: '經典',
+          name: 'news',
+          label: '快訊',
           children: [
-            { value: 0, label: '音樂' },
-            { value: 1, label: '藝術' }
+            { value: 0, label: '經典人物', name: 'character' },
+            { value: 1, label: '特別企劃', name: 'special' }
           ]
         },
         {
           value: 1,
-          label: '色蘊',
+          name: 'beauty',
+          label: '保養',
           children: [
-            { value: 0, label: '美妝' },
-            { value: 1, label: '美肌' },
-            { value: 2, label: '美體' }
+            { value: 0, name: 'body', label: '美體' },
+            { value: 1, name: 'fragrance', label: '香氛' }
           ]
         },
-        {
-          value: 2,
+        { value: 2,
+          name: 'life',
           label: '生活',
           children: [
-            { value: 0, label: '旅行' },
-            { value: 1, label: '居家' },
-            { value: 2, label: '味蕾' },
-            { value: 3, label: '纖體' }
+            { value: 0, name: 'art_tech', label: '藝術科技' },
+            { value: 1, name: 'home', label: '家居' }
           ]
         },
         {
           value: 3,
-          label: '時尚',
+          name: 'feature',
+          label: '品味',
           children: [
-            { value: 0, label: '設計師' },
-            { value: 1, label: '品牌' }
+            { value: 0, name: 'gourmet', label: '美食' },
+            { value: 1, name: 'vintage', label: '佳釀' },
+            { value: 2, name: 'coffee', label: '品茗咖啡' },
+            { value: 3, name: 'ingredinents', label: '食材' }
           ]
         },
         {
           value: 4,
-          label: '主題'
+          name: 'classic',
+          label: '經典',
+          children: [
+            { value: 0, name: 'art', label: '藝術' },
+            { value: 1, name: 'exhibition', label: '展覽' },
+            { value: 2, name: 'livehouse', label: '空間' },
+            { value: 3, name: 'brands', label: '品牌' }
+          ]
         },
         {
           value: 5,
-          label: '人物'
+          name: 'music',
+          label: '音樂',
+          children: [
+            { value: 0, name: 'vinyl', label: '黑膠' },
+            { value: 1, name: 'melody', label: '音律' },
+            { value: 2, name: 'activity', label: '活動' }
+          ]
         }
       ]
     }
