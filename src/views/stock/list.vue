@@ -206,7 +206,7 @@ export default {
       }
     },
     openTo(id) {
-      location.replace(`http://60.249.179.125/shop/stock/${id}`)
+      location.replace(`https://decade.global/shop/stock/${id}`)
     }
   }
 }

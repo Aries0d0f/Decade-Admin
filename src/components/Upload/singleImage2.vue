@@ -31,7 +31,7 @@ export default {
     return {
       tempUrl: '',
       dataObj: { token: '', key: '' },
-      uploadUrl: 'http://60.249.179.125:3002'
+      uploadUrl: 'https://decade.global/admin'
     }
   },
   methods: {

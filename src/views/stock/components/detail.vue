@@ -212,7 +212,7 @@ export default {
       dialogImageUrl: '',
       isTicket: false,
       dialogVisible: false,
-      uploadUrl: 'http://60.249.179.125:3002',
+      uploadUrl: 'https://decade.global/admin',
       // uploadUrl: 'http://localhost:3002',
       itemContent: '',
       imgList: [],
@@ -282,7 +282,7 @@ export default {
         const stock = await fetchStock(this.$route.params.id)
         this.postForm = stock
         this.postForm.info = JSON.parse(stock.info)
-        this.isTicket = this.postForm.info.type === 1 ? false : true
+        this.isTicket = this.postForm.info.type === 0 ? true : this.postForm.type === 3 ? true : false
         this.postForm.img.map((img, i) => {
           this.imgList.push({ name: i, url: img })
         })
@@ -294,7 +294,7 @@ export default {
     async submitForm() {
       // this.postForm.seller.push('5a531f46418f6102cc971035')
       this.postForm.seller = [this.userInfo.id]
-      this.postForm.catalog = this.categoryClass[1] || -1
+      this.postForm.catalog = this.categoryClass[1] !== -1 ? this.categoryClass[1] : -1
       this.postForm.info.type = this.categoryClass[0]
       this.postForm.info = JSON.stringify(this.postForm.info)
       this.postForm.type = this.categoryClass[0] === 0 ? 3 : this.isTicket ? 3 : 1

@@ -25,7 +25,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      uploadUrl: 'http://60.249.179.125:3002',
+      uploadUrl: 'https://decade.global/admin',
       listObj: {},
       fileList: []
     }
