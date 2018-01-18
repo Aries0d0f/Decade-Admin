@@ -97,8 +97,9 @@ export default {
           label: '生活品味',
           children: [
             { value: 0, label: '個人用品' },
-            { value: 1, label: '旅行周邊' },
-            { value: 2, label: '時尚配飾' }
+            { value: 1, label: '肌膚保養' },
+            { value: 2, label: '時尚配飾' },
+            { value: 3, label: '3C周邊' }
           ]
         },
         {
