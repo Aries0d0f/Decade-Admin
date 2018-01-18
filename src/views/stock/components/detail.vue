@@ -212,7 +212,7 @@ export default {
       dialogImageUrl: '',
       isTicket: false,
       dialogVisible: false,
-      uploadUrl: 'http://60.249.179.125:3002',
+      uploadUrl: 'https://decade.global/admin',
       // uploadUrl: 'http://localhost:3002',
       itemContent: '',
       imgList: [],

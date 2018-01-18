@@ -20,7 +20,6 @@
       ...mapActions(['checkAuth']),
       async checkUser() {
         if (this.$route.meta.auth === false) return
-        console.log('check Auth')
         const isLogin = await this.checkAuth()
         if (!isLogin) {
           this.$router.push({ name: 'login' })

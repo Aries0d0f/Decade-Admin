@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const service = axios.create({
-  baseURL: 'http://60.249.179.125:1337',
+  baseURL: 'https://decade.global/api',
   timeout: 5000
 })
 
