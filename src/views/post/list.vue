@@ -77,7 +77,7 @@ export default {
         {
           value: 0,
           name: 'news',
-          label: '快訊',
+          label: '新訊',
           children: [
             { value: 0, label: '經典人物', name: 'character' },
             { value: 1, label: '特別企劃', name: 'special' }

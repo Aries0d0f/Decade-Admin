@@ -243,7 +243,7 @@ export default {
         {
           value: 2,
           name: 'brands',
-          label: '生活品味',
+          label: '生活質感',
           children: [
             { label: '3C周邊', name: 'eletronics', value: 0 },
             { label: '個人用品', name: 'personal', value: 1 },
