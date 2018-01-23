@@ -1,11 +1,11 @@
 <template>
   <div class="app-container coupon-list-container">
     <h3 class="form-title">優惠券列表</h3>
-    <div class="filter-container">
+    <!-- <div class="filter-container">
       <el-input @keyup.enter.native="handleFilter" class="filter-item filter-search-item" prefix-icon="el-icon-search" v-model="listQuery.name"></el-input>
       <el-button class="filter-item" plain @click="handleFilter">搜尋</el-button>
-    </div>
-    <el-table :key='tableKey' :data="list" v-loading="listLoading" header-row-style="background-color: #f3f3f3;color: #424242" empty-text="查無資料" element-loading-text="載入中..." fit style="width: 100%">
+    </div> -->
+    <el-table :key='tableKey' :data="list" v-loading="listLoading" :header-row-style="{ 'background-color': '#ebeef5' }" empty-text="查無資料" element-loading-text="載入中..." fit style="width: 100%">
       <el-table-column label="優惠券編號">
         <template slot-scope="scope">
           <span>{{scope.row.id}}</span>
@@ -44,6 +44,12 @@
       </el-table-column>
     </el-table>
 
+
+    <div class="pagination-container">      
+      <el-pagination background @current-change="handleCurrentChange" :current-page.sync="listQuery.page"
+        :page-sizes="[listQuery.limit]" :page-size="listQuery.limit" layout="prev, pager, next, jumper" :total="total">
+      </el-pagination>
+    </div>
     <!-- <div class="pagination-container">
       <el-pagination background @current-change="handleCurrentChange" :current-page.sync="listQuery.page"
         :page-sizes="30" layout="total, sizes, prev, pager, next, jumper" :total="total">
@@ -75,14 +81,20 @@ export default {
     await this.getList()
   },
   methods: {
-    async getList() {
+    async getList(query = '') {
       this.listLoading = true
-      const list = await fetchCouponList()
+      const tempList = await fetchCouponList(query)
+      const list = tempList.data || tempList
       this.total = list.length
       this.list = list
       this.listLoading = false
     },
-    handleFilter() {
+    async handleFilter() {
+      if (!this.listQuery.name || this.listQuery.name === '') {
+        await this.getList()
+      } else {
+        await this.getList(`name/${this.listQuery.name}`)
+      }
     },
     handleCurrentChange() {
     },
