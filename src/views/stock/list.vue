@@ -102,7 +102,7 @@ export default {
         {
           value: 2,
           name: 'brands',
-          label: '生活品味',
+          label: '生活質感',
           children: [
             { label: '3C周邊', name: 'eletronics', value: 0 },
             { label: '個人用品', name: 'personal', value: 1 },
@@ -143,11 +143,12 @@ export default {
     }
   },
   methods: {
-    async getList() {
+    async getList(query = '') {
       this.listLoading = true
       this.currentList = []
       this.list = []
-      const list = await fetchStockList()
+      const tempList = await fetchStockList(query)
+      const list = tempList.data || tempList
       this.total = list.length
 
       if (list.length === 0) return
@@ -163,7 +164,12 @@ export default {
       this.currentList = list
       this.listLoading = false
     },
-    handleFilter() {
+    async handleFilter() {
+      if (!this.listQuery.name || this.listQuery.name === '') {
+        await this.getList()
+      } else {
+        await this.getList(`name/${this.listQuery.name}`)
+      }
     },
     handleCurrentChange() {
     },
