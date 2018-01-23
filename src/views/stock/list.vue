@@ -149,8 +149,13 @@ export default {
       this.list = []
       const tempList = await fetchStockList(query)
       const list = tempList.data || tempList
+      if (list.err) {
+        this.list = []
+        this.currentList = []
+        this.listLoading = false
+        return
+      }
       this.total = list.length
-
       if (list.length === 0) return
       const uidList = []
       list.map(async(item, i) => uidList.push(item.seller[0]))
