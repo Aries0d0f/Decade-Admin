@@ -3,7 +3,10 @@
     <el-form class="form-container" :model="postForm" ref="postForm">
       <sticky :className="'sub-navbar '+postForm.status">
         <template v-if="fetchSuccess">
-          <el-button v-loading="loading" style="margin-left: 10px;" type="info">草稿</el-button>
+          <span style="color: #fff;">
+            草稿
+            <el-switch v-model="isDraft"></el-switch>
+          </span>
           <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm()">發布</el-button>
           <el-button v-loading="loading" type="warning">瀏覽</el-button>
         </template>
@@ -100,6 +103,7 @@ const defaultForm = {
   author: undefined,
   region: undefined,
   related: [],
+  status: 0,
   tag: [],
   meta: {
     image: '',
@@ -124,6 +128,7 @@ export default {
       loading: false,
       categoryTypes: [],
       relatedItems: [],
+      isDraft: true,
       rules: {},
       options: [
         {
@@ -206,6 +211,7 @@ export default {
       this.loading = true
       try {
         this.postForm = await fetchPost(this.$route.params.id)
+        this.isDraft = this.postForm.status === 1 ? false : true
       } catch (err) {
         this.fetchSuccess = false
         console.log(err)
@@ -213,8 +219,9 @@ export default {
       this.loading = false
     },
     async submitForm() {
-      this.postForm.author = '5a531f46418f6102cc971035'
+      this.postForm.author = this.userInfo.id
       this.postForm.region = 0
+      this.postForm.status = this.isDraft ? 0 : 1
       this.postForm.related = this.relatedItems.map(x => x.key)
       this.loading = true
       try {

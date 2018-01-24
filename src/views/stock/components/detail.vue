@@ -3,7 +3,10 @@
     <el-form class="form-container" :model="postForm">
       <sticky :className="'sub-navbar '+postForm.status">
         <template v-if="fetchSuccess">
-          <el-button v-loading="loading" style="margin-left: 10px;" type="info">草稿</el-button>
+          <span style="color: #fff;">
+            草稿
+            <el-switch v-model="isDraft"></el-switch>
+          </span>
           <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm()">發布</el-button>
           <el-button v-loading="loading" type="warning">瀏覽</el-button>
         </template>
@@ -185,6 +188,7 @@ const defaultForm = {
   },
   count: undefined,
   available: false,
+  status: 0,
   price: undefined,
   // price: {
   //   orig: undefined,
@@ -207,6 +211,7 @@ export default {
   data() {
     return {
       postForm: Object.assign({}, defaultForm),
+      isDraft: true,
       fetchSuccess: true,
       loading: false,
       dialogImageUrl: '',
@@ -282,6 +287,7 @@ export default {
         const stock = await fetchStock(this.$route.params.id)
         this.postForm = stock
         this.postForm.info = JSON.parse(stock.info)
+        this.isDraft = this.postForm.status === 1 ? false : true
         this.isTicket = this.postForm.info.type === 0 ? true : this.postForm.type === 3 ? true : false
         this.postForm.img.map((img, i) => {
           this.imgList.push({ name: i, url: img })
@@ -295,6 +301,7 @@ export default {
       // this.postForm.seller.push('5a531f46418f6102cc971035')
       this.postForm.seller = [this.userInfo.id]
       this.postForm.catalog = this.categoryClass[1] !== -1 ? this.categoryClass[1] : -1
+      this.postForm.status = this.isDraft ? 0 : 1
       this.postForm.info.type = this.categoryClass[0]
       this.postForm.info = JSON.stringify(this.postForm.info)
       this.postForm.type = this.categoryClass[0] === 0 ? 3 : this.isTicket ? 3 : 1
@@ -343,8 +350,6 @@ export default {
       this.postForm.info.specInfo.splice(index, 1)
     },
     handleRemove(file, fileList) {
-      console.log('file', file)
-      console.log('fileList', fileList)
       this.imgList = fileList
     },
     handlePictureCardPreview(file) {
