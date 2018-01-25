@@ -106,7 +106,7 @@ export default {
         {
           value: 3,
           name: 'feature',
-          label: '品味',
+          label: '味蕾',
           children: [
             { value: 0, name: 'gourmet', label: '美食' },
             { value: 1, name: 'vintage', label: '佳釀' },
