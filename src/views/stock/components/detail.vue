@@ -15,13 +15,13 @@
         </template>
       </sticky>
       <div class="createStock-main-container">
-        <el-form-item style="margin-bottom: 40px;" prop="title">
+        <el-form-item style="margin-bottom: 40px;" prop="name">
           <MDinput name="name" v-model="postForm.name" required :maxlength="100">
             商品名稱
           </MDinput>
         </el-form-item>
 
-        <el-form-item style="margin-bottom: 40px;" prop="title" label-width="60px" label="分類">
+        <el-form-item style="margin-bottom: 40px;" label-width="60px" label="分類">
           <el-cascader :options="options" placeholder="請選擇分類" v-model="categoryClass" @change="handleSelectCategort"></el-cascader>
         </el-form-item>
 

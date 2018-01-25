@@ -21,12 +21,11 @@
           <span>{{categoryLabel(scope.row.category, scope.row.subCategory)}}</span>
         </template>
       </el-table-column>
-      <!-- TODO 文章狀態
       <el-table-column label="狀態" width="80">
         <template slot-scope="scope">
-          <span>?</span>
+          <span>{{scope.row.status === 1 ? '已發佈': '草稿'}}</span>
         </template>
-      </el-table-column> -->
+      </el-table-column>
       <el-table-column label="發布日期" width="120">
         <template slot-scope="scope">
           <span>{{scope.row.createdAt | LocalTime}}</span>

@@ -8,7 +8,7 @@
     <el-table :key='tableKey' :data="currentList.slice(pager.start, pager.end)" v-loading="listLoading" :header-row-style="{ 'background-color': '#ebeef5' }" empty-text="查無資料" element-loading-text="載入中..." fit style="width: 100%">
       <el-table-column label="商品編號" width="230">
         <template slot-scope="scope">
-          <span>{{scope.row.id}}</span>
+          <span>{{scope.row.id || scope.row._id}}</span>
         </template>
       </el-table-column>
       <el-table-column label="廠商貨號" width="120">
@@ -31,9 +31,9 @@
           <span>{{categoryLabel(scope.row.info.type, scope.row.catalog)}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="狀態" width="120">
+      <el-table-column label="狀態" width="80">
         <template slot-scope="scope">
-          <span>{{scope.row.available | stockStatus}}</span>
+          <span>{{scope.row.status === 1 ? '已發佈': '草稿'}}</span>
         </template>
       </el-table-column>
       <el-table-column label="發布日期" width="120">
