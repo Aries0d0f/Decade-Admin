@@ -44,9 +44,9 @@
       <el-table-column label="動作" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button size="mini">分享</el-button>
-          <el-button size="mini" @click="$router.push({ name: 'StockEdit', params: { id: scope.row.id } })">編輯</el-button>
-          <el-button size="mini" @click="openTo(scope.row.id)">檢視</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.row.id)">刪除</el-button>
+          <el-button size="mini" @click="$router.push({ name: 'StockEdit', params: { id: scope.row.id || scope.row._id } })">編輯</el-button>
+          <el-button size="mini" @click="openTo(scope.row.id || scope.row._id)">檢視</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.row.id || scope.row._id)">刪除</el-button>
         </template>
       </el-table-column>
     </el-table>
