@@ -134,10 +134,11 @@ export default {
         {
           value: 0,
           name: 'news',
-          label: '新訊',
+          label: '專題',
           children: [
             { value: 0, label: '經典人物', name: 'character' },
-            { value: 1, label: '特別企劃', name: 'special' }
+            { value: 1, label: '特別企劃', name: 'special' },
+            { value: 2, label: '活動專訪', name: 'interview' }
           ]
         },
         {
@@ -146,7 +147,8 @@ export default {
           label: '保養',
           children: [
             { value: 0, name: 'body', label: '美體' },
-            { value: 1, name: 'fragrance', label: '香氛' }
+            { value: 1, name: 'fragrance', label: '香氛' },
+            { value: 2, name: 'share', label: '專業分享' }
           ]
         },
         { value: 2,
@@ -154,7 +156,9 @@ export default {
           label: '生活',
           children: [
             { value: 0, name: 'art_tech', label: '藝術科技' },
-            { value: 1, name: 'home', label: '家居' }
+            { value: 1, name: 'home', label: '家居' },
+            { value: 2, name: 'travel', label: '旅行' },
+            { value: 3, name: 'story', label: '心情寫照' }
           ]
         },
         {
@@ -165,7 +169,8 @@ export default {
             { value: 0, name: 'gourmet', label: '美食' },
             { value: 1, name: 'vintage', label: '佳釀' },
             { value: 2, name: 'coffee', label: '品茗咖啡' },
-            { value: 3, name: 'ingredinents', label: '食材' }
+            { value: 3, name: 'ingredinents', label: '食材' },
+            { value: 4, name: 'food_diary', label: '食記分享' }
           ]
         },
         {
@@ -176,7 +181,8 @@ export default {
             { value: 0, name: 'art', label: '藝術' },
             { value: 1, name: 'exhibition', label: '展覽' },
             { value: 2, name: 'livehouse', label: '空間' },
-            { value: 3, name: 'brands', label: '品牌' }
+            { value: 3, name: 'brands', label: '品牌' },
+            { value: 4, name: 'classic_creation', label: '文。創作' }
           ]
         },
         {
@@ -186,9 +192,10 @@ export default {
           children: [
             { value: 0, name: 'vinyl', label: '黑膠' },
             { value: 1, name: 'melody', label: '音律' },
-            { value: 2, name: 'activity', label: '活動' }
+            { value: 2, name: 'activity', label: '活動' },
+            { value: 3, name: 'music_review', label: '樂。點評' }
           ]
-        }
+        }        
       ]
     }
   },
