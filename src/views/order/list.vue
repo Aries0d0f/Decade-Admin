@@ -142,23 +142,20 @@ export default {
       this.currentList = []
       const list = await fetchOrderList()
       this.total = list.length
-      if (list.length === 0) return
+      if (list.length === 0) {
+        this.currentList = []
+        this.list = list
+        this.listLoading = false
+        return
+      }
       const sidList = []
       list.map(async(item, i) => sidList.push(item.content.stock))
       const stockList = await this.queryStockIdList(sidList)
       list.map(async(item, i) => {
         item.content.stock.map((x, j) => {
-          const element = list[i].content.stock[j]
           const stock = stockList.find(y => list[i].content.stock[j].sid === y.id)
           list[i].content.stock[j].name = stock.name
         })
-        // if (list[i].content.stock.length > 1) {
-        // } else {
-        //   const stock = stockList.filter(x => {
-        //     x.id === stockList[0].sid
-        //   })
-        //   list[i].content.stock[0] = stock
-        // }
       })
       this.currentList = list
       this.list = list
