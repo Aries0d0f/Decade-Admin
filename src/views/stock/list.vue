@@ -192,7 +192,7 @@ export default {
         }
         return label
       } catch (error) {
-        return 'unknow'
+        return 'Unknown'
       }
     },
     async queryUid(uidList) {

@@ -154,6 +154,9 @@ export default {
       list.map(async(item, i) => {
         item.content.stock.map((x, j) => {
           const stock = stockList.find(y => list[i].content.stock[j].sid === y.id)
+          if (!stock) {
+            list[i].content.stock[j].name = 'Unknown'
+          }
           list[i].content.stock[j].name = stock.name
         })
       })
