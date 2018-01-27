@@ -154,6 +154,33 @@
           </el-tabs>
         </el-form-item>        
 
+
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span>推薦文章串聯</span>
+          </div>
+          <el-form-item
+            v-for="(i, index) in relatedItems"
+            :label="'商品 ' + (index + 1)"
+            :key="index"
+            :prop="'item.' + index"
+          >
+            <el-autocomplete v-model="i.key" style="width:80%" :fetch-suggestions="queryStock" @select="handleSelectStock" placeholder="請輸入文章名稱">
+              <template slot-scope="props">
+                <span>{{ props.item.title }}</span>
+                <br>
+              </template>
+            </el-autocomplete>
+            <el-button type="danger" icon="el-icon-delete" @click.prevent="removeDomain(i)"></el-button>
+            <div v-if="i.data">{{i.data.title}}</div>
+          </el-form-item>
+
+          <el-form-item>
+            <el-button @click="addDomain">新增文章</el-button>
+            <span>(已輸入 {{relatedItems.length || 0}} 組，還可以增加 {{ 6 - relatedItems.length || 0}} 組)</span>
+          </el-form-item>
+        </el-card>
+
       </div>
     </el-form>
   </div>
@@ -166,6 +193,7 @@ import Upload from '@/components/Upload/singleImage2'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky'
 import { fetchStock, createStock, updateStock } from '@/api/stock'
+import { fetchPost } from '@/api/post'
 import { querySearch } from '@/api/search'
 
 const defaultForm = {
@@ -221,6 +249,7 @@ export default {
       // uploadUrl: 'http://localhost:3002',
       itemContent: '',
       imgList: [],
+      relatedItems: [],
       categoryClass: [],
       specInfo: [],
       rules: {},
@@ -274,6 +303,10 @@ export default {
     if (this.isEdit) {
       await this.fetchData()
       this.categoryClass = [parseInt(this.postForm.info.type, 10), this.postForm.catalog]
+      this.postForm.related.map(async x => {
+        const data = await fetchPost(x)
+        this.relatedItems.push({ key: x, data: { title: data.title } })
+      })
     } else {
       this.postForm = Object.assign({}, defaultForm)
     }
@@ -299,6 +332,7 @@ export default {
     },
     async submitForm() {
       this.postForm.seller = [this.userInfo.id]
+      this.postForm.related = this.relatedItems.map(x => x.key)
       this.postForm.catalog = this.categoryClass[1] !== -1 ? this.categoryClass[1] : -1
       this.postForm.status = this.isDraft ? 0 : 1
       this.postForm.info.type = this.categoryClass[0]
@@ -361,6 +395,31 @@ export default {
     handleImageScucess(res) {
       this.imgList.push({ name: this.imgList.length, url: `${this.uploadUrl}${res.path}` })
       this.postForm.img.push(`${this.uploadUrl}${res.path}`)
+    },
+    async queryStock(queryString, cb) {
+      if (!queryString) return cb()
+      const items = []
+      const list = await querySearch(queryString)
+      list.data.post.map(x => {
+        items.push({ value: x.id || x._id, title: x.title, data: x })
+      })
+      cb(items)
+    },
+    async handleSelectStock(item) {
+      const i = this.relatedItems.map(x => x.key).indexOf(item.value)
+      this.relatedItems[i].data = item.data
+    },
+    removeDomain(item) {
+      var index = this.relatedItems.indexOf(item)
+      if (index !== -1) {
+        this.relatedItems.splice(index, 1)
+      }
+    },
+    addDomain() {
+      if (this.relatedItems.length > 5) {
+        return
+      }
+      this.relatedItems.push({ key: '' })
     }
   }
 }

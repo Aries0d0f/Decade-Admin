@@ -1,6 +1,6 @@
 <template>
   <div class="createPost-container">
-    <el-form class="form-container" :model="postForm" ref="postForm">
+    <el-form class="form-container" :model="postForm">
       <sticky :className="'sub-navbar '+postForm.status">
         <template v-if="fetchSuccess">
           <span style="color: #fff;">
@@ -65,11 +65,11 @@
                   <template slot-scope="props">
                     <span>{{ props.item.name }}</span>
                     <br>
-                    <span>$ {{ props.item.price }}</span>
+                    <span>$ {{ props.item.price.common }}</span>
                   </template>
                 </el-autocomplete>
                 <el-button type="danger" icon="el-icon-delete" @click.prevent="removeDomain(i)"></el-button>
-                <div v-if="i.data">{{i.data.name}} - ${{i.data.price}}</div>
+                <div v-if="i.data">{{i.data.name}} - ${{i.data.price.common}}</div>
               </el-form-item>
 
               <el-form-item>
@@ -93,6 +93,7 @@ import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky'
 import { fetchPost, createPost, updatePost } from '@/api/post'
 import { querySearch } from '@/api/search'
+import { fetchStock } from '@/api/stock'
 import { mapGetters } from 'vuex'
 
 const defaultForm = {
@@ -203,8 +204,9 @@ export default {
     if (this.isEdit) {
       await this.fetchData()
       this.categoryTypes = [this.postForm.category, this.postForm.subCategory]
-      this.postForm.related.map(x => {
-        this.relatedItems.push({ key: x })
+      this.postForm.related.map(async x => {
+        const data = await fetchStock(x)
+        this.relatedItems.push({ key: x, data: { name: data.name, price: data.price } })
       })
     } else {
       this.postForm = Object.assign({}, defaultForm)
@@ -256,8 +258,8 @@ export default {
       if (!queryString) return cb()
       const items = []
       const list = await querySearch(queryString)
-      list.stock.map(x => {
-        items.push({ value: x.id, name: x.name, price: x.price, data: x })
+      list.data.stock.map(x => {
+        items.push({ value: x.id || x._id, name: x.name, price: x.price, data: x })
       })
       cb(items)
     },

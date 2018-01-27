@@ -239,7 +239,7 @@ export default {
       })
     },
     openTo(id) {
-      location.replace(`https://decade.global/magazine/post/${id}`)
+      window.open(`https://decade.global/magazine/post/${id}`, '_blank')
     }
   }
 }
