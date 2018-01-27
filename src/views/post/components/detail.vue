@@ -8,7 +8,7 @@
             <el-switch v-model="isDraft"></el-switch>
           </span>
           <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm()">發布</el-button>
-          <el-button v-loading="loading" type="warning">瀏覽</el-button>
+          <el-button v-loading="loading" v-if="isEdit" @click="viewDraft" type="warning">預覽草稿</el-button>
         </template>
         <template v-else>
           <el-tag>獲取失敗，請重新整理頁面</el-tag>
@@ -248,6 +248,9 @@ export default {
         console.log(err)
       }
       this.loading = false
+    },
+    viewDraft() {
+      window.open(`https://decade.global/magazine/post/${this.$route.params.id}`, '_blank')
     },
     async queryStock(queryString, cb) {
       if (!queryString) return cb()

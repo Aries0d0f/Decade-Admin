@@ -8,7 +8,7 @@
             <el-switch v-model="isDraft"></el-switch>
           </span>
           <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm()">發布</el-button>
-          <el-button v-loading="loading" type="warning">瀏覽</el-button>
+          <el-button v-loading="loading" v-if="isEdit" @click="viewDraft" type="warning">預覽草稿</el-button>
         </template>
         <template v-else>
           <el-tag>獲取失敗，請重新整理頁面</el-tag>
@@ -53,7 +53,7 @@
             <el-tab-pane label="價格">
               <span slot="label" class="item-detail-pane">價格</span>
               <el-form-item style="width:15rem;margin-bottom:1rem" label-width="60px" label="售價">
-                <el-input v-model="postForm.price" placeholder="">
+                <el-input type="number" v-model.number="postForm.price.common" placeholder="">
                   <span slot="prefix" style="margin: 0 .5rem;"> $</span>
                 </el-input>
               </el-form-item>
@@ -189,11 +189,11 @@ const defaultForm = {
   count: undefined,
   available: false,
   status: 0,
-  price: undefined,
-  // price: {
-  //   orig: undefined,
-  //   onsale: undefined
-  // },
+  // price: undefined,
+  price: {
+    common: undefined
+    // onsale: undefined
+  },
   spec: [],
   related: [],
   seller: []
@@ -298,7 +298,6 @@ export default {
       }
     },
     async submitForm() {
-      // this.postForm.seller.push('5a531f46418f6102cc971035')
       this.postForm.seller = [this.userInfo.id]
       this.postForm.catalog = this.categoryClass[1] !== -1 ? this.categoryClass[1] : -1
       this.postForm.status = this.isDraft ? 0 : 1
@@ -328,6 +327,9 @@ export default {
         items.push({ value: x.id, name: x.name, price: x.price, data: x })
       })
       cb(items)
+    },
+    viewDraft() {
+      window.open(`https://decade.global/shop/stock/${this.$route.params.id}`, '_blank')
     },
     async handleSelectStock(item) {
       const i = this.relatedItems.map(x => x.key).indexOf(item.value)
