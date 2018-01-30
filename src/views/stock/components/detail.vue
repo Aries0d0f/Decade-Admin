@@ -126,8 +126,10 @@
                 :prop="'item.' + index"
               >
                 <el-input v-model="item.name" placeholder="請輸入選項名稱" style="width: 15rem;margin-bottom: 1rem;"></el-input>
-                <el-input v-model.number="item.detail" placeholder="說明" style="width: 8rem;"></el-input>
                 <el-button type="danger" icon="el-icon-delete" @click.prevent="removeSpecInfo(index)"></el-button>
+                <div>
+                  <el-input v-model="item.detail" type="textarea" :autosize="{ minRows: 3, maxRows: 5}" placeholder="說明" style="width: 20rem;margin-bottom: .5rem;"></el-input>
+                </div>
               </el-form-item>
               <el-button @click="addSpecInfo">新增規格</el-button>
             </el-tab-pane>
