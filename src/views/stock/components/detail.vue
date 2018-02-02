@@ -262,8 +262,6 @@ export default {
           label: '服務體驗',
           children: [
             { label: '課程活動', name: 'lecture', value: 0 },
-            { label: '精選商店', name: 'special_shop', value: 1 },
-            { label: '旅遊', name: 'traveling', value: 2 }
           ]
         },
         {
