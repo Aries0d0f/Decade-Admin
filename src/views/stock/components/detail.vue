@@ -24,7 +24,6 @@
         <el-form-item style="margin-bottom: 40px;" label-width="60px" label="分類">
           <el-cascader :options="options" placeholder="請選擇分類" v-model="categoryClass" @change="handleSelectCategort"></el-cascader>
         </el-form-item>
-
         <!-- <el-form-item style="margin-bottom: 40px;" label-width="60px" label="關鍵字">
           <el-select v-model="postForm.tag" style="width: 40%" multiple filterable :allow-create="postForm.tag.length < 5" default-first-option placeholder="請輸入關鍵字" no-data-text="請輸入關鍵字" no-match-text="已達 5 組關鍵字">
             <el-option v-for="item in postForm.tag" :key="item.value" :label="item.value" :value="item.value"></el-option>
@@ -45,6 +44,13 @@
           <el-dialog :visible.sync="dialogVisible" size="tiny">
             <img width="100%" :src="dialogImageUrl" alt="">
           </el-dialog>
+        </el-form-item>
+
+        <el-form-item style="margin-bottom: 40px;" label-width="60px" label="關鍵字" prop="tag">
+          <el-select v-model="postForm.tag" style="width: 100%" multiple filterable :allow-create="postForm.tag && postForm.tag.length < 5" default-first-option placeholder="請輸入關鍵字" no-data-text="請輸入關鍵字" no-match-text="已達 5 組關鍵字">
+            <el-option v-for="item in postForm.tag" :key="item.value" :label="item.value" :value="item.value"></el-option>
+          </el-select>
+          <span>(已輸入 {{postForm.tag.length || 0}} 組，還可以增加 {{ 5 - (postForm.tag.length || 0)}} 組)</span>
         </el-form-item>
 
         <el-form-item style="margin-bottom: 40px;">
