@@ -25,7 +25,7 @@ export default {
       type: Array,
       required: false,
       default() {
-        return ['removeformat undo redo |  bullist numlist | outdent indent | forecolor | fullscreen code', 'bold italic blockquote | h2 p  media link | alignleft aligncenter alignright']
+        return ['removeformat undo redo |  bullist numlist | outdent indent | forecolor | fullscreen code', 'bold italic blockquote | h2 p  media link | alignleft aligncenter alignright table']
       }
     },
     menubar: {
@@ -70,7 +70,7 @@ export default {
         object_resizing: false,
         toolbar: this.toolbar,
         menubar: this.menubar,
-        plugins: 'advlist,autolink,code,paste,textcolor, colorpicker,fullscreen,link,lists,media,wordcount, imagetools',
+        plugins: 'advlist,autolink,code,paste,textcolor, colorpicker,fullscreen,link,lists,media,wordcount,imagetools,table',
         end_container_on_empty_block: true,
         powerpaste_word_import: 'clean',
         code_dialog_height: 450,
