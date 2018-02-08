@@ -337,24 +337,26 @@ export default {
       }
     },
     async submitForm() {
-      this.postForm.seller = [this.userInfo.id]
-      this.postForm.related = this.relatedItems.map(x => x.key)
-      this.postForm.catalog = this.categoryClass[1] !== -1 ? this.categoryClass[1] : -1
-      this.postForm.status = this.isDraft ? 0 : 1
-      this.postForm.info.type = this.categoryClass[0]
-      this.postForm.info = JSON.stringify(this.postForm.info)
-      this.postForm.type = this.categoryClass[0] === 0 ? 3 : this.isTicket ? 3 : 1
-      this.postForm.img = []
-      this.imgList.map(x => this.postForm.img.push(x.url))
+      const postData = Object.assign({}, this.postForm)
+      postData.seller = [this.userInfo.id]
+      postData.related = this.relatedItems.map(x => x.key)
+      postData.catalog = this.categoryClass[1] !== -1 ? this.categoryClass[1] : -1
+      postData.status = this.isDraft ? 0 : 1
+      postData.info.type = this.categoryClass[0]
+      postData.info = JSON.stringify(postData.info)
+      postData.type = this.categoryClass[0] === 0 ? 3 : this.isTicket ? 3 : 1
+      postData.img = []
+      this.imgList.map(x => postData.img.push(x.url))
       try {
         if (this.isEdit) {
-          await updateStock(this.$route.params.id, this.postForm)
+          await updateStock(this.$route.params.id, postData)
         } else {
-          await createStock(this.postForm)
+          await createStock(postData)
         }
         this.$notify({ title: '成功', message: '發布成功', type: 'success', duration: 2000 })
         this.$router.push({ name: 'StockList' })
       } catch (err) {
+        this.$notify({ title: '失敗', message: '發布失敗，請檢查欄位', type: 'error', duration: 2000 })
         console.log(err)
       }
       this.loading = false
@@ -368,8 +370,27 @@ export default {
       })
       cb(items)
     },
-    viewDraft() {
-      window.open(`https://decade.global/shop/stock/${this.$route.params.id}`, '_blank')
+    async viewDraft() {
+      const postData = Object.assign({}, this.postForm)
+      this.isDraft = true
+      postData.seller = [this.userInfo.id]
+      postData.related = this.relatedItems.map(x => x.key)
+      postData.catalog = this.categoryClass[1] !== -1 ? this.categoryClass[1] : -1
+      postData.status = 0
+      postData.info.type = this.categoryClass[0]
+      postData.info = JSON.stringify(this.postForm.info)
+      postData.type = this.categoryClass[0] === 0 ? 3 : this.isTicket ? 3 : 1
+      postData.img = []
+      this.imgList.map(x => postData.img.push(x.url))
+      try {
+        await updateStock(this.$route.params.id, postData)
+        this.$notify({ title: '成功', message: '發布成功', type: 'success', duration: 2000 })
+        window.open(`https://decade.global/shop/stock/${this.$route.params.id}`, '_blank')
+      } catch (err) {
+        this.$notify({ title: '失敗', message: '發布失敗，請檢查欄位', type: 'error', duration: 2000 })
+        console.log(err)
+      }
+      this.loading = false
     },
     async handleSelectStock(item) {
       const i = this.relatedItems.map(x => x.key).indexOf(item.value)
