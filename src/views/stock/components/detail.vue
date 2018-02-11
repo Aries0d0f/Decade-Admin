@@ -1,6 +1,6 @@
 <template>
-  <div class="createStock-container">
-    <el-form class="form-container" :model="postForm">
+  <div class="createStock-container" v-loading="loading">
+    <el-form class="form-container" :model="postForm" :rules="rules" ref="postForm" v-if="!loading">
       <sticky :className="'sub-navbar '+postForm.status">
         <template v-if="fetchSuccess">
           <span style="color: #fff;">
@@ -21,16 +21,10 @@
           </MDinput>
         </el-form-item>
 
-        <el-form-item style="margin-bottom: 40px;" label-width="60px" label="分類">
+        <el-form-item style="margin-bottom: 40px;" label-width="60px" label="分類" prop="category">
           <el-cascader :options="options" placeholder="請選擇分類" v-model="categoryClass" @change="handleSelectCategort"></el-cascader>
         </el-form-item>
-        <!-- <el-form-item style="margin-bottom: 40px;" label-width="60px" label="關鍵字">
-          <el-select v-model="postForm.tag" style="width: 40%" multiple filterable :allow-create="postForm.tag.length < 5" default-first-option placeholder="請輸入關鍵字" no-data-text="請輸入關鍵字" no-match-text="已達 5 組關鍵字">
-            <el-option v-for="item in postForm.tag" :key="item.value" :label="item.value" :value="item.value"></el-option>
-          </el-select>
-          <div>(已輸入 {{postForm.tag.length}} 組，還可以增加 {{ 5 - postForm.tag.length}} 組)</div>
-        </el-form-item> -->
-        <el-form-item style="margin-bottom: 40px;" label-width="60px" label="照片">
+        <el-form-item style="margin-bottom: 40px;" label-width="60px" label="照片" prop="img">
           <el-upload
             :action="`${uploadUrl}/upload`"
             list-type="picture-card"
@@ -46,7 +40,7 @@
           </el-dialog>
         </el-form-item>
 
-        <el-form-item style="margin-bottom: 40px;" label-width="60px" label="關鍵字" prop="tag">
+        <el-form-item style="margin-bottom: 40px;" label-width="60px" label="關鍵字">
           <el-select v-model="postForm.tag" style="width: 100%" multiple filterable :allow-create="postForm.tag && postForm.tag.length < 5" default-first-option placeholder="請輸入關鍵字" no-data-text="請輸入關鍵字" no-match-text="已達 5 組關鍵字">
             <el-option v-for="item in postForm.tag" :key="item.value" :label="item.value" :value="item.value"></el-option>
           </el-select>
@@ -54,68 +48,67 @@
         </el-form-item>
 
         <el-form-item style="margin-bottom: 40px;">
-          <h4 class="form-subtitle">商品資訊</h4>
-          <el-tabs tab-position="left">
-            <el-tab-pane label="價格">
-              <span slot="label" class="item-detail-pane">價格</span>
-              <el-form-item style="width:15rem;margin-bottom:1rem" label-width="60px" label="售價">
-                <el-input type="number" v-model.number="postForm.price.common" placeholder="">
-                  <span slot="prefix" style="margin: 0 .5rem;"> $</span>
-                </el-input>
-              </el-form-item>
-              <el-form-item style="width:15rem" label-width="60px" label="數量">
-                <el-input v-model="postForm.count" placeholder=""></el-input>
-              </el-form-item>    
-              <el-form-item label-width="60px">
-                <el-checkbox v-model="isTicket">服務體驗類若無預設金額請勾選</el-checkbox>
-                <el-tooltip class="item" effect="dark" placement="bottom">
-                  <div slot="content">服務體驗選項，將於售價顯示"獨家體驗服務無需預繳任何費用，<br>視體驗活動現場與商家線上核銷確認購買該組合套餐。"</div>
-                  <span class="tooltip-btn">?</span>
-                </el-tooltip>
-              </el-form-item>
-            </el-tab-pane>
+          <h4 class="form-subtitle">商品規格</h4>
+          <el-collapse class="spec-collapse">
+            <el-form-item
+              v-for="(item, index) in postForm.spec"
+              v-model="postForm.spec"
+              :key="index"
+              style="margin-left: 1rem;"
+            >
+              {{item}}
+              <el-collapse-item :title="`#${index + 1}. ${item.name}` || `規格 ${index + 1}`" :name="index">
+                <div class="spec-container">
+                  <el-form-item prop="imageUrl">
+                    <Upload style="height: 100%;margin: 1rem 1rem 0 0" v-model="item.imageURL[0]" :defaultImg="item.imageURL[0]"></Upload>
+                  </el-form-item> 
+                  
+                  <div class="spec-form">
+                    <el-form-item label="名稱" prop="specName" style="margin-bottom:.8rem;">
+                      <el-input v-model="item.name" placeholder=""></el-input>
+                    </el-form-item> 
+                    
+                    <el-form-item label="數量" prop="specCount">
+                      <el-input-number v-model.number="item.count" controls-position="right" :min="1" :max="9999" style="width: 100%"></el-input-number>
+                    </el-form-item> 
+                    
+                    <el-form-item label="金額" prop="specPriceDefault">
+                      <el-input-number v-model.number="item.priceDefault" :controls="false" :min="0" style="width: 100%"></el-input-number>
+                    </el-form-item>
+                  </div>
+                  <el-button type="danger" class="delete-btn" icon="el-icon-delete" @click.prevent="removeSpec(index)"></el-button>
+                </div>
+              </el-collapse-item>
+            </el-form-item>
+          </el-collapse>
+          <el-button @click="addSpec">新增規格</el-button>
+        </el-form-item>
+        <el-form-item style="margin-bottom: 40px;" v-if="categoryClass[0] === 0 || isTicket">
+          <h4 class="form-subtitle">票券說明</h4>
+          <el-form-item style="width:15rem;margin-bottom:1rem" label-width="60px" label="分店">
+            <el-input v-model="postForm.info.teacher" placeholder=""></el-input>
+          </el-form-item>
+          <el-form-item style="width:15rem" label-width="60px" label="日期">
+            <el-date-picker v-model="postForm.info.time" type="datetime" placeholder=""></el-date-picker>
+          </el-form-item>
+        </el-form-item>
 
-            <el-tab-pane label="商品簡短說明">
-              <span slot="label" class="item-detail-pane">商品簡短說明</span>
-              <div>商品簡介</div>
-              <el-form-item style="width:100%">
-                <el-input type="textarea" v-model="postForm.info.summary" :autosize="{ minRows: 4 }"></el-input>
-              </el-form-item>
-            </el-tab-pane>
 
-            <el-tab-pane label="可選規格與銷售數量">
-              <span slot="label" class="item-detail-pane">可選規格與銷售數量</span>
-              <el-form-item
-                v-for="(item, index) in postForm.spec"
-                :label="'規格' + (index + 1)"
-                v-model="postForm.spec"
-                :key="index"
-                style="margin-left: 1rem;"
-                :prop="'item.' + index"
-              >
-                <el-input v-model="item.name" placeholder="請輸入選項名稱" style="width: 15rem;margin-bottom: 1rem;"></el-input>
-                <el-input v-model.number="item.count" placeholder="數量" style="width: 8rem;"></el-input>
-                <el-button type="danger" icon="el-icon-delete" @click.prevent="removeSpec(index)"></el-button>
-              </el-form-item>
-              <el-button @click="addSpec">新增規格</el-button>
-            </el-tab-pane>
-            <el-tab-pane label="票券說明" v-if="categoryClass[0] === 0 || isTicket">
-              <span slot="label" class="item-detail-pane">票券說明</span>
-              <el-form-item style="width:15rem;margin-bottom:1rem" label-width="60px" label="分店">
-                <el-input v-model="postForm.info.teacher" placeholder=""></el-input>
-              </el-form-item>
-              <el-form-item style="width:15rem" label-width="60px" label="日期">
-                <el-date-picker v-model="postForm.info.time" type="datetime" placeholder=""></el-date-picker>
-              </el-form-item>
-            </el-tab-pane>
-          </el-tabs>
+        <el-form-item style="margin-bottom: 40px;">
+          <h4 class="form-subtitle">商品簡介</h4>
+          <el-form-item style="width:100%" prop="summary">
+            <el-input type="textarea" v-model="postForm.info.summary" :autosize="{ minRows: 4 }"></el-input>
+          </el-form-item>          
         </el-form-item>
 
         <el-form-item style="margin-bottom: 40px;">
           <h4 class="form-subtitle">商品描述</h4>
-          <div class="editor-container">
+          <el-form-item class="editor-container" prop="discription">
             <tinymce :height=400 ref="editor" v-model="postForm.info.discription"></tinymce>
-          </div>
+          </el-form-item>   
+          <!-- <div class="editor-container" prop="summary">
+            <tinymce :height=400 ref="editor" v-model="postForm.info.discription"></tinymce>
+          </div> -->
         </el-form-item>
 
         <el-form-item style="margin-bottom: 40px;">
@@ -129,7 +122,6 @@
                 :label="'規格' + (index + 1)"
                 :key="index"
                 style="margin-left: 1rem;"
-                :prop="'item.' + index"
               >
                 <el-input v-model="item.name" placeholder="請輸入選項名稱" style="width: 15rem;margin-bottom: 1rem;"></el-input>
                 <el-button type="danger" icon="el-icon-delete" @click.prevent="removeSpecInfo(index)"></el-button>
@@ -171,7 +163,6 @@
             v-for="(i, index) in relatedItems"
             :label="'商品 ' + (index + 1)"
             :key="index"
-            :prop="'item.' + index"
           >
             <el-autocomplete v-model="i.key" style="width:80%" :fetch-suggestions="queryStock" @select="handleSelectStock" placeholder="請輸入文章名稱">
               <template slot-scope="props">
@@ -207,7 +198,6 @@ import { querySearch } from '@/api/search'
 const defaultForm = {
   type: undefined,
   catalog: undefined,
-  // subCatalog: undefined,
   comboList: [],
   tag: [],
   img: [],
@@ -222,15 +212,17 @@ const defaultForm = {
     note: undefined,
     warn: undefined
   },
-  count: undefined,
   available: false,
   status: 0,
-  // price: undefined,
-  price: {
-    common: undefined
-    // onsale: undefined
-  },
-  spec: [],
+  spec: [
+    {
+      name: '',
+      priceDefault: undefined,
+      priceOnsale: undefined,
+      count: undefined,
+      imageURL: []
+    }
+  ],
   related: [],
   seller: []
 }
@@ -249,25 +241,96 @@ export default {
       postForm: Object.assign({}, defaultForm),
       isDraft: true,
       fetchSuccess: true,
-      loading: false,
+      loading: true,
       dialogImageUrl: '',
       isTicket: false,
       dialogVisible: false,
       uploadUrl: 'https://decade.global/admin',
-      // uploadUrl: 'http://localhost:3002',
       itemContent: '',
       imgList: [],
       relatedItems: [],
       categoryClass: [],
       specInfo: [],
-      rules: {},
+      rules: {
+        name: [
+          { required: true, message: '請輸入商品名稱', trigger: 'blur' }
+        ],
+        specName: [
+          {
+            validator: (rule, value, callback) => {
+              this.postForm.spec.map(item => {
+                if (item.name.length === 0) {
+                  callback('請輸入名稱')
+                }
+              })
+              callback()
+            },
+            trigger: 'blur'
+          }
+        ],
+        imageUrl: [
+          {
+            validator: (rule, value, callback) => {
+              this.postForm.spec.map(item => {
+                if (item.imageURL.length === 0) {
+                  callback('請上傳圖片')
+                }
+              })
+              callback()
+            },
+            trigger: 'change'
+          }
+        ],
+        category: [
+          {
+            validator: (rule, value, callback) => {
+              if (this.categoryClass.length !== 2) {
+                return callback('請選擇分類')
+              }
+              callback()
+            },
+            trigger: 'blur'
+          }
+        ],
+        discription: [
+          {
+            validator: (rule, value, callback) => {
+              if (!this.postForm.info.discription || this.postForm.info.discription.length === 0) {
+                return callback('請輸入商品描述')
+              }
+              callback()
+            },
+            trigger: 'change'
+          }
+        ],
+        summary: [
+          {
+            validator: (rule, value, callback) => {
+              if (!this.postForm.info.summary || this.postForm.info.summary.length === 0) {
+                return callback('請輸入商品簡介')
+              }
+              callback()
+            },
+            trigger: 'blur'
+          }
+        ]
+      },
+      specRules: {
+        validator: (rule, value, callback) => {
+          if (this.categoryClass.length !== 2) {
+            return callback('請選擇分類')
+          }
+          callback()
+        },
+        trigger: 'change'
+      },
       options: [
         {
           value: 0,
           name: 'theme',
           label: '服務體驗',
           children: [
-            { label: '課程活動', name: 'lecture', value: 0 },
+            { label: '課程活動', name: 'lecture', value: 0 }
           ]
         },
         {
@@ -308,36 +371,60 @@ export default {
   async created() {
     if (this.isEdit) {
       await this.fetchData()
-      this.categoryClass = [parseInt(this.postForm.info.type, 10), this.postForm.catalog]
-      this.postForm.related.map(async x => {
-        const data = await fetchPost(x)
-        this.relatedItems.push({ key: x, data: { title: data.title } })
-      })
     } else {
       this.postForm = Object.assign({}, defaultForm)
     }
+    this.loading = false
   },
   computed: {
     ...mapGetters(['userInfo'])
+  },
+  watch: {
+    'postForm.spec': {
+      handler: function (val) {
+        val.map(item => {
+          const imgUrl = item.imageURL[0] || undefined
+          if (imgUrl && !this.postForm.img.some(x => x === imgUrl)) {
+            this.postForm.img.push(imgUrl)
+            this.imgList.push({ name: new Date().getTime(), url: imgUrl })
+          }
+        })
+      },
+      deep: true
+    }
   },
   methods: {
     async fetchData() {
       try {
         const stock = await fetchStock(this.$route.params.id)
-        this.postForm = stock
+        Object.assign(this.postForm, stock)
+        // this.postForm = stock
         this.postForm.info = JSON.parse(stock.info)
-        this.isDraft = this.postForm.status === 1 ? false : true
-        this.isTicket = this.postForm.info.type === 0 ? true : this.postForm.type === 3 ? true : false
+        this.isDraft = this.postForm.status === 1 ? 0 : 1
+        this.isTicket = this.postForm.info.type === 0 ? true : this.postForm.type === 3 ? 1 : 0
         this.postForm.img.map((img, i) => {
           this.imgList.push({ name: i, url: img })
         })
+        this.categoryClass = [parseInt(this.postForm.info.type, 10), this.postForm.catalog]
+        this.postForm.related.map(async x => {
+          const data = await fetchPost(x)
+          this.relatedItems.push({ key: x, data: { title: data.title }})
+        })
+
+        // 舊版商品格式處理
+        if (this.postForm.spec === 0 || !this.postForm.spec[0].priceDefault) {
+          this.postForm.spec.forEach((spec, i) => {
+            this.postForm.spec[i] = { name: spec.name, count: spec.count, priceDefault: undefined, priceOnsale: undefined, imageURL: [] }
+          })
+        }
       } catch (err) {
         this.fetchSuccess = false
         console.log(err)
       }
     },
     async submitForm() {
-      const postData = Object.assign({}, this.postForm)
+      if (!await this.validateForm()) return
+      const postData = JSON.parse(JSON.stringify(this.postForm))
       postData.seller = [this.userInfo.id]
       postData.related = this.relatedItems.map(x => x.key)
       postData.catalog = this.categoryClass[1] !== -1 ? this.categoryClass[1] : -1
@@ -347,30 +434,28 @@ export default {
       postData.type = this.categoryClass[0] === 0 ? 3 : this.isTicket ? 3 : 1
       postData.img = []
       this.imgList.map(x => postData.img.push(x.url))
+      // 舊版商品格式處理
+      if (!postData.price) {
+        postData.price = { common: 99999 }
+      }
       try {
+        console.log(this.postForm)
+        console.log(postData)
         if (this.isEdit) {
           await updateStock(this.$route.params.id, postData)
         } else {
           await createStock(postData)
         }
         this.$notify({ title: '成功', message: '發布成功', type: 'success', duration: 2000 })
-        this.$router.push({ name: 'StockList' })
+        // this.$router.push({ name: 'StockList' })
       } catch (err) {
-        this.$notify({ title: '失敗', message: '發布失敗，請檢查欄位', type: 'error', duration: 2000 })
+        this.$notify({ title: '失敗', message: '發布失敗，伺服器錯誤！', type: 'error', duration: 2000 })
         console.log(err)
       }
       this.loading = false
     },
-    async queryStock(queryString, cb) {
-      if (!queryString) return cb()
-      const items = []
-      const list = await querySearch(queryString)
-      list.stock.map(x => {
-        items.push({ value: x.id, name: x.name, price: x.price, data: x })
-      })
-      cb(items)
-    },
     async viewDraft() {
+      if (!await this.validateForm()) return
       const postData = Object.assign({}, this.postForm)
       this.isDraft = true
       postData.seller = [this.userInfo.id]
@@ -382,6 +467,10 @@ export default {
       postData.type = this.categoryClass[0] === 0 ? 3 : this.isTicket ? 3 : 1
       postData.img = []
       this.imgList.map(x => postData.img.push(x.url))
+      // 舊版商品格式處理
+      if (!postData.price) {
+        postData.price = { common: 99999 }
+      }
       try {
         await updateStock(this.$route.params.id, postData)
         this.$notify({ title: '成功', message: '發布成功', type: 'success', duration: 2000 })
@@ -392,18 +481,44 @@ export default {
       }
       this.loading = false
     },
-    async handleSelectStock(item) {
-      const i = this.relatedItems.map(x => x.key).indexOf(item.value)
-      this.relatedItems[i].data = item.data
+    validateForm() {
+      return new Promise((resolve) => {
+        this.$refs.postForm.validate((valid) => {
+          if (valid) {
+            resolve(true)
+          } else {
+            this.$message.error('上傳失敗，請先將表單內容填寫完畢！')
+            resolve(false)
+          }
+        })
+      })
     },
     handleSelectCategort(category) {
       this.postForm.info.type = category[0]
       this.postForm.catalog = category[1]
     },
     addSpec() {
-      this.postForm.spec.push({ name: undefined, count: undefined })
+      this.postForm.spec.push({
+        name: '',
+        priceDefault: undefined,
+        priceOnsale: undefined,
+        count: undefined,
+        imageURL: []
+      })
     },
     removeSpec(index) {
+      if (this.postForm.spec.length === 1) {
+        return this.$message.error('失敗：商品至少需要有一種分類！')
+      }
+      const imgUrl = this.postForm.spec[index].imageURL[0]
+      const inImgIndex = this.postForm.img.findIndex(x => x === imgUrl)
+      const inImgListIndex = this.imgList.findIndex(x => x.url === imgUrl)
+      if (inImgIndex !== -1) {
+        this.postForm.img.splice(inImgIndex, 1)
+      }
+      if (inImgListIndex !== -1) {
+        this.imgList.splice(inImgListIndex, 1)
+      }
       this.postForm.spec.splice(index, 1)
     },
     addSpecInfo() {
@@ -477,6 +592,24 @@ export default {
     position: relative;
     .createStock-main-container {
       padding: 40px 45px 20px 50px;
+    }
+  }
+  .spec-collapse{
+    margin-bottom: 1rem;
+  }
+  .spec-container{
+    display: flex;
+    width: 100%;
+    margin-bottom: .5rem;
+
+    .spec-form{
+      width: 100%;
+      max-width: 30rem;
+    }
+
+    .delete-btn{
+      margin: 0 .5rem;
+      height: 2rem;
     }
   }
 </style>

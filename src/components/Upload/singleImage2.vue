@@ -1,102 +1,107 @@
 <template>
-	<div class="singleImageUpload2 upload-container">
-		<el-upload class="image-uploader" :data="dataObj" drag :multiple="false" :show-file-list="false" :action="`${uploadUrl}/upload`"
-		  :on-success="handleImageScucess">
-			<i class="el-icon-upload"></i>
-			<div class="el-upload__text">Drag或<em>點擊上傳</em></div>
-		</el-upload>
-		<div v-show="imageUrl.length>0" class="image-preview">
-			<div class="image-preview-wrapper" v-show="imageUrl.length>1">
-				<img :src="imageUrl">
-				<div class="image-preview-action">
-					<i @click="rmImage" class="el-icon-delete"></i>
-				</div>
-			</div>
-		</div>
-	</div>
+  <div>
+    <el-upload
+      :action="`${uploadUrl}/upload`"
+      name="image"
+			class="avatar-uploader"
+			v-loading="imgUploading"
+			:show-file-list="false"
+      :before-upload="beforeUploadImg"
+      :on-success="handleImageScucess"
+      :on-error="handleImageError"
+      :on-preview="handlePictureCardPreview"
+      :on-remove="handleRemove">
+			<img v-if="localUrl" :src="localUrl" class="avatar">
+			<i v-else class="el-icon-plus avatar-uploader-icon"></i>
+    </el-upload>
+    <el-dialog :visible.sync="dialogVisible">
+      <img width="100%" :src="dialogImageUrl" alt="">
+    </el-dialog>
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'singleImageUpload2',
-  props: {
-    value: String
-  },
-  computed: {
-    imageUrl() {
-      return this.value
-    }
-  },
+  props: ['defaultImg'],
   data() {
     return {
-      tempUrl: '',
-      dataObj: { token: '', key: '' },
-      uploadUrl: 'https://decade.global/admin'
+      uploadUrl: 'https://decade.global/img',
+      imgUrl: '',
+      localUrl: '',
+      imgUploading: false,
+      dialogVisible: false,
+      dialogImageUrl: ''
     }
   },
+  created() {
+    this.imgUrl = this.defaultImg || undefined
+    this.localUrl = this.defaultImg || undefined
+  },
   methods: {
-    rmImage() {
-      this.emitInput('')
+    handleRemove() {
+      this.imgUrl = undefined
     },
-    emitInput(val) {
-      this.$emit('input', val)
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url
+      this.dialogVisible = true
     },
-    handleImageScucess(response) {
-      this.emitInput(`${this.uploadUrl}${response.path}`)
+    handleImageScucess(res, file, fileList) {
+      if (res.success === false) {
+        this.$message.error(`錯誤：${res.msg}`)
+        this.imgUrl = undefined
+        this.imgUploading = false
+      } else {
+        this.localUrl = file.url
+        this.imgUrl = res.data.url
+        this.$emit('input', res.data.url)
+        this.imgUploading = false
+      }
+    },
+    handleImageError() {
+      this.$message.error('錯誤：圖片上傳失敗，請重試！')
+      this.imgUploading = false
+    },
+    beforeUploadImg(file) {
+      if (file.type !== 'image/png' && file.type !== 'image/jpeg') {
+        this.$message.error('錯誤：請檢查檔案格式是否為 jpeg 或 png！')
+        return false
+      } else if (file.size / 1024 / 1024 > 10) {
+        this.$message.error('錯誤：圖片大小限制為 10MB！')
+        return false
+      } else if (this.imgUploading) {
+        this.$message.error('錯誤：請等待其他圖片上傳完成！')
+        return false
+      }
+      this.imgUploading = true
+      return true
     }
   }
 }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
-.upload-container {
-	width: 100%;
-	height: 100%;
-	position: relative;
-	.image-uploader {
-		height: 100%;
-	}
-	.image-preview {
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		left: 0px;
-		top: 0px;
-		border: 1px dashed #d9d9d9;
-		.image-preview-wrapper {
-			position: relative;
-			width: 100%;
-			height: 100%;
-			img {
-				width: 100%;
-				height: 100%;
-			}
-		}
-		.image-preview-action {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			left: 0;
-			top: 0;
-			cursor: default;
-			text-align: center;
-			color: #fff;
-			opacity: 0;
-			font-size: 20px;
-			background-color: rgba(0, 0, 0, .5);
-			transition: opacity .3s;
-			cursor: pointer;
-			text-align: center;
-			line-height: 200px;
-			.el-icon-delete {
-				font-size: 36px;
-			}
-		}
-		&:hover {
-			.image-preview-action {
-				opacity: 1;
-			}
-		}
-	}
-}
+<style>
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+		object-fit: cover;
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
 </style>

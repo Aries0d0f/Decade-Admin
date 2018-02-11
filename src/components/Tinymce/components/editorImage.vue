@@ -3,8 +3,17 @@
     <el-button icon='upload' :style="{background:color,borderColor:color}" @click=" dialogVisible=true" type="primary">上傳圖片
     </el-button>
     <el-dialog :visible.sync="dialogVisible">
-      <el-upload class="editor-slide-upload" :action="`${uploadUrl}/upload`" :multiple="true" :file-list="fileList" :show-file-list="true"
-        list-type="picture-card" :on-remove="handleRemove" :on-success="handleSuccess" :before-upload="beforeUpload">
+      <el-upload 
+        class="editor-slide-upload" 
+        :action="`${uploadUrl}/upload`" 
+        name="image" 
+        :multiple="false" 
+        :file-list="fileList" 
+        :show-file-list="true"
+        list-type="picture-card" 
+        :on-remove="handleRemove" 
+        :on-success="handleSuccess" 
+        :before-upload="beforeUpload">
         <el-button size="small" type="primary">點擊上傳</el-button>
       </el-upload>
       <el-button @click="dialogVisible = false">取 消</el-button>
@@ -25,9 +34,10 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      uploadUrl: 'https://decade.global/admin',
+      uploadUrl: 'https://decade.global/img',
       listObj: {},
-      fileList: []
+      fileList: [],
+      imgUploading: false
     }
   },
   methods: {
@@ -40,7 +50,6 @@ export default {
         this.$message('請等待所有圖片上傳成功！')
         return
       }
-      console.log('arr', arr)
       this.$emit('successCBK', arr)
       this.listObj = {}
       this.fileList = []
@@ -51,7 +60,7 @@ export default {
       const objKeyArr = Object.keys(this.listObj)
       for (let i = 0, len = objKeyArr.length; i < len; i++) {
         if (this.listObj[objKeyArr[i]].uid === uid) {
-          this.listObj[objKeyArr[i]].url = `${this.uploadUrl}${response.path}`
+          this.listObj[objKeyArr[i]].url = response.data.url
           this.listObj[objKeyArr[i]].hasSuccess = true
           return
         }
@@ -68,18 +77,18 @@ export default {
       }
     },
     beforeUpload(file) {
-      const _self = this
-      const _URL = window.URL || window.webkitURL
-      const fileName = file.uid
-      this.listObj[fileName] = {}
-      return new Promise((resolve, reject) => {
-        const img = new Image()
-        img.src = _URL.createObjectURL(file)
-        img.onload = function() {
-          _self.listObj[fileName] = { hasSuccess: false, uid: file.uid, width: this.width, height: this.height }
-        }
-        resolve(true)
-      })
+      if (file.type !== 'image/png' && file.type !== 'image/jpeg') {
+        this.$message.error('錯誤：請檢查檔案格式是否為 jpeg 或 png！')
+        return false
+      } else if (file.size / 1024 / 1024 > 10) {
+        this.$message.error('錯誤：圖片大小限制為 10MB！')
+        return false
+      } else if (this.imgUploading) {
+        this.$message.error('錯誤：請等待其他圖片上傳完成！')
+        return false
+      }
+      this.listObj[file.uid] = { hasSuccess: false, uid: file.uid }
+      return true
     }
   }
 }

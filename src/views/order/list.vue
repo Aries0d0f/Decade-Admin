@@ -173,7 +173,10 @@ export default {
       let idArrStr = ''
       idList.map(x => {
         if (x.length > 0) {
-          x.map(item => idArrStr += `"${item.sid}",`)
+          x.map(item => {
+            idArrStr += `"${item.sid}",`
+            return true
+          })
         } else {
           idArrStr += `"${x[0].sid}",`
         }

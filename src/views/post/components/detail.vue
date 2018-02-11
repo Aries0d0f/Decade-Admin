@@ -1,6 +1,6 @@
 <template>
-  <div class="createPost-container">
-    <el-form class="form-container" :model="postForm">
+  <div class="createPost-container" v-loading="loading">
+    <el-form class="form-container" :model="postForm" v-if="!loading">
       <sticky :className="'sub-navbar '+postForm.status">
         <template v-if="fetchSuccess">
           <span style="color: #fff;">
@@ -24,7 +24,7 @@
           <el-col :span="6">
             <div style="margin-bottom: 20px;">
               <el-form-item prop="image">
-                <Upload style="height: 100%;" v-model="postForm.meta.image"></Upload>
+                <Upload style="height: 100%;" v-model="postForm.meta.image" :defaultImg="postForm.meta.image"></Upload>
               </el-form-item>
             </div>
           </el-col>
@@ -97,6 +97,7 @@ import { fetchStock } from '@/api/stock'
 import { mapGetters } from 'vuex'
 
 const defaultForm = {
+  loading: true,
   title: '',
   content: '',
   category: undefined,
@@ -195,21 +196,23 @@ export default {
             { value: 2, name: 'activity', label: '活動' },
             { value: 3, name: 'music_review', label: '樂。點評' }
           ]
-        }        
+        }
       ]
     }
   },
   async created() {
+    this.loading = true
     if (this.isEdit) {
       await this.fetchData()
       this.categoryTypes = [this.postForm.category, this.postForm.subCategory]
       this.postForm.related.map(async x => {
         const data = await fetchStock(x)
-        this.relatedItems.push({ key: x, data: { name: data.name, price: data.price } })
+        this.relatedItems.push({ key: x, data: { name: data.name, price: data.price }})
       })
     } else {
       this.postForm = Object.assign({}, defaultForm)
     }
+    this.loading = false
   },
   computed: {
     ...mapGetters(['userInfo'])
@@ -219,7 +222,7 @@ export default {
       this.loading = true
       try {
         this.postForm = await fetchPost(this.$route.params.id)
-        this.isDraft = this.postForm.status === 1 ? false : true
+        this.isDraft = this.postForm.status === 1 ? 0 : 1
       } catch (err) {
         this.fetchSuccess = false
         console.log(err)

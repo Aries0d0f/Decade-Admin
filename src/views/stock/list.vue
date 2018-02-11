@@ -84,7 +84,7 @@ export default {
           name: 'theme',
           label: '服務體驗',
           children: [
-            { label: '課程活動', name: 'lecture', value: 0 },
+            { label: '課程活動', name: 'lecture', value: 0 }
           ]
         },
         {
