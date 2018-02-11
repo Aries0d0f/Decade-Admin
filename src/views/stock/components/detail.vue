@@ -56,7 +56,6 @@
               :key="index"
               style="margin-left: 1rem;"
             >
-              {{item}}
               <el-collapse-item :title="`#${index + 1}. ${item.name}` || `規格 ${index + 1}`" :name="index">
                 <div class="spec-container">
                   <el-form-item prop="imageUrl">
@@ -439,7 +438,6 @@ export default {
         postData.price = { common: 99999 }
       }
       try {
-        console.log(this.postForm)
         console.log(postData)
         if (this.isEdit) {
           await updateStock(this.$route.params.id, postData)
