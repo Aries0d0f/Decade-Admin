@@ -28,6 +28,7 @@
           <el-upload
             :action="`${uploadUrl}/upload`"
             list-type="picture-card"
+            name="image"
             :on-success="handleImageScucess"
             :file-list="imgList"
             v-model="postForm.img"
@@ -59,7 +60,7 @@
               <el-collapse-item :title="`#${index + 1}. ${item.name}` || `規格 ${index + 1}`" :name="index">
                 <div class="spec-container">
                   <el-form-item prop="imageUrl">
-                    <Upload style="height: 100%;margin: 1rem 1rem 0 0" v-model="item.imageURL[0]" :defaultImg="item.imageURL[0]"></Upload>
+                    <Upload style="height: 100%;margin: 1rem 1rem 0 0" v-model="item.imageURL" :defaultImg="item.imageURL"></Upload>
                   </el-form-item> 
                   
                   <div class="spec-form">
@@ -219,7 +220,7 @@ const defaultForm = {
       priceDefault: undefined,
       priceOnsale: undefined,
       count: undefined,
-      imageURL: []
+      imageURL: undefined
     }
   ],
   related: [],
@@ -244,7 +245,7 @@ export default {
       dialogImageUrl: '',
       isTicket: false,
       dialogVisible: false,
-      uploadUrl: 'https://decade.global/admin',
+      uploadUrl: 'https://decade.global/img',
       itemContent: '',
       imgList: [],
       relatedItems: [],
@@ -382,7 +383,7 @@ export default {
     'postForm.spec': {
       handler: function (val) {
         val.map(item => {
-          const imgUrl = item.imageURL[0] || undefined
+          const imgUrl = item.imageURL || undefined
           if (imgUrl && !this.postForm.img.some(x => x === imgUrl)) {
             this.postForm.img.push(imgUrl)
             this.imgList.push({ name: new Date().getTime(), url: imgUrl })
@@ -434,9 +435,9 @@ export default {
       postData.img = []
       this.imgList.map(x => postData.img.push(x.url))
       // 舊版商品格式處理
-      if (!postData.price) {
-        postData.price = { common: 99999 }
-      }
+      // if (!postData.price) {
+      //   postData.price = { common: 99999 }
+      // }
       try {
         console.log(postData)
         if (this.isEdit) {
@@ -445,7 +446,7 @@ export default {
           await createStock(postData)
         }
         this.$notify({ title: '成功', message: '發布成功', type: 'success', duration: 2000 })
-        // this.$router.push({ name: 'StockList' })
+        this.$router.push({ name: 'StockList' })
       } catch (err) {
         this.$notify({ title: '失敗', message: '發布失敗，伺服器錯誤！', type: 'error', duration: 2000 })
         console.log(err)
@@ -466,9 +467,9 @@ export default {
       postData.img = []
       this.imgList.map(x => postData.img.push(x.url))
       // 舊版商品格式處理
-      if (!postData.price) {
-        postData.price = { common: 99999 }
-      }
+      // if (!postData.price) {
+      //   postData.price = { common: 99999 }
+      // }
       try {
         await updateStock(this.$route.params.id, postData)
         this.$notify({ title: '成功', message: '發布成功', type: 'success', duration: 2000 })
@@ -501,14 +502,14 @@ export default {
         priceDefault: undefined,
         priceOnsale: undefined,
         count: undefined,
-        imageURL: []
+        imageURL: ''
       })
     },
     removeSpec(index) {
       if (this.postForm.spec.length === 1) {
         return this.$message.error('失敗：商品至少需要有一種分類！')
       }
-      const imgUrl = this.postForm.spec[index].imageURL[0]
+      const imgUrl = this.postForm.spec[index].imageURL
       const inImgIndex = this.postForm.img.findIndex(x => x === imgUrl)
       const inImgListIndex = this.imgList.findIndex(x => x.url === imgUrl)
       if (inImgIndex !== -1) {
@@ -533,8 +534,10 @@ export default {
       this.dialogVisible = true
     },
     handleImageScucess(res) {
-      this.imgList.push({ name: this.imgList.length, url: `${this.uploadUrl}${res.path}` })
-      this.postForm.img.push(`${this.uploadUrl}${res.path}`)
+      setTimeout(() => {
+        this.imgList.push({ name: this.imgList.length, url: res.data.url })
+        this.postForm.img.push(res.data.url)
+      }, 5000)
     },
     async queryStock(queryString, cb) {
       if (!queryString) return cb()
