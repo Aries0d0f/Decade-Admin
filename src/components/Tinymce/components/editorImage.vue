@@ -13,11 +13,12 @@
         list-type="picture-card" 
         :on-remove="handleRemove" 
         :on-success="handleSuccess" 
+         v-loading="loading"
         :before-upload="beforeUpload">
         <el-button size="small" type="primary">點擊上傳</el-button>
       </el-upload>
-      <el-button @click="dialogVisible = false">取 消</el-button>
-      <el-button type="primary" @click="handleSubmit">確 定</el-button>
+      <el-button @click="dialogVisible = false" :disabled="loading">取 消</el-button>
+      <el-button type="primary" @click="handleSubmit" :disabled="loading">確 定</el-button>
     </el-dialog>
   </div>
 </template>
@@ -37,6 +38,7 @@ export default {
       uploadUrl: 'https://decade.global/img',
       listObj: {},
       fileList: [],
+      loading: false,
       imgUploading: false
     }
   },
@@ -50,10 +52,14 @@ export default {
         this.$message('請等待所有圖片上傳成功！')
         return
       }
-      this.$emit('successCBK', arr)
-      this.listObj = {}
-      this.fileList = []
-      this.dialogVisible = false
+      this.loading = true
+      setTimeout(() => {
+        this.$emit('successCBK', arr)
+        this.listObj = {}
+        this.fileList = []
+        this.dialogVisible = false
+        this.loading = false
+      }, 5000)
     },
     handleSuccess(response, file) {
       const uid = file.uid

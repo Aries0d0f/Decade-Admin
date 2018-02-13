@@ -51,10 +51,12 @@ export default {
         this.imgUrl = undefined
         this.imgUploading = false
       } else {
-        this.localUrl = file.url
-        this.imgUrl = res.data.url
-        this.$emit('input', res.data.url)
-        this.imgUploading = false
+        setTimeout(() => {
+          this.localUrl = file.url
+          this.imgUrl = res.data.url
+          this.$emit('input', res.data.url)
+          this.imgUploading = false
+        }, 5000)
       }
     },
     handleImageError() {
