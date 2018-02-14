@@ -59,7 +59,7 @@
             >
               <el-collapse-item :title="`#${index + 1}. ${item.name}` || `規格 ${index + 1}`" :name="index">
                 <div class="spec-container">
-                  <el-form-item prop="imageUrl">
+                  <el-form-item>
                     <Upload style="height: 100%;margin: 1rem 1rem 0 0" v-model="item.imageURL" :defaultImg="item.imageURL"></Upload>
                   </el-form-item> 
                   
@@ -400,7 +400,7 @@ export default {
         Object.assign(this.postForm, stock)
         // this.postForm = stock
         this.postForm.info = JSON.parse(stock.info)
-        this.isDraft = this.postForm.status === 1 ? 0 : 1
+        this.isDraft = this.postForm.status === 1 ? false : true
         this.isTicket = this.postForm.info.type === 0 ? true : this.postForm.type === 3 ? 1 : 0
         this.postForm.img.map((img, i) => {
           this.imgList.push({ name: i, url: img })
@@ -414,7 +414,7 @@ export default {
         // 舊版商品格式處理
         if (this.postForm.spec === 0 || !this.postForm.spec[0].priceDefault) {
           this.postForm.spec.forEach((spec, i) => {
-            this.postForm.spec[i] = { name: spec.name, count: spec.count, priceDefault: undefined, priceOnsale: undefined, imageURL: [] }
+            this.postForm.spec[i] = { name: spec.name, count: spec.count, priceDefault: undefined, priceOnsale: undefined, imageURL: spec.imageURL || undefined }
           })
         }
       } catch (err) {
@@ -439,14 +439,13 @@ export default {
       //   postData.price = { common: 99999 }
       // }
       try {
-        console.log(postData)
         if (this.isEdit) {
           await updateStock(this.$route.params.id, postData)
         } else {
           await createStock(postData)
         }
         this.$notify({ title: '成功', message: '發布成功', type: 'success', duration: 2000 })
-        this.$router.push({ name: 'StockList' })
+        // this.$router.push({ name: 'StockList' })
       } catch (err) {
         this.$notify({ title: '失敗', message: '發布失敗，伺服器錯誤！', type: 'error', duration: 2000 })
         console.log(err)
