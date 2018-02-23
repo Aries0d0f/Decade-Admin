@@ -14,14 +14,25 @@ export const constantRouterMap = [
   {
     path: '',
     component: Layout,
-    redirect: 'dashboard',
+    redirect: '/dashboard',
     children: [{
-      path: 'dashboard',
+      path: '/dashboard',
       component: _import('dashboard/index'),
       name: 'dashboard',
       meta: { title: '首頁', icon: 'dashboard', noCache: true }
     }]
-  },
+  }
+]
+const router = new Router({
+  // mode: 'history',
+  scrollBehavior: () => ({ y: 0 }),
+  routes: constantRouterMap
+})
+
+export default router
+
+export const asyncRouterMap = [
+  { path: '*', redirect: '/404', hidden: true, meta: { auth: false }},
   {
     path: '/post',
     component: Layout,
@@ -29,7 +40,8 @@ export const constantRouterMap = [
     name: 'post',
     meta: {
       title: '文章管理',
-      icon: 'form'
+      icon: 'form',
+      auth: 4
     },
     children: [
       {
@@ -45,7 +57,8 @@ export const constantRouterMap = [
         component: _import('post/create'),
         name: 'postCreate',
         meta: {
-          title: '新增文章'
+          title: '新增文章',
+          noCache: true
         }
       },
       {
@@ -54,7 +67,8 @@ export const constantRouterMap = [
         hidden: true,
         name: 'postEdit',
         meta: {
-          title: '文章編輯'
+          title: '文章編輯',
+          noCache: true
         }
       }
     ]
@@ -66,7 +80,8 @@ export const constantRouterMap = [
     name: 'stock',
     meta: {
       title: '商品管理',
-      icon: 'example'
+      icon: 'example',
+      auth: 4
     },
     children: [
       {
@@ -82,7 +97,8 @@ export const constantRouterMap = [
         component: _import('stock/create'),
         name: 'StockCreate',
         meta: {
-          title: '新增商品'
+          title: '新增商品',
+          noCache: true
         }
       },
       {
@@ -91,7 +107,8 @@ export const constantRouterMap = [
         hidden: true,
         name: 'StockEdit',
         meta: {
-          title: '商品編輯'
+          title: '商品編輯',
+          noCache: true
         }
       }
     ]
@@ -119,7 +136,8 @@ export const constantRouterMap = [
         component: _import('coupon/create'),
         name: 'CouponCreate',
         meta: {
-          title: '新增優惠券'
+          title: '新增優惠券',
+          noCache: true
         }
       },
       {
@@ -128,7 +146,8 @@ export const constantRouterMap = [
         hidden: true,
         name: 'CouponEdit',
         meta: {
-          title: '優惠券編輯'
+          title: '優惠券編輯',
+          noCache: true
         }
       }
     ]
@@ -157,20 +176,10 @@ export const constantRouterMap = [
         name: 'orderItem',
         hidden: true,
         meta: {
-          title: '訂單詳情'
+          title: '訂單詳情',
+          noCache: true
         }
       }
     ]
   }
-]
-const router = new Router({
-  // mode: 'history',
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRouterMap
-})
-
-export default router
-
-export const asyncRouterMap = [
-  { path: '*', redirect: '/404', hidden: true, meta: { auth: false }}
 ]

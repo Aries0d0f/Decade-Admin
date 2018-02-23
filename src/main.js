@@ -9,9 +9,9 @@ import '@/styles/index.scss' // global css
 
 import App from './App'
 import router from './router'
+import './permission'
 import store from './store'
 
-// import i18n from './lang' // Internationalization
 import './icons' // icon
 
 import * as filters from './filters' // global filters

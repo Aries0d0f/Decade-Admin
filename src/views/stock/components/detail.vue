@@ -381,7 +381,7 @@ export default {
   },
   watch: {
     'postForm.spec': {
-      handler: function (val) {
+      handler: function(val) {
         val.map(item => {
           const imgUrl = item.imageURL || undefined
           if (imgUrl && !this.postForm.img.some(x => x === imgUrl)) {
@@ -400,6 +400,7 @@ export default {
         Object.assign(this.postForm, stock)
         // this.postForm = stock
         this.postForm.info = JSON.parse(stock.info)
+        // eslint-disable-next-line
         this.isDraft = this.postForm.status === 1 ? false : true
         this.isTicket = this.postForm.info.type === 0 ? true : this.postForm.type === 3 ? 1 : 0
         this.postForm.img.map((img, i) => {

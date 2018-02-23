@@ -1,5 +1,5 @@
 import { loginByUsername, fetchUser } from '@/api/user'
-
+import { setToken, removeToken } from '@/utils/auth'
 const user = {
   state: {
     id: '',
@@ -28,15 +28,15 @@ const user = {
   },
 
   actions: {
-    // 用户名登录
     async LoginByUsername({ commit }, userInfo) {
       try {
         const data = await loginByUsername(userInfo.username, userInfo.password)
         if (!data.success) {
-          console.log(data.success)
           throw new Error(data.err.message)
+        } else if (data.result.role === 999) {
+          throw new Error('錯誤: 會員權限不足')
         }
-        console.log('object')
+        setToken(data.result.id)
         commit('SET_ID', data.result.id)
         commit('SET_CID', data.result.cid)
         commit('SET_ROLE', data.result.role)
@@ -52,6 +52,9 @@ const user = {
       if (!localStorage.uid) return false
       try {
         const res = await fetchUser(localStorage.uid)
+        if (res.role === 999) {
+          throw new Error('錯誤: 會員權限不足')
+        }
         commit('SET_ID', res.id)
         commit('SET_CID', res.cid)
         commit('SET_ROLE', res.role)
@@ -64,7 +67,6 @@ const user = {
       }
     },
 
-    // 登出
     LogOut({ commit, state }) {
       commit('SET_ID', '')
       commit('SET_CID', '')
@@ -72,6 +74,7 @@ const user = {
       commit('SET_STATE', '')
       commit('SET_USERNAME', '')
       delete localStorage.uid
+      removeToken()
     }
   }
 }

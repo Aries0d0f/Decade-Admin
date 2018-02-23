@@ -61,7 +61,7 @@ export default {
           try {
             await this.$store.dispatch('LoginByUsername', this.loginForm)
             this.loading = false
-            this.$router.push({ path: '/' })
+            this.$router.push({ name: 'dashboard' })
           } catch (err) {
             // console.log('err: ', err)
             this.$message.error(err.message)

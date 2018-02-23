@@ -1,20 +1,31 @@
 import { asyncRouterMap, constantRouterMap } from '@/router'
 
 /**
- * 通过meta.role判断是否与当前用户权限匹配
- * @param roles
- * @param route
+ * 通過 meta.role 判斷是否與當前用戶權限匹配
+ * role: 0 - 內部管理員
+ * role: 3 - 簽約廠商
+ * role: 4 - 簽約編輯
+ * @param userRole - 當前用戶權限
+ * @param route - 當前路由權限
  */
-function hasPermission(roles, route) {
-  if (route.meta && route.meta.roles) {
-    return roles.some(role => route.meta.roles.indexOf(role) >= 0)
-  } else {
+function hasPermission(userRole, route) {
+  if (!route.meta || !route.meta.auth && route.meta.auth !== 0) {
     return true
+  }
+  const { auth: routeRole } = route.meta
+  switch (userRole) {
+    case 0:
+      return true
+    case 3:
+    case 4:
+      return userRole === routeRole
+    default:
+      return false
   }
 }
 
 /**
- * 递归过滤异步路由表，返回符合用户角色权限的路由表
+ * 遞歸過濾異步路由表，返回符合用戶角色權限的路由表
  * @param asyncRouterMap
  * @param roles
  */
@@ -43,14 +54,13 @@ const permission = {
     }
   },
   actions: {
-    GenerateRoutes({ commit }, data) {
+    async GenerateRoutes({ commit }, role) {
       return new Promise(resolve => {
-        const { roles } = data
         let accessedRouters
-        if (roles.indexOf('admin') >= 0) {
+        if (role === 0) {
           accessedRouters = asyncRouterMap
         } else {
-          accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
+          accessedRouters = filterAsyncRouter(asyncRouterMap, role)
         }
         commit('SET_ROUTERS', accessedRouters)
         resolve()
