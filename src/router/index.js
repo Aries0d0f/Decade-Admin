@@ -21,6 +21,16 @@ export const constantRouterMap = [
       name: 'dashboard',
       meta: { title: '首頁', icon: 'dashboard', noCache: true }
     }]
+  },
+  {
+    path: '/user/me',
+    component: Layout,
+    children: [{
+      path: '',
+      component: _import('user/me'),
+      name: 'UserInfo-Me',
+      meta: { title: '個人資料', icon: 'user', noCache: true }
+    }]
   }
 ]
 const router = new Router({

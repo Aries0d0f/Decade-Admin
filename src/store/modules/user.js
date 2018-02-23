@@ -1,4 +1,4 @@
-import { loginByUsername, fetchUser } from '@/api/user'
+import { loginByUsername, fetchUser, createUserData, patchUser } from '@/api/user'
 import { setToken, removeToken } from '@/utils/auth'
 const user = {
   state: {
@@ -55,6 +55,12 @@ const user = {
         if (res.role === 999) {
           throw new Error('錯誤: 會員權限不足')
         }
+        // 檢查是否存在 udata ，如否則新增
+        if (!res.cid) {
+          const udata = await createUserData({ name: res.username, region: 0 })
+          await patchUser(res.id, { cid: udata.id })
+          res.cid = udata.id
+        }
         commit('SET_ID', res.id)
         commit('SET_CID', res.cid)
         commit('SET_ROLE', res.role)
@@ -75,6 +81,9 @@ const user = {
       commit('SET_USERNAME', '')
       delete localStorage.uid
       removeToken()
+    },
+
+    createUserData() {
     }
   }
 }

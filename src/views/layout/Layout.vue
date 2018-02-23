@@ -17,7 +17,7 @@ export default {
     Navbar,
     Sidebar,
     AppMain
-	},
+  },
   computed: {
     sidebar() {
       return this.$store.state.app.sidebar

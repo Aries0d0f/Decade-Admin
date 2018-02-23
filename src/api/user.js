@@ -19,3 +19,30 @@ export const loginByUsername = async(username, pwd) => {
   })
   return res.data
 }
+
+export const patchUser = async(uid, data) => {
+  const res = await request({
+    url: `/user/${uid}`,
+    method: 'PATCH',
+    data
+  })
+  return res.data
+}
+
+export const createUserData = async(data) => {
+  const res = await request({
+    url: '/udata',
+    method: 'POST',
+    data
+  })
+  return res.data
+}
+
+export const patchUserData = async(uid, data) => {
+  const res = await request({
+    url: `/udata/${uid}`,
+    method: 'PATCH',
+    data
+  })
+  return res.data
+}
