@@ -152,34 +152,16 @@
               </el-form-item>
             </el-tab-pane>
           </el-tabs>
-        </el-form-item>        
+        </el-form-item>
 
-
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>推薦文章串聯</span>
-          </div>
-          <el-form-item
-            v-for="(i, index) in relatedItems"
-            :label="'商品 ' + (index + 1)"
-            :key="index"
-          >
-            <el-autocomplete v-model="i.key" style="width:80%" :fetch-suggestions="queryStock" @select="handleSelectStock" placeholder="請輸入文章名稱">
-              <template slot-scope="props">
-                <span>{{ props.item.title }}</span>
-                <br>
-              </template>
-            </el-autocomplete>
-            <el-button type="danger" icon="el-icon-delete" @click.prevent="removeDomain(i)"></el-button>
-            <div v-if="i.data">{{i.data.title}}</div>
-          </el-form-item>
-
-          <el-form-item>
-            <el-button @click="addDomain">新增文章</el-button>
-            <span>(已輸入 {{relatedItems.length || 0}} 組，還可以增加 {{ 6 - relatedItems.length || 0}} 組)</span>
-          </el-form-item>
-        </el-card>
-
+        <el-row :gutter="20" v-if="userInfo.role === 0">
+          <el-col :span="12">
+            <RelatedStock ref="RelatedStock"></RelatedStock>
+          </el-col>
+          <el-col :span="12">
+            <RelatedPost ref="RelatedPost" :idList="postForm.related"></RelatedPost>
+          </el-col>
+        </el-row>
       </div>
     </el-form>
   </div>
@@ -191,6 +173,8 @@ import Tinymce from '@/components/Tinymce'
 import Upload from '@/components/Upload/singleImage2'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky'
+import RelatedStock from '@/components/RelatedCard/stock'
+import RelatedPost from '@/components/RelatedCard/post'
 import { fetchStock, createStock, updateStock } from '@/api/stock'
 import { fetchPost } from '@/api/post'
 import { querySearch } from '@/api/search'
@@ -229,7 +213,7 @@ const defaultForm = {
 
 export default {
   name: 'articleDetail',
-  components: { Tinymce, MDinput, Upload, Sticky },
+  components: { Tinymce, MDinput, Upload, Sticky, RelatedStock, RelatedPost },
   props: {
     isEdit: {
       type: Boolean,
@@ -407,10 +391,6 @@ export default {
           this.imgList.push({ name: i, url: img })
         })
         this.categoryClass = [parseInt(this.postForm.info.type, 10), this.postForm.catalog]
-        this.postForm.related.map(async x => {
-          const data = await fetchPost(x)
-          this.relatedItems.push({ key: x, data: { title: data.title }})
-        })
 
         // 舊版商品格式處理
         if (this.postForm.spec === 0 || !this.postForm.spec[0].priceDefault) {
@@ -427,7 +407,8 @@ export default {
       if (!await this.validateForm()) return
       const postData = JSON.parse(JSON.stringify(this.postForm))
       postData.seller = [this.userInfo.id]
-      postData.related = this.relatedItems.map(x => x.key)
+      postData.related = this.$refs.RelatedPost.relatedItems.map(x => x.key)
+      
       postData.catalog = this.categoryClass[1] !== -1 ? this.categoryClass[1] : -1
       postData.status = this.isDraft ? 0 : 1
       postData.info.type = this.categoryClass[0]
@@ -444,9 +425,9 @@ export default {
           await updateStock(this.$route.params.id, postData)
         } else {
           await createStock(postData)
+          this.$router.push({ name: 'StockList' })
         }
         this.$notify({ title: '成功', message: '發布成功', type: 'success', duration: 2000 })
-        // this.$router.push({ name: 'StockList' })
       } catch (err) {
         this.$notify({ title: '失敗', message: '發布失敗，伺服器錯誤！', type: 'error', duration: 2000 })
         console.log(err)
@@ -458,7 +439,7 @@ export default {
       const postData = Object.assign({}, this.postForm)
       this.isDraft = true
       postData.seller = [this.userInfo.id]
-      postData.related = this.relatedItems.map(x => x.key)
+      postData.related = this.$refs.RelatedPost.relatedItems.map(x => x.key)
       postData.catalog = this.categoryClass[1] !== -1 ? this.categoryClass[1] : -1
       postData.status = 0
       postData.info.type = this.categoryClass[0]
@@ -538,31 +519,6 @@ export default {
         this.imgList.push({ name: this.imgList.length, url: res.data.url })
         this.postForm.img.push(res.data.url)
       }, 5000)
-    },
-    async queryStock(queryString, cb) {
-      if (!queryString) return cb()
-      const items = []
-      const list = await querySearch(queryString)
-      list.data.post.map(x => {
-        items.push({ value: x.id || x._id, title: x.title, data: x })
-      })
-      cb(items)
-    },
-    async handleSelectStock(item) {
-      const i = this.relatedItems.map(x => x.key).indexOf(item.value)
-      this.relatedItems[i].data = item.data
-    },
-    removeDomain(item) {
-      var index = this.relatedItems.indexOf(item)
-      if (index !== -1) {
-        this.relatedItems.splice(index, 1)
-      }
-    },
-    addDomain() {
-      if (this.relatedItems.length > 5) {
-        return
-      }
-      this.relatedItems.push({ key: '' })
     }
   }
 }
@@ -591,6 +547,8 @@ export default {
 
   .createStock-container {
     position: relative;
+    margin-bottom: 20vh;
+    
     .createStock-main-container {
       padding: 40px 45px 20px 50px;
     }

@@ -5,7 +5,25 @@
       <el-input @keyup.enter.native="handleFilter" class="filter-item filter-search-item" prefix-icon="el-icon-search" v-model="listQuery.name"></el-input>
       <el-button class="filter-item" plain @click="handleFilter">搜尋</el-button>
     </div>
-    <el-table :key='tableKey' :data="currentList.slice(pager.start, pager.end)" v-loading="listLoading" :header-row-style="{ 'background-color': '#ebeef5' }" empty-text="查無資料" element-loading-text="載入中..." fit style="width: 100%">
+    <!-- <div class="toolbar">
+      <el-button type="warning" @click="handleChangeStatus(999)">回收桶</el-button>
+      <el-button type="success" @click="handleChangeStatus(1)" v-if="userInfo.role === 0">審核完成</el-button>
+      <el-button type="success" @click="handleChangeStatus(2)" v-else>送出審核</el-button>
+    </div> -->
+    <el-table
+      :key='tableKey'
+      :data="currentList.slice(pager.start, pager.end)"
+      v-loading="listLoading"
+      :header-row-style="{ 'background-color': '#ebeef5' }"
+      empty-text="查無資料"
+      element-loading-text="載入中..."
+      fit
+      style="width: 100%"
+      @selection-change="handleSelectionChange">
+      <!-- <el-table-column
+        type="selection"
+        width="55">
+      </el-table-column> -->
       <el-table-column label="商品編號" width="230">
         <template slot-scope="scope">
           <span>{{scope.row.id || scope.row._id}}</span>
@@ -21,11 +39,11 @@
           <span>{{scope.row.name}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="廠商" width="150">
+      <!-- <el-table-column label="廠商" width="150">
         <template slot-scope="scope">
           <span>{{scope.row.seller[0].username}}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="分類" width="200">
         <template slot-scope="scope">
           <span>{{categoryLabel(scope.row.info.type, scope.row.catalog)}}</span>
@@ -41,7 +59,7 @@
           <span>{{scope.row.createdAt | LocalTime}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="動作" class-name="small-padding fixed-width">
+      <el-table-column label="動作" class-name="small-padding fixed-width" width="320">
         <template slot-scope="scope">
           <el-button size="mini">分享</el-button>
           <el-button size="mini" @click="$router.push({ name: 'StockEdit', params: { id: scope.row.id || scope.row._id } })">編輯</el-button>
@@ -60,8 +78,9 @@
 </template>
 
 <script>
-import { fetchStockList, deleteStock } from '@/api/stock'
+import { fetchStockList, deleteStock, updateStock } from '@/api/stock'
 import { fetchUserQuery } from '@/api/user'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Order-List',
@@ -71,6 +90,7 @@ export default {
       list: null,
       total: null,
       currentList: [],
+      multipleSelection: [],
       listLoading: true,
       listQuery: {
         page: 1,
@@ -131,6 +151,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['userInfo']),
     pager: function() {
       const page = this.listQuery.page
       const limit = this.listQuery.limit
@@ -173,6 +194,24 @@ export default {
       } else {
         await this.getList(`name/${this.listQuery.name}`)
       }
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
+    async handleChangeStatus(status) {
+      if (this.multipleSelection.length === 0) {
+        return false
+      }
+      // const updateList = []
+      // this.multipleSelection.forEach(x => {
+      //   updateList.push(updateStock(x.id, { status }))
+      // })
+      // await Promise.all(updateList)
+      // if (this.userInfo.role === 0) {
+      //   await this.getList()
+      // } else {
+      //   await this.getList(`?where={"author":["${this.userInfo.id}"]}`)
+      // }
     },
     handleCurrentChange() {
     },
@@ -237,6 +276,9 @@ export default {
     .filter-search-item{
       width: 250px;
     }
+  }
+  .toolbar{
+    margin-bottom: 1rem;
   }
 </style>
 

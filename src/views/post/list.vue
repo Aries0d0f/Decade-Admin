@@ -200,7 +200,7 @@ export default {
         const userList = await this.queryUid(uidList)
         list.map(async(item, i) => {
           const user = userList.filter(x => x.id === userList[0].id)
-          list[i].author = user[0] || { username: 'unknow' }
+          list[i].author = user[0] || { username: 'unknown' }
         })
         this.list = list
         this.currentList = list
@@ -228,10 +228,18 @@ export default {
       }
     },
     async handleFilter() {
-      if (!this.listQuery.title || this.listQuery.title === '') {
-        await this.getList()
+      if (this.userInfo.role === 0) {
+        if (!this.listQuery.title || this.listQuery.title === '') {
+          await this.getList()
+        } else {
+          await this.getList(`title/${this.listQuery.title}`)
+        }
       } else {
-        await this.getList(`title/${this.listQuery.title}`)
+        if (!this.listQuery.title || this.listQuery.title === '') {
+          await this.getList(`?where={"author":["${this.userInfo.id}"]}`)
+        } else {
+          await this.getList(`title/${this.listQuery.title}?where={"author":["${this.userInfo.id}"]}`)
+        }
       }
     },
     handleCurrentChange(val) {

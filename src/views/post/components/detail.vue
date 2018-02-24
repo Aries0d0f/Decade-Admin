@@ -60,34 +60,10 @@
 
         <el-row :gutter="20" v-if="userInfo.role === 0">
           <el-col :span="12">
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>推薦商品串聯</span>
-              </div>
-              <el-form-item
-                v-for="(i, index) in relatedItems"
-                :label="'商品 ' + (index + 1)"
-                :key="index"
-                :prop="'item.' + index"
-              >
-                <el-autocomplete v-model="i.key" style="width:15rem" :fetch-suggestions="queryStock" @select="handleSelectStock" placeholder="請輸入商品名稱">
-                  <template slot-scope="props">
-                    <span>{{ props.item.name }}</span>
-                    <br>
-                    <span>$ {{ props.item.price.common }}</span>
-                  </template>
-                </el-autocomplete>
-                <el-button type="danger" icon="el-icon-delete" @click.prevent="removeDomain(i)"></el-button>
-                <div v-if="i.data">{{i.data.name}} - ${{i.data.price.common}}</div>
-              </el-form-item>
-
-              <el-form-item>
-                <el-button @click="addDomain">新增商品</el-button>
-                <span>(已輸入 {{relatedItems.length || 0}} 組，還可以增加 {{ 6 - relatedItems.length || 0}} 組)</span>
-              </el-form-item>
-            </el-card>
+            <RelatedStock ref="RelatedStock" :idList="postForm.related"></RelatedStock>
           </el-col>
           <el-col :span="12">
+            <RelatedPost ref="RelatedPost"></RelatedPost>
           </el-col>
         </el-row>
       </div>
@@ -100,9 +76,9 @@ import Tinymce from '@/components/Tinymce'
 import Upload from '@/components/Upload/singleImage2'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky'
+import RelatedStock from '@/components/RelatedCard/stock'
+import RelatedPost from '@/components/RelatedCard/post'
 import { fetchPost, createPost, updatePost, deletePost } from '@/api/post'
-import { querySearch } from '@/api/search'
-import { fetchStock } from '@/api/stock'
 import { mapGetters } from 'vuex'
 
 const defaultForm = {
@@ -124,7 +100,7 @@ const defaultForm = {
 
 export default {
   name: 'articleDetail',
-  components: { Tinymce, MDinput, Upload, Sticky },
+  components: { Tinymce, MDinput, Upload, Sticky, RelatedStock, RelatedPost },
   props: {
     isEdit: {
       type: Boolean,
@@ -213,10 +189,6 @@ export default {
     if (this.isEdit) {
       await this.fetchData()
       this.categoryTypes = [this.postForm.category, this.postForm.subCategory]
-      this.postForm.related.map(async x => {
-        const data = await fetchStock(x)
-        this.relatedItems.push({ key: x, data: { name: data.name, price: data.price }})
-      })
     } else {
       this.postForm = Object.assign({}, defaultForm)
     }
@@ -240,7 +212,7 @@ export default {
       this.postForm.author = this.userInfo.id
       this.postForm.region = 0
       this.postForm.status = status
-      this.postForm.related = this.relatedItems.map(x => x.key)
+      this.postForm.related = this.$refs.RelatedStock.relatedItems.map(x => x.key)
       this.loading = true
       try {
         if (this.isEdit) {
@@ -252,9 +224,9 @@ export default {
           await updatePost(this.postForm.id, data)
         } else {
           await createPost(this.postForm)
+          this.$router.push({ name: 'postList' })
         }
         this.$notify({ title: '成功', message: '發布成功', type: 'success', duration: 2000 })
-        this.$router.push({ name: 'postList' })
       } catch (err) {
         console.log(err)
       }
@@ -295,31 +267,6 @@ export default {
         this.loading = false
       }
     },
-    async queryStock(queryString, cb) {
-      if (!queryString) return cb()
-      const items = []
-      const list = await querySearch(queryString)
-      list.data.stock.map(x => {
-        items.push({ value: x.id || x._id, name: x.name, price: x.price, data: x })
-      })
-      cb(items)
-    },
-    async handleSelectStock(item) {
-      const i = this.relatedItems.map(x => x.key).indexOf(item.value)
-      this.relatedItems[i].data = item.data
-    },
-    removeDomain(item) {
-      var index = this.relatedItems.indexOf(item)
-      if (index !== -1) {
-        this.relatedItems.splice(index, 1)
-      }
-    },
-    addDomain() {
-      if (this.relatedItems.length > 5) {
-        return
-      }
-      this.relatedItems.push({ key: '' })
-    },
     handleSelectCategory(type) {
       this.postForm.category = type[0]
       this.postForm.subCategory = type[1]
@@ -339,6 +286,7 @@ export default {
   }
   .createPost-container {
     position: relative;
+    margin-bottom: 20vh;
     .createPost-main-container {
       padding: 40px 45px 20px 50px;
       .postInfo-container {
