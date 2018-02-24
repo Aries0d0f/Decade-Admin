@@ -51,7 +51,8 @@ export const asyncRouterMap = [
     meta: {
       title: '文章管理',
       icon: 'form',
-      auth: 4
+      auth: 4,
+      noCache: true
     },
     children: [
       {
@@ -59,7 +60,8 @@ export const asyncRouterMap = [
         component: _import('post/list'),
         name: 'postList',
         meta: {
-          title: '文章列表'
+          title: '文章列表',
+          noCache: true
         }
       },
       {
@@ -91,7 +93,8 @@ export const asyncRouterMap = [
     meta: {
       title: '商品管理',
       icon: 'example',
-      auth: 4
+      auth: 4,
+      noCache: true
     },
     children: [
       {
@@ -99,7 +102,8 @@ export const asyncRouterMap = [
         component: _import('stock/list'),
         name: 'StockList',
         meta: {
-          title: '商品列表'
+          title: '商品列表',
+          noCache: true
         }
       },
       {
@@ -138,7 +142,8 @@ export const asyncRouterMap = [
         component: _import('coupon/list'),
         name: 'CouponList',
         meta: {
-          title: '優惠券列表'
+          title: '優惠券列表',
+          noCache: true
         }
       },
       {
@@ -169,7 +174,8 @@ export const asyncRouterMap = [
     name: 'order',
     meta: {
       title: '訂單管理',
-      icon: 'tab'
+      icon: 'tab',
+      noCache: true
     },
     children: [
       {
@@ -177,7 +183,8 @@ export const asyncRouterMap = [
         component: _import('order/list'),
         name: 'orderList',
         meta: {
-          title: '訂單列表'
+          title: '訂單列表',
+          noCache: true
         }
       },
       {

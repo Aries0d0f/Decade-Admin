@@ -5,7 +5,25 @@
       <el-input style="width: 250px;" class="filter-item" placeholder="文章標題" v-model="listQuery.title"></el-input>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜尋</el-button>
     </div>
-    <el-table :key='tableKey' :data="currentList.slice(pager.start, pager.end)" v-loading="listLoading" :header-row-style="{ 'background-color': '#ebeef5' }" empty-text="查無資料" element-loading-text="載入中..." fit style="width: 100%">
+    <div class="toolbar">
+      <el-button type="warning" @click="handleChangeStatus(999)">回收桶</el-button>
+      <el-button type="success" @click="handleChangeStatus(1)" v-if="userInfo.role === 0">審核完成</el-button>
+      <el-button type="success" @click="handleChangeStatus(2)" v-else>送出審核</el-button>
+    </div>
+    <el-table 
+      :key='tableKey'
+      :data="currentList.slice(pager.start, pager.end)"
+      v-loading="listLoading"
+      :header-row-style="{ 'background-color': '#ebeef5' }"
+      empty-text="查無資料"
+      element-loading-text="載入中..."
+      fit
+      style="width: 100%"
+      @selection-change="handleSelectionChange">
+      <el-table-column
+        type="selection"
+        width="55">
+      </el-table-column>
       <el-table-column label="文章標題">
         <template slot-scope="scope">
           <span>{{scope.row.title}}</span>
@@ -23,7 +41,7 @@
       </el-table-column>
       <el-table-column label="狀態" width="80">
         <template slot-scope="scope">
-          <span>{{scope.row.status === 1 ? '已發佈': '草稿'}}</span>
+          <span>{{scope.row.status | PostStatusLabel}}</span>
         </template>
       </el-table-column>
       <el-table-column label="發布日期" width="120">
@@ -40,8 +58,7 @@
         <template slot-scope="scope">
           <el-button size="mini">分享</el-button>
           <el-button size="mini" @click="$router.push({ name: 'postEdit', params: { id: scope.row.id || scope.row._id } })">編輯</el-button>
-          <el-button size="mini" @click="openTo(scope.row.id || scope.row._id)">檢視</el-button>
-          <el-button size="mini" type="danger">刪除</el-button>
+          <el-button size="mini" @click="openTo(scope.row.id || scope.row._id)">檢視</el-button>          
         </template>
       </el-table-column>
     </el-table>
@@ -54,11 +71,12 @@
 </template>
 
 <script>
-import { fetchPostList } from '@/api/post'
+import { fetchPostList, updatePost } from '@/api/post'
 import { fetchUserQuery } from '@/api/user'
+import { mapGetters } from 'vuex'
 
 export default {
-  name: 'Order-List',
+  name: 'Post-List',
   data() {
     return {
       tableKey: 0,
@@ -66,6 +84,7 @@ export default {
       currentList: [],
       total: null,
       listLoading: true,
+      multipleSelection: [],
       listQuery: {
         page: 1,
         limit: 30,
@@ -139,19 +158,18 @@ export default {
           ]
         }
       ],
-      statusType: [
-        { key: 0, label: '已產生' },
-        { key: 1, label: '已付款' },
-        { key: 2, label: '已發貨' },
-        { key: 3, label: '完成' },
-        { key: 4, label: '失敗' }
-      ]
+      statusType: ['草稿', '已刊登', '審核中']
     }
   },
   async created() {
-    await this.getList()
+    if (this.userInfo.role === 0) {
+      await this.getList()
+    } else {
+      await this.getList(`?where={"author":["${this.userInfo.id}"]}`)
+    }
   },
   computed: {
+    ...mapGetters(['userInfo']),
     pager: function() {
       const page = this.listQuery.page
       const limit = this.listQuery.limit
@@ -230,13 +248,23 @@ export default {
       const res = await fetchUserQuery(`where={"id":[${idArrStr}""]}`)
       return res
     },
-    handleDelete(row) {
-      this.$notify({
-        title: '成功',
-        message: '删除成功',
-        type: 'success',
-        duration: 2000
+    async handleChangeStatus(status) {
+      if (this.multipleSelection.length === 0) {
+        return false
+      }
+      const updateList = []
+      this.multipleSelection.forEach(x => {
+        updateList.push(updatePost(x.id, { status }))
       })
+      await Promise.all(updateList)
+      if (this.userInfo.role === 0) {
+        await this.getList()
+      } else {
+        await this.getList(`?where={"author":["${this.userInfo.id}"]}`)
+      }
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
     },
     openTo(id) {
       window.open(`https://decade.global/magazine/post/${id}`, '_blank')
@@ -249,6 +277,9 @@ export default {
   .form-title{
     color: #b27536;
     font-weight: normal;
+  }
+  .toolbar{
+    margin-bottom: 1rem;
   }
 </style>
 

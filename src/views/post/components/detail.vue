@@ -1,20 +1,29 @@
 <template>
-  <div class="createPost-container" v-loading="loading">
-    <el-form class="form-container" :model="postForm" v-if="!loading">
+  <div class="createPost-container">
+    <el-form class="form-container" :model="postForm" v-loading="loading">
       <sticky :className="'sub-navbar '+postForm.status">
         <template v-if="fetchSuccess">
-          <span style="color: #fff;">
-            草稿
-            <el-switch v-model="isDraft"></el-switch>
-          </span>
-          <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm()">發布</el-button>
+          <span class="post-status">狀態: {{postForm.status | PostStatusLabel}}</span>
+          <el-button v-loading="loading" style="margin-left: 10px;" v-if="userInfo.role === 0" type="success" @click="submitForm(1)">
+            審核完成
+          </el-button>
+          <el-button v-loading="loading" style="margin-left: 10px;" v-else type="success" @click="submitForm(2)">
+            送出審核
+          </el-button>
           <el-button v-loading="loading" v-if="isEdit" @click="viewDraft" type="warning">預覽草稿</el-button>
+          <template v-if="this.isEdit">
+            <el-button v-loading="loading" @click="toDraft" type="info">草稿</el-button>
+            <el-button v-loading="loading" @click="toRecycle" v-if="postForm.status !== 999" type="danger">回收桶</el-button>
+            <el-button v-loading="loading" @click="toDelete" v-else type="danger">刪除</el-button>
+            <el-button v-loading="loading" @click="toRecovery" v-if="postForm.status === 999" type="info">復原</el-button>
+          </template>
         </template>
+
         <template v-else>
           <el-tag>獲取失敗，請重新整理頁面</el-tag>
         </template>
       </sticky>
-      <div class="createPost-main-container" v-loading="loading">
+      <div class="createPost-main-container" v-if="!loading">
         <el-form-item style="margin-bottom: 40px;" prop="title">
           <MDinput name="name" v-model="postForm.title" required :maxlength="100">
             標題
@@ -49,7 +58,7 @@
 
         <hr>
 
-        <el-row :gutter="20">
+        <el-row :gutter="20" v-if="userInfo.role === 0">
           <el-col :span="12">
             <el-card class="box-card">
               <div slot="header" class="clearfix">
@@ -91,7 +100,7 @@ import Tinymce from '@/components/Tinymce'
 import Upload from '@/components/Upload/singleImage2'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky'
-import { fetchPost, createPost, updatePost } from '@/api/post'
+import { fetchPost, createPost, updatePost, deletePost } from '@/api/post'
 import { querySearch } from '@/api/search'
 import { fetchStock } from '@/api/stock'
 import { mapGetters } from 'vuex'
@@ -129,7 +138,6 @@ export default {
       loading: false,
       categoryTypes: [],
       relatedItems: [],
-      isDraft: true,
       rules: {},
       options: [
         {
@@ -222,17 +230,16 @@ export default {
       this.loading = true
       try {
         this.postForm = await fetchPost(this.$route.params.id)
-        this.isDraft = this.postForm.status === 1 ? 0 : 1
       } catch (err) {
         this.fetchSuccess = false
         console.log(err)
       }
       this.loading = false
     },
-    async submitForm() {
+    async submitForm(status) {
       this.postForm.author = this.userInfo.id
       this.postForm.region = 0
-      this.postForm.status = this.isDraft ? 0 : 1
+      this.postForm.status = status
       this.postForm.related = this.relatedItems.map(x => x.key)
       this.loading = true
       try {
@@ -255,6 +262,38 @@ export default {
     },
     viewDraft() {
       window.open(`https://decade.global/magazine/post/${this.$route.params.id}`, '_blank')
+    },
+    async toDraft() {
+      this.loading = true
+      this.postForm.status = 0
+      await updatePost(this.postForm.id, { status: 0 })
+      this.loading = false
+    },
+    async toRecycle() {
+      this.loading = true
+      this.postForm.status = 999
+      await updatePost(this.postForm.id, { status: 999 })
+      this.loading = false
+    },
+    async toRecovery() {
+      this.loading = true
+      this.postForm.status = 2
+      await updatePost(this.postForm.id, { status: 2 })
+      this.loading = false
+    },
+    async toDelete() {
+      const check = await this.$confirm('是否確定要刪除該筆資料?', '提示', {
+        confirmButtonText: '確定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+      if (check) {
+        this.loading = true
+        await deletePost(this.postForm.id)
+        this.$notify({ title: '成功', message: '刪除成功', type: 'success', duration: 2000 })
+        this.$router.push({ name: 'postList' })
+        this.loading = false
+      }
     },
     async queryStock(queryString, cb) {
       if (!queryString) return cb()
@@ -328,6 +367,11 @@ export default {
       right: -10px;
       top: 0px;
     }
+  }
+  .post-status{
+    position: absolute;
+    left: 3rem;
+    color: #fff;
   }
 </style>
 

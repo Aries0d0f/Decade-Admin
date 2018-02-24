@@ -110,3 +110,13 @@ export const LocalePrice = (price) => {
 export const LocalTime = (time) => {
   return new Date(time).toISOString().substr(0, 10)
 }
+
+export const PostStatusLabel = (status) => {
+  const statusList = [
+    { value: 0, label: '草稿' },
+    { value: 1, label: '已刊登' },
+    { value: 2, label: '審核中' },
+    { value: 999, label: '回收桶' }
+  ]
+  return statusList.find(x => x.value === status).label
+}
