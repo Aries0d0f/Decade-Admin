@@ -46,3 +46,8 @@ export const patchUserData = async(uid, data) => {
   })
   return res.data
 }
+
+export const deleteUser = async(id) => {
+  const res = await request({ url: `/user/${id}`, method: 'DELETE' })
+  return res.data
+}

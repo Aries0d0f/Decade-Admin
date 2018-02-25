@@ -14,12 +14,13 @@ export const constantRouterMap = [
   {
     path: '',
     component: Layout,
+    // hidden: true,
     redirect: '/dashboard',
     children: [{
-      path: '/dashboard',
+      path: 'dashboard',
       component: _import('dashboard/index'),
       name: 'dashboard',
-      meta: { title: '首頁', icon: 'dashboard', noCache: true }
+      meta: { title: '首頁', icon: 'dashboard', noCache: true, auth: false }
     }]
   },
   {
@@ -42,7 +43,6 @@ const router = new Router({
 export default router
 
 export const asyncRouterMap = [
-  { path: '*', redirect: '/404', hidden: true, meta: { auth: false }},
   {
     path: '/post',
     component: Layout,
@@ -93,7 +93,7 @@ export const asyncRouterMap = [
     meta: {
       title: '商品管理',
       icon: 'example',
-      auth: 4,
+      auth: 0,
       noCache: true
     },
     children: [
@@ -134,6 +134,7 @@ export const asyncRouterMap = [
     name: 'Coupon',
     meta: {
       title: '優惠券',
+      auth: 0,
       icon: 'example'
     },
     children: [
@@ -173,6 +174,7 @@ export const asyncRouterMap = [
     redirect: '/order/order-list',
     name: 'order',
     meta: {
+      auth: 3,
       title: '訂單管理',
       icon: 'tab',
       noCache: true
@@ -198,5 +200,30 @@ export const asyncRouterMap = [
         }
       }
     ]
-  }
+  },
+  {
+    path: '/user',
+    component: Layout,
+    redirect: '/user/user-list',
+    name: 'user',
+    meta: {
+      auth: 0,
+      title: '會員管理',
+      icon: 'tab',
+      noCache: true
+    },
+    children: [
+      {
+        path: 'user-list',
+        component: _import('user/list'),
+        name: 'userList',
+        meta: {
+          title: '會員管理',
+          icon: 'user',
+          noCache: true
+        }
+      }
+    ]
+  },
+  { path: '*', redirect: '/404', hidden: true, meta: { auth: false }}
 ]

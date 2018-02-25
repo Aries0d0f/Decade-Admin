@@ -176,8 +176,6 @@ import Sticky from '@/components/Sticky'
 import RelatedStock from '@/components/RelatedCard/stock'
 import RelatedPost from '@/components/RelatedCard/post'
 import { fetchStock, createStock, updateStock } from '@/api/stock'
-import { fetchPost } from '@/api/post'
-import { querySearch } from '@/api/search'
 
 const defaultForm = {
   type: undefined,
@@ -408,7 +406,6 @@ export default {
       const postData = JSON.parse(JSON.stringify(this.postForm))
       postData.seller = [this.userInfo.id]
       postData.related = this.$refs.RelatedPost.relatedItems.map(x => x.key)
-      
       postData.catalog = this.categoryClass[1] !== -1 ? this.categoryClass[1] : -1
       postData.status = this.isDraft ? 0 : 1
       postData.info.type = this.categoryClass[0]

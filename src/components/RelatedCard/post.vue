@@ -46,7 +46,7 @@ export default {
     if (this.idList) {
       this.idList.forEach(async x => {
         const data = await fetchPost(x)
-        this.relatedItems.push({ key: x, data: { title: data.title, meta: { image: data.meta.image } }})
+        this.relatedItems.push({ key: x, data: { title: data.title, meta: { image: data.meta.image }}})
       })
     }
   },

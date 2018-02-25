@@ -9,12 +9,12 @@
       </div>
       <div class="bullshit">
         <div class="bullshit__oops">OOPS!</div>
-        <div class="bullshit__info">版权所有
-          <a class='link-type' href='https://wallstreetcn.com' target='_blank'>华尔街见闻</a>
+        <div class="bullshit__info">版權所有
+          <a class='link-type' href='https://wallstreetcn.com' target='_blank'>華爾街見聞</a>
         </div>
         <div class="bullshit__headline">{{ message }}</div>
-        <div class="bullshit__info">请检查您输入的网址是否正确，请点击以下按钮返回主页或者发送错误报告</div>
-        <a href="/" class="bullshit__return-home">返回首页</a>
+        <div class="bullshit__info">請檢查您輸入的網址是否正確，請點擊以下按鈕返回主頁或者發送錯誤報告</div>
+        <a href="/" class="bullshit__return-home">返回首頁</a>
       </div>
     </div>
   </div>

@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { fetchStockList, deleteStock, updateStock } from '@/api/stock'
+import { fetchStockList, deleteStock } from '@/api/stock'
 import { fetchUserQuery } from '@/api/user'
 import { mapGetters } from 'vuex'
 

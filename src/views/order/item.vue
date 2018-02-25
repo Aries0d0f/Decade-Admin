@@ -56,7 +56,7 @@
             <el-table :data="stocks" v-if="stocks.length > 0" stripe style="width: 100%" header-row-style="background-color: #ebeef5;">
               <el-table-column align="left" prop="id" label="商品編號" width="220"></el-table-column>
               <el-table-column align="left" prop="name" label="品名"></el-table-column>
-              <el-table-column align="center" prop="price" label="金額" width="100"></el-table-column>
+              <!-- <el-table-column align="center" prop="price" label="金額" width="100"></el-table-column> -->
               <el-table-column align="center" prop="count" label="數量" width="100"></el-table-column>
             </el-table>
             <el-table :data="tickets" v-if="tickets.length > 0" stripe style="margin-top:1rem;width: 100%" header-row-style="background-color: #ebeef5;">
@@ -68,7 +68,7 @@
             
             <div class="actions">
               <el-button v-if="data.status === 0" type="info" disabled>等待付款</el-button>
-              <el-button v-else-if="data.status === 1" type="warning">出貨</el-button>
+              <el-button v-else-if="data.status === 1" @click="handleShipping" type="warning">出貨</el-button>
               <el-button v-else type="info" disabled>已出貨</el-button>
             </div>
           </el-card>
@@ -79,7 +79,7 @@
 </template>
 
 <script>
-  import { fetchOrder } from '@/api/order'
+  import { fetchOrder, updateOrder } from '@/api/order'
   import { fetchStock } from '@/api/stock'
 
   export default {
@@ -132,6 +132,16 @@
         }
         this.data = data
         this.coupons = coupons
+      },
+      async handleShipping() {
+        try {
+          await this.$confirm('請確認是否已將商品出貨?', '提示', { confirmButtonText: '確定', cancelButtonText: '取消', type: 'warning' })
+          await updateOrder(this.data.id, { status: 2 })
+          this.data.status = 2
+          this.$notify({ title: '成功', message: '出貨成功', type: 'success', duration: 1000 })
+        } catch (err) {
+          console.log(err)
+        }
       },
       filterStatus(status) {
         return this.statusType.filter(x => status === x.key)[0].label

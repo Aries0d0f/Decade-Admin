@@ -194,7 +194,12 @@ export default {
           return
         }
         this.total = list.length
-        if (list.length === 0) return
+        if (list.length === 0) {
+          this.list = list
+          this.currentList = list
+          this.listLoading = false
+          return
+        }
         const uidList = []
         list.map(async(item, i) => uidList.push(item.author))
         const userList = await this.queryUid(uidList)

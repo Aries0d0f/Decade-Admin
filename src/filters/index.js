@@ -120,3 +120,24 @@ export const PostStatusLabel = (status) => {
   ]
   return statusList.find(x => x.value === status).label
 }
+
+export const UserRoleLabel = (role) => {
+  const roleList = [
+    { value: 0, label: '管理員' },
+    { value: 3, label: '簽約廠商' },
+    { value: 4, label: '簽約編輯' },
+    { value: 999, label: '一般會員' }
+  ]
+  return roleList.find(x => x.value === role).label
+}
+
+export const OrderStatusLabel = (status) => {
+  const list = [
+    { value: 0, label: '已產生' },
+    { value: 1, label: '已付款' },
+    { value: 2, label: '已發貨' },
+    { value: 3, label: '完成' },
+    { value: 4, label: '失敗' }
+  ]
+  return list.find(x => x.value === status).label
+}

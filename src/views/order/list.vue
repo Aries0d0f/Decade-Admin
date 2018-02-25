@@ -47,6 +47,11 @@
           <span>{{scope.row.price.orderTotal | LocalePrice}}</span>
         </template>
       </el-table-column>
+      <el-table-column align="center" label="狀態" width="100">
+        <template slot-scope="scope">
+          <span>{{scope.row.status | OrderStatusLabel}}</span>
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="收件人" width="200">
         <template slot-scope="scope">
           <div>{{scope.row.receiver.name}}</div>
@@ -62,7 +67,7 @@
       </el-table-column>
       <el-table-column align="center" label="動作" width="240" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="success" size="mini">出貨</el-button>
+          <el-button type="success" v-if="scope.row.status === 1" size="mini" @click="handleShipping(scope.row.id)">出貨</el-button>
           <el-button type="primary" size="mini" @click="$router.push({ name: 'orderItem', params: { id: scope.row.id } })">查看</el-button>
         </template>
       </el-table-column>
@@ -89,7 +94,7 @@
 </template>
 
 <script>
-import { fetchOrderList } from '@/api/order'
+import { fetchOrderList, updateOrder } from '@/api/order'
 import { fetchStockQuery } from '@/api/stock'
 
 export default {
@@ -105,14 +110,7 @@ export default {
         page: 1,
         limit: 30,
         sort: '+id'
-      },
-      statusType: [
-        { key: 0, label: '已產生' },
-        { key: 1, label: '已付款' },
-        { key: 2, label: '已發貨' },
-        { key: 3, label: '完成' },
-        { key: 4, label: '失敗' }
-      ]
+      }
     }
   },
   filters: {
@@ -121,7 +119,7 @@ export default {
     },
     LocalTime(time) {
       return new Date(time).toISOString().substr(0, 10)
-    }
+    },
   },
   async created() {
     await this.getList()
@@ -166,6 +164,16 @@ export default {
     },
     testFilter(status) {
       return this.statusType.filter(x => status === x.key)[0].label
+    },
+    async handleShipping(id) {
+      try {
+        await this.$confirm('請確認是否已將商品出貨?', '提示', { confirmButtonText: '確定', cancelButtonText: '取消', type: 'warning' })
+        await updateOrder(id, { status: 2 })
+        this.$notify({ title: '成功', message: '出貨成功', type: 'success', duration: 1000 })
+        await this.getList()
+      } catch (err) {
+        console.log(err)
+      }
     },
     async queryStockIdList(list) {
       if (list.length === 0) return false
