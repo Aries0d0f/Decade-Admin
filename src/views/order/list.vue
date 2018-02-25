@@ -119,7 +119,7 @@ export default {
     },
     LocalTime(time) {
       return new Date(time).toISOString().substr(0, 10)
-    },
+    }
   },
   async created() {
     await this.getList()

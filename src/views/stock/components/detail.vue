@@ -48,6 +48,12 @@
           <span>(已輸入 {{postForm.tag.length || 0}} 組，還可以增加 {{ 5 - (postForm.tag.length || 0)}} 組)</span>
         </el-form-item>
 
+        <el-form-item style="margin-bottom: 40px;" label-width="60px" label="廠商">
+          <el-select v-model="postForm.seller" style="width: 100%" @remove-tag="handleDeleteUser" @change="remoteUser" v-loading="loadingUser" loading-text="檢查會員中..." :loading="loadingUser" multiple filterable :allow-create="!loadingUser" default-first-option placeholder="請輸入廠商編號" no-data-text="請輸入廠商編號" no-match-text="查無廠商">
+            <el-option v-for="item in postForm.seller" :key="item.value" :label="item.value" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+
         <el-form-item style="margin-bottom: 40px;">
           <h4 class="form-subtitle">商品規格</h4>
           <el-collapse class="spec-collapse">
@@ -105,10 +111,7 @@
           <h4 class="form-subtitle">商品描述</h4>
           <el-form-item class="editor-container" prop="discription">
             <tinymce :height=400 ref="editor" v-model="postForm.info.discription"></tinymce>
-          </el-form-item>   
-          <!-- <div class="editor-container" prop="summary">
-            <tinymce :height=400 ref="editor" v-model="postForm.info.discription"></tinymce>
-          </div> -->
+          </el-form-item>
         </el-form-item>
 
         <el-form-item style="margin-bottom: 40px;">
@@ -176,6 +179,7 @@ import Sticky from '@/components/Sticky'
 import RelatedStock from '@/components/RelatedCard/stock'
 import RelatedPost from '@/components/RelatedCard/post'
 import { fetchStock, createStock, updateStock } from '@/api/stock'
+import { fetchUser } from '@/api/user'
 
 const defaultForm = {
   type: undefined,
@@ -206,7 +210,7 @@ const defaultForm = {
     }
   ],
   related: [],
-  seller: []
+  seller: ['5a82af4d53645f57ee68d0c3']
 }
 
 export default {
@@ -227,6 +231,7 @@ export default {
       dialogImageUrl: '',
       isTicket: false,
       dialogVisible: false,
+      loadingUser: false,
       uploadUrl: 'https://decade.global/img',
       itemContent: '',
       imgList: [],
@@ -404,7 +409,7 @@ export default {
     async submitForm() {
       if (!await this.validateForm()) return
       const postData = JSON.parse(JSON.stringify(this.postForm))
-      postData.seller = [this.userInfo.id]
+      // postData.seller = [this.userInfo.id]
       postData.related = this.$refs.RelatedPost.relatedItems.map(x => x.key)
       postData.catalog = this.categoryClass[1] !== -1 ? this.categoryClass[1] : -1
       postData.status = this.isDraft ? 0 : 1
@@ -435,7 +440,7 @@ export default {
       if (!await this.validateForm()) return
       const postData = Object.assign({}, this.postForm)
       this.isDraft = true
-      postData.seller = [this.userInfo.id]
+      // postData.seller = [this.userInfo.id]
       postData.related = this.$refs.RelatedPost.relatedItems.map(x => x.key)
       postData.catalog = this.categoryClass[1] !== -1 ? this.categoryClass[1] : -1
       postData.status = 0
@@ -516,6 +521,33 @@ export default {
         this.imgList.push({ name: this.imgList.length, url: res.data.url })
         this.postForm.img.push(res.data.url)
       }, 5000)
+    },
+    async handleDeleteUser(item) {
+      if (this.postForm.seller.length > 1 && item.value === '5a82af4d53645f57ee68d0c3') {
+        this.$message.error('錯誤：無法移除 Decade 預設賣家！')
+        this.postForm.seller.unshift('5a82af4d53645f57ee68d0c3')
+      }
+    },
+    async remoteUser(list) {
+      this.loadingUser = true
+      const uid = list[list.length - 1]
+      if (!uid || uid === '5a82af4d53645f57ee68d0c3') {
+        this.$message.error('錯誤：無法移除 Decade 預設賣家！')
+        this.postForm.seller = ['5a82af4d53645f57ee68d0c3']
+        this.loadingUser = false
+        return
+      }
+      try {
+        const user = await fetchUser(uid)
+        if (user.role !== 3) {
+          this.$message.error('錯誤：該會員不是 Decade 簽約廠商！')
+          this.postForm.seller.splice(-1, 1)
+        }
+      } catch (error) {
+        this.postForm.seller.splice(-1, 1)
+        this.$message.error('錯誤：查無該廠商！')
+      }
+      this.loadingUser = false
     }
   }
 }
