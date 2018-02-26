@@ -4,9 +4,9 @@
     <div class="filter-container">
       <el-input @keyup.enter.native="handleFilter" style="width: 250px;" class="filter-item" placeholder="訂單編號" v-model="listQuery.id"></el-input>
       <el-select clearable style="width: 120px" class="filter-item" v-model="listQuery.status" placeholder="訂單狀況">
-        <el-option v-for="item in statusType" :key="item.key" :label="item.label" :value="item.key"></el-option>
+        <el-option v-for="item in orderStatus" :key="item.key" :label="item.label" :value="item.value"></el-option>
       </el-select>
-      <el-date-picker
+      <!-- <el-date-picker
         v-model="listQuery.date"
         type="daterange"
         class="filter-item"
@@ -15,7 +15,7 @@
         end-placeholder="結束日期"
         :default-value="new Date().toISOString().substr(0, 10)"
       >
-      </el-date-picker>
+      </el-date-picker> -->
       <el-button class="filter-item filter-search" type="info" icon="el-icon-search" @click="handleFilter">查詢</el-button>
     </div>
     <el-table :key='tableKey' :data="currentList.slice(pager.start, pager.end)" v-loading="listLoading" :header-row-style="{ 'background-color': '#ebeef5' }" empty-text="查無資料" element-loading-text="載入中..." fit style="width: 100%">
@@ -86,7 +86,7 @@
     </el-table>
 
     <div class="pagination-container">      
-      <el-pagination background @current-change="handleCurrentChange" :current-page.sync="listQuery.page"
+      <el-pagination background :current-page.sync="listQuery.page"
         :page-sizes="[listQuery.limit]" :page-size="listQuery.limit" layout="prev, pager, next, jumper" :total="total">
       </el-pagination>
     </div>
@@ -106,9 +106,18 @@ export default {
       total: null,
       currentList: [],
       listLoading: true,
+      orderStatus: [
+        { value: -1, label: '全部' },
+        { value: 0, label: '已產生' },
+        { value: 1, label: '已付款' },
+        { value: 2, label: '已發貨' },
+        { value: 3, label: '完成' },
+        { value: 4, label: '失敗' }
+      ],
       listQuery: {
         page: 1,
         limit: 30,
+        status: -1,
         sort: '+id'
       }
     }
@@ -135,10 +144,10 @@ export default {
     }
   },
   methods: {
-    async getList() {
+    async getList(query) {
       this.listLoading = true
       this.currentList = []
-      const list = await fetchOrderList()
+      const list = await fetchOrderList(query || '')
       this.total = list.length
       if (list.length === 0) {
         this.currentList = []
@@ -163,7 +172,7 @@ export default {
       this.listLoading = false
     },
     testFilter(status) {
-      return this.statusType.filter(x => status === x.key)[0].label
+      return this.orderStatus.find(x => status === x.value).label
     },
     async handleShipping(id) {
       try {
@@ -193,9 +202,14 @@ export default {
       const res = await fetchStockQuery(`where={"id":[${idArrStr}""]}`)
       return res
     },
-    handleFilter() {
-    },
-    handleCurrentChange() {
+    async handleFilter() {
+      if (this.listQuery.id) {
+        await this.getList(`?where={"id":["${this.listQuery.id}"]}`)
+      } else if (this.listQuery.status === -1) {
+        await this.getList()
+      } else {
+        await this.getList(`?where={"status":["${this.listQuery.status}"]}`)
+      }
     },
     handleDelete(row) {
       this.$notify({

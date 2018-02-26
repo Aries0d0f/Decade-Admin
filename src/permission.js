@@ -1,23 +1,15 @@
 import router from './router'
 import store from './store'
 import { Message } from 'element-ui'
-import NProgress from 'nprogress' // progress bar
-import 'nprogress/nprogress.css'// progress bar style
-import { getToken } from '@/utils/auth' // getToken from cookie
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+import { getToken } from '@/utils/auth'
 
-NProgress.configure({ showSpinner: false })// NProgress Configuration
-
-// permissiom judge function
-// function hasPermission(roles, permissionRoles) {
-//   if (roles.indexOf('admin') >= 0) return true // admin permission passed directly
-//   if (!permissionRoles) return true
-//   return roles.some(role => permissionRoles.indexOf(role) >= 0)
-// }
+NProgress.configure({ showSpinner: false })
 
 const whiteList = ['/login', '/authredirect']// no redirect whitelist
 
 router.beforeEach(async(to, from, next) => {
-  console.log(to.path)
   NProgress.start()
   next()
   if (getToken()) {
@@ -42,12 +34,12 @@ router.beforeEach(async(to, from, next) => {
     if (whiteList.indexOf(to.path) !== -1) {
       next()
     } else {
-      next('/login') // 否则全部重定向到登录页
-      NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
+      next('/login')
+      NProgress.done()
     }
   }
 })
 
 router.afterEach(() => {
-  NProgress.done() // finish progress bar
+  NProgress.done()
 })
