@@ -427,9 +427,9 @@ export default {
           await updateStock(this.$route.params.id, postData)
         } else {
           await createStock(postData)
-          this.$router.push({ name: 'StockList' })
         }
         this.$notify({ title: '成功', message: '發布成功', type: 'success', duration: 2000 })
+        this.$router.push({ name: 'StockList' })
       } catch (err) {
         this.$notify({ title: '失敗', message: '發布失敗，伺服器錯誤！', type: 'error', duration: 2000 })
         console.log(err)

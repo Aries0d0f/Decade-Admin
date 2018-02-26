@@ -63,7 +63,7 @@
             <RelatedStock ref="RelatedStock" :idList="postForm.related"></RelatedStock>
           </el-col>
           <el-col :span="12">
-            <RelatedPost ref="RelatedPost"></RelatedPost>
+            <RelatedPost ref="RelatedPost" :idList="postForm.related"></RelatedPost>
           </el-col>
         </el-row>
       </div>
@@ -224,8 +224,8 @@ export default {
           await updatePost(this.postForm.id, data)
         } else {
           await createPost(this.postForm)
-          this.$router.push({ name: 'postList' })
         }
+        this.$router.push({ name: 'postList' })
         this.$notify({ title: '成功', message: '發布成功', type: 'success', duration: 2000 })
       } catch (err) {
         console.log(err)
