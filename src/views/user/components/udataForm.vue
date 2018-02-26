@@ -25,6 +25,11 @@
             <el-form-item v-if="userInfo.role === 0 || userInfo.role === 4" style="margin-bottom: 40px;" prop="intro" label="介紹">
               <el-input type="textarea" v-model="postForm.intro" :autosize="{ minRows: 4 }"></el-input>
             </el-form-item>
+            <el-form-item style="margin-bottom: 40px;" label-width="80px" label="相關帳號" v-if="userInfo.role === 0 || userInfo.role === 3">
+              <el-select v-model="postForm.relatedSeller" style="width: 100%" @change="remoteUser" v-loading="loadingUser" loading-text="檢查會員中..." :loading="loadingUser" multiple filterable :allow-create="!loadingUser" default-first-option placeholder="請輸入廠商編號" no-data-text="請輸入廠商編號" no-match-text="查無廠商">
+                <el-option v-for="item in postForm.relatedSeller" :key="item.value" :label="item.value" :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
           </el-col>
         </el-row>
       </div>
@@ -39,11 +44,13 @@ import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky'
 import { fetchUData, patchUData } from '@/api/udata'
 import { mapGetters } from 'vuex'
+import { fetchUser } from '@/api/user'
 
 const defaultForm = {
   name: undefined,
   photo: undefined,
-  intro: undefined
+  intro: undefined,
+  relatedSeller: undefined
 }
 
 export default {
@@ -59,6 +66,7 @@ export default {
     return {
       postForm: Object.assign({}, defaultForm),
       fetchSuccess: true,
+      loadingUser: false,
       loading: false,
       rules: {}
     }
@@ -96,6 +104,21 @@ export default {
         console.log(err)
       }
       this.loading = false
+    },
+    async remoteUser(list) {
+      this.loadingUser = true
+      const uid = list[list.length - 1]
+      if (!uid || list.length === 0) {
+        this.loadingUser = false
+        return
+      }
+      try {
+        await fetchUser(uid)
+      } catch (error) {
+        this.postForm.relatedSeller.splice(-1, 1)
+        this.$message.error('錯誤：查無該會員！')
+      }
+      this.loadingUser = false
     }
   }
 }
