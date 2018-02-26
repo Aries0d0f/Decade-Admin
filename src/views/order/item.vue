@@ -45,7 +45,12 @@
             </el-row>
             <el-row class="table-row">
               <el-col :span="4" class="table-label">運單號</el-col>
-              <el-col :span="20" class="table-content">{{data.logisticCode.name}} - {{data.logisticCode.code}}</el-col>
+              <el-col :span="20" class="table-content">
+                <div v-for="(item, i) in data.logisticCode" :key="i" style="margin-bottom:.5rem;">
+                  {{item.name}} - {{item.code}}
+                  <div>{{item.comment}}</div>
+                </div>
+              </el-col>
             </el-row>
           </el-card>
         </div>
@@ -76,11 +81,38 @@
         </div>
       </el-col>
     </el-row>
-    <el-dialog
-      title="提示"
-      :visible.sync="dialogVisible"
-      width="30%">
-      <el-select
+    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
+      <el-collapse class="spec-collapse">
+        <el-form :model="logisticCode" ref="logisticCode">
+          <el-form-item
+            v-for="(item, index) in logisticCode"
+            v-model="logisticCode"
+            :key="index"
+            style="margin-left: 1rem;"
+          >
+            <el-collapse-item :title="`出貨單號 #${index + 1}`" :name="index">
+                
+              <el-select
+                v-model="item.name"
+                filterable
+                allow-create
+                default-first-option
+                placeholder="請輸入運送方式"
+                style="margin-bottom:.5rem;">
+                <el-option v-for="item in defalutLogistic" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+              <el-input v-model="item.code" style="margin-bottom:.5rem;" placeholder="請輸入運單號"></el-input>
+              <el-input type="textarea" v-model="item.comment" style="margin-bottom:.5rem;" placeholder="請輸入備註"></el-input>
+
+              <el-button type="danger" class="delete-btn" icon="el-icon-delete" @click.prevent="removeSpec(index)"></el-button>
+            </el-collapse-item>
+          </el-form-item>
+        </el-form>
+      </el-collapse>
+      <el-button @click="addSpec">新增規格</el-button>     
+      
+       
+      <!-- <el-select
         v-model="logisticCode.name"
         filterable
         allow-create
@@ -89,7 +121,10 @@
         style="margin-bottom:.5rem;">
         <el-option v-for="item in defalutLogistic" :key="item.value" :label="item.label" :value="item.value"></el-option>
       </el-select>
-      <el-input v-model="logisticCode.code" placeholder="請輸入運單號"></el-input>
+      <el-input v-model="logisticCode.code" style="margin-bottom:.5rem;" placeholder="請輸入運單號"></el-input>
+      <el-input type="textarea" v-model="logisticCode.comment" placeholder="請輸入備註"></el-input> -->
+
+
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="handleSetLogisticCode">確 定</el-button>
@@ -116,12 +151,13 @@
           { value: '黑貓', label: '黑貓' },
           { value: '新竹貨運', label: '新竹貨運' },
           { value: '宅配通', label: '宅配通' },
-          { value: '嘉里大榮', label: '嘉里大榮' },
+          { value: '嘉里大榮', label: '嘉里大榮' }
         ],
-        logisticCode: {
+        logisticCode: [{
           name: '',
-          code: ''
-        },
+          code: '',
+          comment: ''
+        }],
         statusType: [
           { key: 0, label: '已產生' },
           { key: 1, label: '已付款' },
@@ -166,14 +202,15 @@
           this.tickets = tickets
         }
         this.data = data
+        this.logisticCode = data.logisticCode
         this.coupons = coupons
       },
       async handleSetLogisticCode() {
         try {
-          if (!this.logisticCode.code || !this.logisticCode.name) {
-            this.$message.error('請輸入正確資料')
-            return
-          }
+          // if (!this.logisticCode.code || !this.logisticCode.name) {
+          //   this.$message.error('請輸入正確資料')
+          //   return
+          // }
           await updateOrder(this.data.id, { logisticCode: this.logisticCode })
           this.$notify({ title: '成功', message: '運單編號新增成功', type: 'success', duration: 1000 })
           this.dialogVisible = false
@@ -181,6 +218,16 @@
         } catch (error) {
           console.log(error)
         }
+      },
+      addSpec() {
+        this.logisticCode.push({
+          name: '',
+          code: '',
+          comment: ''
+        })
+      },
+      removeSpec(index) {
+        this.logisticCode.splice(index, 1)
       },
       async handleShipping() {
         if (!this.data.logisticCode) {
