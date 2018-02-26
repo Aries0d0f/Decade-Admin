@@ -63,7 +63,7 @@
             <RelatedStock ref="RelatedStock" :idList="postForm.related"></RelatedStock>
           </el-col>
           <el-col :span="12">
-            <RelatedPost ref="RelatedPost" :idList="postForm.related"></RelatedPost>
+            <RelatedPost ref="RelatedPost" :idList="postForm.related2"></RelatedPost>
           </el-col>
         </el-row>
       </div>
@@ -90,6 +90,7 @@ const defaultForm = {
   author: undefined,
   region: undefined,
   related: [],
+  related2: [],
   status: 0,
   tag: [],
   meta: {
@@ -213,6 +214,7 @@ export default {
       this.postForm.region = 0
       this.postForm.status = status
       this.postForm.related = this.$refs.RelatedStock.relatedItems.map(x => x.key)
+      this.postForm.related2 = this.$refs.RelatedPost.relatedItems.map(x => x.key)
       this.loading = true
       try {
         if (this.isEdit) {

@@ -159,7 +159,7 @@
 
         <el-row :gutter="20" v-if="userInfo.role === 0">
           <el-col :span="12">
-            <RelatedStock ref="RelatedStock"></RelatedStock>
+            <RelatedStock ref="RelatedStock" :idList="postForm.related2"></RelatedStock>
           </el-col>
           <el-col :span="12">
             <RelatedPost ref="RelatedPost" :idList="postForm.related"></RelatedPost>
@@ -210,6 +210,7 @@ const defaultForm = {
     }
   ],
   related: [],
+  related2: [],
   seller: ['5a82af4d53645f57ee68d0c3']
 }
 
@@ -411,6 +412,7 @@ export default {
       const postData = JSON.parse(JSON.stringify(this.postForm))
       // postData.seller = [this.userInfo.id]
       postData.related = this.$refs.RelatedPost.relatedItems.map(x => x.key)
+      postData.related2 = this.$refs.RelatedStock.relatedItems.map(x => x.key)
       postData.catalog = this.categoryClass[1] !== -1 ? this.categoryClass[1] : -1
       postData.status = this.isDraft ? 0 : 1
       postData.info.type = this.categoryClass[0]
