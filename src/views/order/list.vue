@@ -67,7 +67,7 @@
       </el-table-column>
       <el-table-column align="center" label="動作" width="240" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="success" v-if="scope.row.status === 1" size="mini" @click="handleShipping(scope.row.id)">出貨</el-button>
+          <!-- <el-button type="success" v-if="scope.row.status === 1" size="mini" @click="handleShipping(scope.row.id)">出貨</el-button> -->
           <el-button type="primary" size="mini" @click="$router.push({ name: 'orderItem', params: { id: scope.row.id } })">查看</el-button>
         </template>
       </el-table-column>
