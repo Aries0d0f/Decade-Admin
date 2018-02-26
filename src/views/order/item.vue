@@ -45,7 +45,7 @@
             </el-row>
             <el-row class="table-row">
               <el-col :span="4" class="table-label">運單號</el-col>
-              <el-col :span="20" class="table-content">{{data.logisticCode}}</el-col>
+              <el-col :span="20" class="table-content">{{data.logisticCode.name}} - {{data.logisticCode.code}}</el-col>
             </el-row>
           </el-card>
         </div>
@@ -67,8 +67,8 @@
             
             <div class="actions">
               <el-button v-if="data.status === 0" type="info" disabled>等待付款</el-button>
-              <el-button v-if="data.status === 1 && !data.logisticCode" @click="handleSetLogisticCode" type="warning">填寫運單號</el-button>
-              <el-button v-if="data.status === 1 && data.logisticCode" @click="handleSetLogisticCode" type="warning">更改運單號</el-button>
+              <el-button v-if="data.status === 1 && !data.logisticCode" @click="dialogVisible = true" type="warning">填寫運單號</el-button>
+              <el-button v-if="data.status === 1 && data.logisticCode" @click="dialogVisible = true" type="warning">更改運單號</el-button>
               <el-button v-if="data.status === 1 && userInfo.role === 0" @click="handleShipping" type="warning">出貨</el-button>
               <el-button v-if="data.status === 2" type="info" disabled>已出貨</el-button>
             </div>
@@ -76,6 +76,25 @@
         </div>
       </el-col>
     </el-row>
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      width="30%">
+      <el-select
+        v-model="logisticCode.name"
+        filterable
+        allow-create
+        default-first-option
+        placeholder="請輸入運送方式"
+        style="margin-bottom:.5rem;">
+        <el-option v-for="item in defalutLogistic" :key="item.value" :label="item.label" :value="item.value"></el-option>
+      </el-select>
+      <el-input v-model="logisticCode.code" placeholder="請輸入運單號"></el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleSetLogisticCode">確 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -92,6 +111,17 @@
         stocks: [],
         tickets: [],
         coupon: [],
+        dialogVisible: false,
+        defalutLogistic: [
+          { value: '黑貓', label: '黑貓' },
+          { value: '新竹貨運', label: '新竹貨運' },
+          { value: '宅配通', label: '宅配通' },
+          { value: '嘉里大榮', label: '嘉里大榮' },
+        ],
+        logisticCode: {
+          name: '',
+          code: ''
+        },
         statusType: [
           { key: 0, label: '已產生' },
           { key: 1, label: '已付款' },
@@ -102,7 +132,7 @@
       }
     },
     async created() {
-      await this.getDate()
+      await this.getData()
     },
     computed: {
       ...mapGetters(['userInfo'])
@@ -116,7 +146,7 @@
       }
     },
     methods: {
-      async getDate() {
+      async getData() {
         const data = await fetchOrder(this.$route.params.id)
         const coupons = []
         if (data.content.stock && data.content.stock.length > 0) {
@@ -140,15 +170,14 @@
       },
       async handleSetLogisticCode() {
         try {
-          const { value: logisticCode } = await this.$prompt('請輸入運單號', '提示', {
-            confirmButtonText: '確定',
-            cancelButtonText: '取消',
-            // inputPattern: [0-9],
-            inputErrorMessage: '運單格式有誤！'
-          })
-          await updateOrder(this.data.id, { logisticCode })
-          this.data.logisticCode = logisticCode
+          if (!this.logisticCode.code || !this.logisticCode.name) {
+            this.$message.error('請輸入正確資料')
+            return
+          }
+          await updateOrder(this.data.id, { logisticCode: this.logisticCode })
           this.$notify({ title: '成功', message: '運單編號新增成功', type: 'success', duration: 1000 })
+          this.dialogVisible = false
+          await this.getData()
         } catch (error) {
           console.log(error)
         }
