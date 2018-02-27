@@ -178,7 +178,7 @@ export default {
     },
     async handleCreate() {
       if (!this.selectUser.username || !this.selectUser.password || typeof this.selectUser.role === 'undefined') {
-        this.$message.error('錯誤:請先輸入資料');
+        this.$message.error('錯誤:請先輸入資料')
         return
       }
       try {

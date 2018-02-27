@@ -30,7 +30,7 @@ export const constantRouterMap = [
       path: '',
       component: _import('user/me'),
       name: 'UserInfo-Me',
-      meta: { title: '個人資料', icon: 'user', noCache: true }
+      meta: { title: '個人資料', icon: 'people', noCache: true }
     }]
   }
 ]
@@ -92,7 +92,7 @@ export const asyncRouterMap = [
     name: 'stock',
     meta: {
       title: '商品管理',
-      icon: 'example',
+      icon: 'shoppingCard',
       auth: 0,
       noCache: true
     },
@@ -209,7 +209,7 @@ export const asyncRouterMap = [
     meta: {
       auth: 0,
       title: '會員管理',
-      icon: 'tab',
+      icon: 'lock',
       noCache: true
     },
     children: [
@@ -219,7 +219,31 @@ export const asyncRouterMap = [
         name: 'userList',
         meta: {
           title: '會員管理',
-          icon: 'user',
+          icon: 'lock',
+          noCache: true
+        }
+      }
+    ]
+  },
+  {
+    path: '/advert',
+    component: Layout,
+    redirect: '/advert/advert-list',
+    name: 'advert',
+    meta: {
+      auth: 0,
+      title: '廣告管理',
+      icon: 'star',
+      noCache: true
+    },
+    children: [
+      {
+        path: 'advert-list',
+        component: _import('advert/index'),
+        name: 'advertList',
+        meta: {
+          title: '廣告列表',
+          icon: 'star',
           noCache: true
         }
       }
