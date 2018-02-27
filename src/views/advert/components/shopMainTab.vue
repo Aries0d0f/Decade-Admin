@@ -57,7 +57,7 @@
     <el-card class="box-card" header="推薦獨家商品" :body-style="{ padding: '0px' }">
       <el-tabs type="border-card">
         <el-tab-pane v-for="(stockType, j) in adData.main[0].classStock" :key="j" :label="stockType.title">
-          <StockSelect v-for="(item, i) in stockType.item" :key="i" v-model="adData.main[0].classStock[i]" :prop-data="item" style="margin-bottom:1rem;width:45%"></StockSelect>
+          <StockSelect v-for="(item, i) in stockType.item" :key="i" v-model="adData.main[0].classStock[j].item[i]" :prop-data="item" style="margin-bottom:1rem;width:45%"></StockSelect>
         </el-tab-pane>
       </el-tabs>
     </el-card>

@@ -21,9 +21,9 @@
       </el-tabs>
     </el-card>
 
-    <!-- <el-card class="box-card" header="進駐品牌">
+    <el-card class="box-card" header="進駐品牌">
       <Upload :defaultImg="''"></Upload>
-    </el-card> -->
+    </el-card>
 
     <el-card class="box-card" header="Banner 區塊">
       <el-row :gutter="20">
@@ -40,8 +40,9 @@
 
     <el-card class="box-card" header="推薦獨家商品" :body-style="{ padding: '0px' }">
       <el-tabs type="border-card">
+        <!-- {{adData.classStock}} -->
         <el-tab-pane v-for="(stockType, j) in adData.classStock" :key="j" :label="stockType.title">
-          <StockSelect v-for="(item, i) in stockType.item" v-model="adData.classStock[i]" :prop-data="item" :key="i" style="margin-bottom:1rem;width:45%"></StockSelect>
+          <StockSelect v-for="(item, i) in stockType.item" v-model="adData.classStock[j].item[i]" :prop-data="item" :key="i" style="margin-bottom:1rem;width:45%"></StockSelect>
         </el-tab-pane>
       </el-tabs>
     </el-card>
