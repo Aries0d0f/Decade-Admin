@@ -5,6 +5,9 @@
       <el-input @keyup.enter.native="handleFilter" class="filter-item filter-search-item" prefix-icon="el-icon-search" v-model="listQuery.name"></el-input>
       <el-button class="filter-item" plain @click="handleFilter">搜尋</el-button>
     </div>
+    <div class="toolbar">
+      <el-button type="warning" @click="createUser">新增會員</el-button>
+    </div>
     <el-table
       :key='tableKey'
       :data="currentList.slice(pager.start, pager.end)"
@@ -48,25 +51,44 @@
       :visible.sync="dialogVisible"
       width="30%"
       :before-close="handleClose">
-      <span>會員權限：</span>
-      <el-select v-model="selectUser.role" placeholder="請選擇">
-        <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
+      <template v-if="selectUser.type === 'edit'">
+        <span>會員權限：</span>
+        <el-select v-model="selectUser.role" placeholder="請選擇">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </template>
+      <template v-else>
+        <span>帳號：</span>
+        <el-input v-model="selectUser.username" placeholder="帳號" style="margin-bottom: .5rem"></el-input>
+        <span>密碼：</span>
+        <el-input v-model="selectUser.password" type="password" placeholder="密碼" style="margin-bottom: .5rem"></el-input>
+        <span>會員權限：</span>
+        <el-select v-model="selectUser.role" placeholder="請選擇">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </template>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleUpdate()">確 定</el-button>
+        <el-button type="primary" v-if="selectUser.type === 'edit'" @click="handleUpdate()">確 定</el-button>
+        <el-button type="primary" v-else @click="handleCreate()">確 定</el-button>
       </span>
-    </el-dialog>    
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchUserQuery, deleteUser, patchUser } from '@/api/user'
+import { fetchUserQuery, deleteUser, patchUser, createUser } from '@/api/user'
+import md5 from 'js-md5'
 
 export default {
   name: 'User-List',
@@ -79,6 +101,9 @@ export default {
       dialogVisible: false,
       listLoading: true,
       selectUser: {
+        username: undefined,
+        password: undefined,
+        type: undefined,
         role: undefined,
         id: undefined
       },
@@ -135,7 +160,13 @@ export default {
         await this.getList(`where={"id":["${this.listQuery.name}"]}`)
       }
     },
+    createUser() {
+      this.selectUser.type = 'create'
+      this.selectUser.role = 999
+      this.dialogVisible = true
+    },
     beforeEdit(id, role) {
+      this.selectUser.type = 'edit'
       this.selectUser.id = id
       this.selectUser.role = role
       this.dialogVisible = true
@@ -145,12 +176,41 @@ export default {
       this.selectUser.role = undefined
       this.dialogVisible = false
     },
+    async handleCreate() {
+      if (!this.selectUser.username || !this.selectUser.password || typeof this.selectUser.role === 'undefined') {
+        this.$message.error('錯誤:請先輸入資料');
+        return
+      }
+      try {
+        const data = {
+          username: this.selectUser.username,
+          pwd: md5(this.selectUser.password),
+          role: this.selectUser.role,
+          state: 0
+        }
+        await createUser(data)
+        this.$notify({ title: '成功', message: '新增成功', type: 'success', duration: 1000 })
+        this.dialogVisible = false
+        await this.getList()
+        this.selectUser.id = undefined
+        this.selectUser.username = undefined
+        this.selectUser.password = undefined
+        this.selectUser.role = 999
+      } catch (err) {
+        this.$notify.error({ title: '失敗', message: '新增失敗，請檢查帳號是否重複', duration: 1000 })
+        console.log(err)
+      }
+    },
     async handleUpdate() {
       try {
         await patchUser(this.selectUser.id, { role: this.selectUser.role })
         this.$notify({ title: '成功', message: '更新成功', type: 'success', duration: 1000 })
         this.dialogVisible = false
         await this.getList()
+        this.selectUser.id = undefined
+        this.selectUser.username = undefined
+        this.selectUser.password = undefined
+        this.selectUser.role = 999
       } catch (err) {
         this.$notify({ title: '失敗', message: '更新失敗', type: 'warn', duration: 1000 })
         console.log(err)

@@ -20,6 +20,15 @@ export const loginByUsername = async(username, pwd) => {
   return res.data
 }
 
+export const createUser = async(data) => {
+  const res = await request({
+    url: '/user',
+    method: 'POST',
+    data
+  })
+  return res.data
+}
+
 export const patchUser = async(uid, data) => {
   const res = await request({
     url: `/user/${uid}`,
