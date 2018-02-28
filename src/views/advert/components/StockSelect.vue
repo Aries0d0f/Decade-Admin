@@ -85,8 +85,8 @@ export default {
         border: 0;
         border-bottom: 1px solid #ccc;
         border-radius: 0;
-        padding: .8rem 0;
-        height: 1rem !important;
+        border-radius: 0;
+        line-height: 1rem !important;
       }
     }
   }

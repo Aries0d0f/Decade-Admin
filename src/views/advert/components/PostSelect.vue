@@ -83,11 +83,11 @@ export default {
     .autocomplete{
       width: 100%;
       .el-input > input {
+        color: #606266;
         border: 0;
         border-bottom: 1px solid #ccc;
         border-radius: 0;
-        padding: .8rem 0;
-        height: 1rem !important;
+        line-height: 1rem !important;
       }
     }
   }
