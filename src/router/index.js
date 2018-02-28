@@ -242,6 +242,7 @@ export const asyncRouterMap = [
         component: _import('advert/index'),
         name: 'advertList',
         meta: {
+          auth: 0,
           title: '廣告列表',
           icon: 'star',
           noCache: true

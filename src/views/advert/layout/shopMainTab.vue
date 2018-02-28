@@ -11,7 +11,7 @@
             <el-col :span="15">
               <el-input v-model="adData.main[0].banner.title" placeholder="標題"></el-input>
               <el-input v-model="adData.main[0].banner.subTitle" placeholder="子標題"></el-input>
-              <StockSelect v-model="adData.main[0].banner.item" :prop-data="adData.main[0].banner.item" style="margin-bottom:1rem;"></StockSelect>
+              <el-input v-model="adData.main[0].banner.btnLink" placeholder="路由"></el-input>
             </el-col>
           </el-row>
         </el-tab-pane>
@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import StockSelect from './StockSelect'
+import StockSelect from '../components/StockSelect'
 import Upload from '@/components/Upload/singleImage2'
 
 export default {

@@ -1,6 +1,7 @@
 <template>
   <div class="stock-select">
-    <el-autocomplete v-model="postData.value" class="autocomplete" :fetch-suggestions="queryStock" @select="handleSelectStock" popper-class="autocomplete-view" placeholder="請輸入商品名稱">
+    <span class="item-id" v-if="!edit" @click="edit = true">編號: {{postData.value}}</span>
+    <el-autocomplete v-else v-model="postData.value" class="autocomplete" :fetch-suggestions="queryStock" @select="handleSelectStock" popper-class="autocomplete-view" placeholder="請輸入商品名稱">
       <template slot-scope="props">
         <div class="autocomplete-item">
           <div class="item-img" :style="`background-image:url(${props.item.data.meta.image})`"></div>
@@ -35,7 +36,8 @@ export default {
       postCard: {
         meta: { image: '' },
         title: ''
-      }
+      },
+      edit: false
     }
   },
   async created() {
@@ -47,6 +49,7 @@ export default {
       } catch (error) {
         this.postCard = { meta: { image: '' }, title: '' }
         this.postData.value = undefined
+        this.edit = true
         console.log(error)
       }
     }
@@ -72,6 +75,11 @@ export default {
 
 <style lang="scss">
   .stock-select{
+    .item-id{
+      display: block;
+      color: #606266;
+      margin-bottom: .5rem;
+    }
     .autocomplete{
       width: 100%;
       .el-input > input {

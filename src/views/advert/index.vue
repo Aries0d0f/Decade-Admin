@@ -10,13 +10,20 @@
       <el-tab-pane label="商店推薦">
         <ShopMainTab ref="shopMainTab" :props-data="shopMainData"></ShopMainTab>
       </el-tab-pane>
-      <!-- <el-tab-pane label="文章推薦">文章推薦</el-tab-pane> -->
+      <el-tab-pane label="文章分類">
+        <PostTab ref="postTab" :props-data="postData"></PostTab>
+      </el-tab-pane>
+      <el-tab-pane label="商品分類">
+        <StockTab ref="stockTab" :props-data="stockData"></StockTab>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 <script>
-  import IndexTab from './components/indexTab'
-  import ShopMainTab from './components/shopMainTab'
+  import IndexTab from './layout/indexTab'
+  import ShopMainTab from './layout/shopMainTab'
+  import StockTab from './layout/stockTab'
+  import PostTab from './layout/postTab'
   import request from '@/utils/request'
   
   export default {
@@ -25,7 +32,9 @@
         loading: true,
         adData: {},
         indexData: {},
-        shopMainData: {}
+        shopMainData: {},
+        stockData: {},
+        postData: {},
       }
     },
     created() {
@@ -35,17 +44,18 @@
       async getAdData() {
         const res = await request.get('/ad')
         this.adData = res.data.data
-        this.indexData = {
-          ...res.data.data.main
-        }
+        this.indexData = { ...res.data.data.main }
         this.shopMainData = { ...res.data.data.shop }
+        this.stockData = { ...res.data.data.stock }
+        this.postData = { ...res.data.data.post }
         this.loading = false
       },
       async handleUpdate() {
         const data = {
           main: this.$refs.indexTab.adData,
           shop: this.$refs.shopMainTab.adData,
-          post: this.adData.post
+          stock: this.$refs.stockTab.adData,
+          post: this.$refs.postTab.adData
         }
         try {
           this.loading = true
@@ -58,7 +68,9 @@
     },
     components: {
       IndexTab,
-      ShopMainTab
+      ShopMainTab,
+      StockTab,
+      PostTab
     }
   }
 </script>

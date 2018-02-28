@@ -21,9 +21,9 @@
       </el-tabs>
     </el-card>
 
-    <el-card class="box-card" header="進駐品牌">
+    <!-- <el-card class="box-card" header="進駐品牌">
       <Upload :defaultImg="''"></Upload>
-    </el-card>
+    </el-card> -->
 
     <el-card class="box-card" header="Banner 區塊">
       <el-row :gutter="20">
@@ -51,8 +51,8 @@
 </template>
 
 <script>
-import StockSelect from './StockSelect'
-import PostSelect from './PostSelect'
+import StockSelect from '../components/StockSelect'
+import PostSelect from '../components/PostSelect'
 import Upload from '@/components/Upload/singleImage2'
 
 export default {
