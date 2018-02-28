@@ -26,14 +26,14 @@ node {
 		echo 'Connecting to the server.'
 		sshagent(['b090bf66-6a26-40a3-92e3-a7e9066d3777']){
 			sh "ssh root@60.249.179.125 '\
-				cd /srv/manager;
-				pm2 stop decade-manager;
-				ls | grep -v package.zip | xargs rm;
-				unzip -o package.zip;
-				npm install;
-				npm run build:prod;
-				pm2 restart manager.json;
-				rm package.zip;
+				cd /srv/manager; \
+				pm2 stop decade-manager; \
+				ls | grep -v package.zip | xargs rm; \
+				unzip -o package.zip; \
+				npm install; \
+				npm run build:prod; \
+				pm2 restart manager.json; \
+				rm package.zip; \
 			'"
 		}
 	}
