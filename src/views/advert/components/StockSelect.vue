@@ -57,6 +57,7 @@ export default {
   methods: {
     async handleSelectStock(item) {
       this.stockCard = item.data
+      this.edit = false
       this.$emit('input', item.value)
     },
     async queryStock(queryString, cb) {

@@ -10,6 +10,9 @@
       <el-tab-pane label="商店推薦">
         <ShopMainTab ref="shopMainTab" :props-data="shopMainData"></ShopMainTab>
       </el-tab-pane>
+      <el-tab-pane label="生活誌推薦">
+        <PostMainTab ref="magazineMainTab" :props-data="magazineMainData"></PostMainTab>
+      </el-tab-pane>
       <el-tab-pane label="文章分類">
         <PostTab ref="postTab" :props-data="postData"></PostTab>
       </el-tab-pane>
@@ -22,6 +25,7 @@
 <script>
   import IndexTab from './layout/indexTab'
   import ShopMainTab from './layout/shopMainTab'
+  import PostMainTab from './layout/postMainTab'
   import StockTab from './layout/stockTab'
   import PostTab from './layout/postTab'
   import request from '@/utils/request'
@@ -34,7 +38,7 @@
         indexData: {},
         shopMainData: {},
         stockData: {},
-        postData: {},
+        postData: {}
       }
     },
     created() {
@@ -46,6 +50,7 @@
         this.adData = res.data.data
         this.indexData = { ...res.data.data.main }
         this.shopMainData = { ...res.data.data.shop }
+        this.magazineMainData = { ...res.data.data.magazine }
         this.stockData = { ...res.data.data.stock }
         this.postData = { ...res.data.data.post }
         this.loading = false
@@ -54,6 +59,7 @@
         const data = {
           main: this.$refs.indexTab.adData,
           shop: this.$refs.shopMainTab.adData,
+          magazine: this.$refs.magazineMainTab.adData,
           stock: this.$refs.stockTab.adData,
           post: this.$refs.postTab.adData
         }
@@ -70,7 +76,8 @@
       IndexTab,
       ShopMainTab,
       StockTab,
-      PostTab
+      PostTab,
+      PostMainTab
     }
   }
 </script>
