@@ -10,28 +10,37 @@
         </template>
       </sticky>
       <div class="createPost-main-container" v-loading="loading">
-        <el-row :gutter="10">
-          <el-col :span="6">
-            <div style="margin-bottom: 20px;">
-              <el-form-item prop="image">
-                <Upload style="height: 100%;" v-model="postForm.photo" :defaultImg="postForm.photo"></Upload>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col :span="18">
-            <el-form-item style="margin-bottom: 20px;" prop="name">
-              <MDinput name="name" v-model="postForm.name" required :maxlength="20">姓名</MDinput>
-            </el-form-item>
-            <el-form-item v-if="userInfo.role === 0 || userInfo.role === 4" style="margin-bottom: 40px;" prop="intro" label="介紹">
-              <el-input type="textarea" v-model="postForm.intro" :autosize="{ minRows: 4 }"></el-input>
-            </el-form-item>
-            <el-form-item style="margin-bottom: 40px;" label-width="80px" label="相關帳號" v-if="userInfo.role === 0 || userInfo.role === 3">
-              <el-select v-model="postForm.relatedSeller" style="width: 100%" @change="remoteUser" v-loading="loadingUser" loading-text="檢查會員中..." :loading="loadingUser" multiple filterable :allow-create="!loadingUser" default-first-option placeholder="請輸入廠商編號" no-data-text="請輸入廠商編號" no-match-text="查無廠商">
-                <el-option v-for="item in postForm.relatedSeller" :key="item.value" :label="item.value" :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
+        <div style="margin-bottom: 20px;margin-right: 3vw;">
+          <el-form-item prop="image">
+            <Upload style="height: 100%;" v-model="postForm.photo" :defaultImg="postForm.photo"></Upload>
+          </el-form-item>
+        </div>
+        <div class="edit-form">
+          <el-form-item style="margin-bottom: 20px;" prop="name">
+            <MDinput name="name" v-model="postForm.name" required :maxlength="20">姓名</MDinput>
+          </el-form-item>
+          <el-form-item v-if="userInfo.role === 0 || userInfo.role === 4" style="margin-bottom: 40px;" prop="intro" label="介紹">
+            <el-input type="textarea" v-model="postForm.intro" :autosize="{ minRows: 4 }"></el-input>
+          </el-form-item>
+
+          <h4>關聯帳號管理</h4>
+          <el-table :data="postForm.relatedSeller" :header-row-style="{ background: '#efefef' }" empty-text="尚未新增關聯帳號" style="width: 100%">
+            <el-table-column prop="name" label="名稱"></el-table-column>
+            <el-table-column prop="mail" label="聯絡信箱"></el-table-column>
+
+            <el-table-column label="" class-name="small-padding fixed-width" width="100">
+              <template slot-scope="scope">
+                <el-button size="mini" @click="removeVendor(scope.row.key)">刪除</el-button>
+              </template>
+            </el-table-column>                
+          </el-table>
+
+          <div class="new-vendor">
+            <el-input class="vendor-input" v-model="newVendor.name" placeholder="請輸入部門/分店名稱"></el-input>
+            <el-input class="vendor-input" v-model="newVendor.mail" placeholder="請輸入 mail"></el-input>
+            <el-button @click="addVendor" size="mini">新增</el-button>
+          </div>
+        </div>
       </div>
     </el-form>
   </div>
@@ -44,7 +53,6 @@ import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky'
 import { fetchUData, patchUData } from '@/api/udata'
 import { mapGetters } from 'vuex'
-import { fetchUser } from '@/api/user'
 
 const defaultForm = {
   name: undefined,
@@ -68,7 +76,12 @@ export default {
       fetchSuccess: true,
       loadingUser: false,
       loading: false,
-      rules: {}
+      rules: {},
+      newVendor: {
+        name: '',
+        mail: '',
+        key: new Date().getTime()
+      }
     }
   },
   async created() {
@@ -84,6 +97,13 @@ export default {
       this.loading = true
       try {
         this.postForm = await fetchUData(cid)
+        // 舊格式兼容
+        if (this.postForm.relatedSeller[0] && !this.postForm.relatedSeller[0].name) {
+          this.postForm.relatedSeller = []
+        }
+        this.postForm.relatedSeller.map(x => {
+          x = { ...x, key: new Date().getTime() }
+        })
       } catch (err) {
         this.fetchSuccess = false
         console.log(err)
@@ -97,28 +117,33 @@ export default {
         Object.keys(defaultForm).forEach(x => {
           data[x] = this.postForm[x]
         })
+        this.postForm.relatedSeller.map(x => {
+          delete x.key
+        })
         await patchUData(this.cid, data)
         this.$notify({ title: '成功', message: '更新完成', type: 'success', duration: 2000 })
-        // this.$router.push({ name: 'postList' })
       } catch (err) {
         console.log(err)
       }
       this.loading = false
     },
-    async remoteUser(list) {
-      this.loadingUser = true
-      const uid = list[list.length - 1]
-      if (!uid || list.length === 0) {
-        this.loadingUser = false
+    removeVendor(key) {
+      const index = this.postForm.relatedSeller.findIndex(x => x.key === key)
+      if (index !== -1) {
+        this.postForm.relatedSeller.splice(index, 1)
+      }
+    },
+    addVendor() {
+      const re = /\S+@\S+\.\S+/
+      if (this.newVendor.name === '') {
+        this.$message.error('錯誤：請輸入姓名')
+        return
+      } else if (!re.test(this.newVendor.mail)) {
+        this.$message.error('錯誤：請輸入有效信箱')
         return
       }
-      try {
-        await fetchUser(uid)
-      } catch (error) {
-        this.postForm.relatedSeller.splice(-1, 1)
-        this.$message.error('錯誤：查無該會員！')
-      }
-      this.loadingUser = false
+      this.postForm.relatedSeller.push(this.newVendor)
+      this.newVendor = { name: '', mail: '', key: new Date().getTime() }
     }
   }
 }
@@ -135,8 +160,22 @@ export default {
   }
   .createPost-container {
     position: relative;
+    .new-vendor{
+      display: flex;
+      margin: 1rem 0;
+      .vendor-input{
+        margin-right: 1rem;
+      }
+    }
     .createPost-main-container {
+      display: flex;
+      width: 100%;
+      max-width: 900px;
       padding: 40px 45px 20px 50px;
+
+      .edit-form{
+        width: 100%;
+      }
       .postInfo-container {
         position: relative;
         @include clearfix;

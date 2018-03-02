@@ -218,8 +218,26 @@ export const asyncRouterMap = [
         component: _import('user/list'),
         name: 'userList',
         meta: {
-          title: '會員管理',
-          icon: 'lock',
+          title: '會員列表',
+          noCache: true
+        }
+      },
+      {
+        path: 'vendor-list',
+        component: _import('user/vendor'),
+        name: 'vendorList',
+        meta: {
+          title: '廠商管理',
+          noCache: true
+        }
+      },
+      {
+        path: ':id',
+        component: _import('user/edit'),
+        name: 'userItem',
+        hidden: true,
+        meta: {
+          title: '會員編輯',
           noCache: true
         }
       }
