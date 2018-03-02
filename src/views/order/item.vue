@@ -109,21 +109,7 @@
           </el-form-item>
         </el-form>
       </el-collapse>
-      <el-button @click="addSpec">新增規格</el-button>     
-      
-       
-      <!-- <el-select
-        v-model="logisticCode.name"
-        filterable
-        allow-create
-        default-first-option
-        placeholder="請輸入運送方式"
-        style="margin-bottom:.5rem;">
-        <el-option v-for="item in defalutLogistic" :key="item.value" :label="item.label" :value="item.value"></el-option>
-      </el-select>
-      <el-input v-model="logisticCode.code" style="margin-bottom:.5rem;" placeholder="請輸入運單號"></el-input>
-      <el-input type="textarea" v-model="logisticCode.comment" placeholder="請輸入備註"></el-input> -->
-
+      <el-button @click="addSpec">新增其他</el-button>     
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
@@ -220,6 +206,9 @@
         }
       },
       addSpec() {
+        if (!this.logisticCode) {
+          this.logisticCode = []
+        }
         this.logisticCode.push({
           name: '',
           code: '',
