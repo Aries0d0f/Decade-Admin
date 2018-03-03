@@ -18,9 +18,17 @@
       </el-tabs>
     </el-card>
 
-    <!-- <el-card class="box-card" header="進駐品牌">
-      <Upload :defaultImg="''"></Upload>
-    </el-card> -->
+    <el-card class="box-card" header="進駐品牌" :body-style="{ display: 'flex', 'flex-wrap': 'wrap'}">
+      <div class="brand-item" v-for="(vendor, i) in adData.main[0].vendor" :key="i" v-if="!vendor.delete">
+        <div class="delete-btn" @click="removeVendor(i)">X</div>
+        <Upload v-model="adData.main[0].vendor[i].logo" :watch-default="true" :defaultImg="vendor.logo"></Upload>
+        <div class="brand-detail">
+          <el-input v-model="adData.main[0].vendor[i].label" placeholder="名稱"></el-input>
+          <el-input v-model="adData.main[0].vendor[i].name" placeholder="搜尋字串"></el-input>
+        </div>
+      </div>
+      <div class="brand-item add-brand" @click="addVendor">+</div>      
+    </el-card>
 
     <el-card class="box-card" header="主題推薦">
       <el-row :gutter="20">
@@ -79,6 +87,14 @@ export default {
   created() {
     this.adData = Object.assign({}, this.propsData)
   },
+  methods: {
+    removeVendor(i) {
+      this.adData.main[0].vendor[i].delete = true
+    },
+    addVendor() {
+      this.adData.main[0].vendor.push({ label: '', name: '', logo: '', delete: false })
+    }
+  },
   components: {
     StockSelect,
     Upload
@@ -104,5 +120,43 @@ export default {
       flex-direction: row;
       justify-content: space-between;
     }
+    .brand-item{
+      margin: .5rem;
+      width: 178px;
+      color: #6b6b6b;
+      cursor: pointer;
+      .delete-btn{
+        width: 20px;
+        height: 20px;
+        background: #e0e0e0;
+        color: #808080;
+        border-radius: 50%;
+        position: absolute;
+        margin-top: .5rem;
+        margin-left: .5rem;
+        z-index: 1;
+        font-size: 13px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: background .3s;
+
+        &:hover{
+          background: #bdbdbd;
+        }
+      }
+      .brand-detail{
+        margin-top: .5rem;
+      }
+    }
+    .add-brand{
+      height: 178px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 3rem;
+      color: #a8a8a8;
+      background: #e8e8e8;
+    }    
   }
 </style>

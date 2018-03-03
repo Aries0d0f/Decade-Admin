@@ -21,9 +21,17 @@
       </el-tabs>
     </el-card>
 
-    <!-- <el-card class="box-card" header="進駐品牌">
-      <Upload :defaultImg="''"></Upload>
-    </el-card> -->
+    <el-card class="box-card" header="進駐品牌" :body-style="{ display: 'flex', 'flex-wrap': 'wrap'}">
+      <div class="brand-item" v-for="(vendor, i) in adData.vendor" :key="i" v-if="!vendor.delete">
+        <div class="delete-btn" @click="removeVendor(i)">X</div>
+        <Upload v-model="adData.vendor[i].logo" :watch-default="true" :defaultImg="vendor.logo"></Upload>
+        <div class="brand-detail">
+          <el-input v-model="adData.vendor[i].label" placeholder="名稱"></el-input>
+          <el-input v-model="adData.vendor[i].name" placeholder="搜尋字串"></el-input>
+        </div>
+      </div>
+      <div class="brand-item add-brand" @click="addVendor">+</div>      
+    </el-card>
 
     <el-card class="box-card" header="Banner 區塊">
       <el-row :gutter="20">
@@ -40,7 +48,6 @@
 
     <el-card class="box-card" header="推薦獨家商品" :body-style="{ padding: '0px' }">
       <el-tabs type="border-card">
-        <!-- {{adData.classStock}} -->
         <el-tab-pane v-for="(stockType, j) in adData.classStock" :key="j" :label="stockType.title">
           <StockSelect v-for="(item, i) in stockType.item" v-model="adData.classStock[j].item[i]" :prop-data="item" :key="i" style="margin-bottom:1rem;width:45%"></StockSelect>
         </el-tab-pane>
@@ -64,6 +71,14 @@ export default {
   },
   created() {
     this.adData = Object.assign({}, this.propsData)
+  },
+  methods: {
+    removeVendor(i) {
+      this.adData.vendor[i].delete = true
+    },
+    addVendor() {
+      this.adData.vendor.push({ label: '', name: '', logo: '', delete: false })
+    }
   },
   components: {
     StockSelect,
@@ -93,6 +108,45 @@ export default {
       flex-wrap: wrap;
       flex-direction: row;
       justify-content: space-between;
+    }
+
+    .brand-item{
+      margin: .5rem;
+      width: 178px;
+      color: #6b6b6b;
+      cursor: pointer;
+      .delete-btn{
+        width: 20px;
+        height: 20px;
+        background: #e0e0e0;
+        color: #808080;
+        border-radius: 50%;
+        position: absolute;
+        margin-top: .5rem;
+        margin-left: .5rem;
+        z-index: 1;
+        font-size: 13px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: background .3s;
+
+        &:hover{
+          background: #bdbdbd;
+        }
+      }
+      .brand-detail{
+        margin-top: .5rem;
+      }
+    }
+    .add-brand{
+      height: 178px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 3rem;
+      color: #a8a8a8;
+      background: #e8e8e8;
     }
   }
 </style>

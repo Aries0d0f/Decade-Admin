@@ -47,6 +47,10 @@
     methods: {
       async getAdData() {
         const res = await request.get('/ad')
+        // 兼容神奇的後端
+        res.data.data.main.vendor.map(x => x.delete = false)
+        res.data.data.shop.main[0].vendor.map(x => x.delete = false)
+        
         this.adData = res.data.data
         this.indexData = { ...res.data.data.main }
         this.shopMainData = { ...res.data.data.shop }
@@ -63,6 +67,9 @@
           stock: this.$refs.stockTab.adData,
           post: this.$refs.postTab.adData
         }
+        // 兼容神奇的後端
+        data.main.vendor.map(x => delete x.delete)
+        data.shop.main[0].vendor.map(x => delete x.delete)
         try {
           this.loading = true
           await request.post('/ad', { config: data })
