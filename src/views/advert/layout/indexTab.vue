@@ -8,7 +8,7 @@
     <el-card class="box-card" header="經典推薦" :body-style="{ padding: '0px' }">
       <el-tabs type="border-card">
         <el-tab-pane v-for="i in 3" :key="i" :label="`分頁 ${i}`">
-          <PostSelect v-for="j in 5" v-model="adData.topPost[(i - 1) * 5 + j]" :prop-data="adData.topPost[((i - 1) * 5 + j) - 1]" :key="j" class="post-select"></PostSelect>
+          <PostSelect v-for="j in 5" v-model="adData.topPost[((i - 1) * 5 + j) - 1]" :prop-data="adData.topPost[((i - 1) * 5 + j) - 1]" :key="j" class="post-select"></PostSelect>
         </el-tab-pane>
       </el-tabs>
     </el-card>
