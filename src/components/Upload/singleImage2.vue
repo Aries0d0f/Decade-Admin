@@ -8,15 +8,10 @@
 			:show-file-list="false"
       :before-upload="beforeUploadImg"
       :on-success="handleImageScucess"
-      :on-error="handleImageError"
-      :on-preview="handlePictureCardPreview"
-      :on-remove="handleRemove">
+      :on-error="handleImageError">
 			<img v-if="localUrl" :src="localUrl" class="avatar">
 			<i v-else class="el-icon-plus avatar-uploader-icon"></i>
     </el-upload>
-    <el-dialog :visible.sync="dialogVisible">
-      <img width="100%" :src="dialogImageUrl" alt="">
-    </el-dialog>
   </div>
 </template>
 
@@ -28,35 +23,21 @@ export default {
       uploadUrl: 'https://decade.global/img',
       imgUrl: '',
       localUrl: '',
-      imgUploading: false,
-      dialogVisible: false,
-      dialogImageUrl: ''
+      imgUploading: false
     }
   },
   created() {
-    this.imgUrl = this.defaultImg || undefined
     this.localUrl = this.defaultImg || undefined
   },
   methods: {
-    handleRemove() {
-      this.imgUrl = undefined
-    },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url
-      this.dialogVisible = true
-    },
     handleImageScucess(res, file, fileList) {
       if (res.success === false) {
         this.$message.error(`錯誤：${res.msg}`)
-        this.imgUrl = undefined
         this.imgUploading = false
       } else {
-        setTimeout(() => {
-          this.localUrl = file.url
-          this.imgUrl = res.data.url
-          this.$emit('input', res.data.url)
-          this.imgUploading = false
-        }, 5000)
+        this.localUrl = file.url
+        this.$emit('input', res.data.url)
+        this.imgUploading = false
       }
     },
     handleImageError() {
