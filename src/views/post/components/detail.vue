@@ -210,7 +210,6 @@ export default {
       this.loading = false
     },
     async submitForm(status) {
-      this.postForm.author = this.userInfo.id
       this.postForm.region = 0
       this.postForm.status = status
       this.postForm.related = this.$refs.RelatedStock.relatedItems.map(x => x.key)
@@ -225,6 +224,7 @@ export default {
           })
           await updatePost(this.postForm.id, data)
         } else {
+          this.postForm.author = this.userInfo.id
           await createPost(this.postForm)
         }
         this.$router.push({ name: 'postList' })
