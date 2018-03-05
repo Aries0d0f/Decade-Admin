@@ -21,6 +21,12 @@ export const loginByUsername = async(username, pwd) => {
 }
 
 export const createUser = async(data) => {
+  const udata = await request({
+    url: '/udata',
+    method: 'POST',
+    data: { region: 0, name: data.username }
+  })
+  data.cid = udata.data.id
   const res = await request({
     url: '/user',
     method: 'POST',
