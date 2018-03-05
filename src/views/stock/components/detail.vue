@@ -48,11 +48,25 @@
           <span>(已輸入 {{postForm.tag.length || 0}} 組，還可以增加 {{ 5 - (postForm.tag.length || 0)}} 組)</span>
         </el-form-item>
 
-        <el-form-item style="margin-bottom: 40px;" label-width="60px" label="廠商">
-          <el-select v-model="postForm.seller" style="width: 100%" @remove-tag="handleDeleteUser" @change="remoteUser" v-loading="loadingUser" loading-text="檢查會員中..." :loading="loadingUser" multiple filterable :allow-create="!loadingUser" default-first-option placeholder="請輸入廠商編號" no-data-text="請輸入廠商編號" no-match-text="查無廠商">
+        <!-- <el-form-item style="margin-bottom: 40px;" label-width="60px" label="廠商">
+          <el-select 
+            v-model="postForm.seller"
+            style="width: 100%"
+            @remove-tag="handleDeleteUser"
+            @change="remoteUser"
+            loading-text="檢查會員中..."
+            multiple
+            filterable
+            default-first-option
+            v-loading="loadingUser"
+            :loading="loadingUser"
+            :allow-create="!loadingUser"
+            placeholder="請輸入廠商編號"
+            no-data-text="請輸入廠商編號"
+            no-match-text="查無廠商">
             <el-option v-for="item in postForm.seller" :key="item.value" :label="item.value" :value="item.value"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item style="margin-bottom: 40px;">
           <h4 class="form-subtitle">商品規格</h4>
@@ -115,7 +129,8 @@
         </el-form-item>
 
         <el-form-item style="margin-bottom: 40px;">
-          <h4>商品規格及須知</h4>
+          <h4 class="form-subtitle">商品規格及須知</h4>
+          
           <el-tabs tab-position="left">
             <el-tab-pane label="規格">
               <span slot="label" class="item-detail-pane">商品規格</span>
@@ -157,6 +172,27 @@
           </el-tabs>
         </el-form-item>
 
+        <h4 class="form-subtitle">出貨廠商</h4>
+        <el-table :data="postForm.seller" :header-row-style="{ background: '#efefef' }" empty-text="尚未新增關聯帳號" style="width: 100%;max-width: 40rem">
+          <el-table-column prop="id" label="編號"></el-table-column>
+          <el-table-column label="帳號">
+            <template slot-scope="scope">
+              {{scope.row.data.username}}
+            </template>
+          </el-table-column>
+
+          <el-table-column label="" class-name="small-padding fixed-width" width="100">
+            <template slot-scope="scope">
+              <el-button v-if="scope.row.id !== '5a531f46418f6102cc971035'" size="mini" @click="removeVendor(scope.row.id)">刪除</el-button>
+            </template>
+          </el-table-column>                
+        </el-table>
+        <div class="new-vendor" style="max-width: 20rem">
+          <el-input class="vendor-input" v-model="newVendor.username" placeholder="請輸入帳號"></el-input>
+          <el-button @click="addVendor" size="mini">新增</el-button>
+        </div>
+
+        <h4 class="form-subtitle">推薦商品 & 文章</h4>
         <el-row :gutter="20" v-if="userInfo.role === 0">
           <el-col :span="12">
             <RelatedStock ref="RelatedStock" :idList="postForm.related2"></RelatedStock>
@@ -179,7 +215,7 @@ import Sticky from '@/components/Sticky'
 import RelatedStock from '@/components/RelatedCard/stock'
 import RelatedPost from '@/components/RelatedCard/post'
 import { fetchStock, createStock, updateStock } from '@/api/stock'
-import { fetchUser } from '@/api/user'
+import { fetchUserQuery, fetchUser } from '@/api/user'
 
 const defaultForm = {
   type: undefined,
@@ -211,7 +247,7 @@ const defaultForm = {
   ],
   related: [],
   related2: [],
-  seller: ['5a82af4d53645f57ee68d0c3']
+  seller: [{ id: '5a531f46418f6102cc971035', data: {}}]
 }
 
 export default {
@@ -239,6 +275,9 @@ export default {
       relatedItems: [],
       categoryClass: [],
       specInfo: [],
+      newVendor: {
+        username: ''
+      },
       rules: {
         name: [
           { required: true, message: '請輸入商品名稱', trigger: 'blur' }
@@ -359,9 +398,17 @@ export default {
   async created() {
     if (this.isEdit) {
       await this.fetchData()
+      // 兼容舊格式
+      if (this.postForm.seller[0].id !== '5a531f46418f6102cc971035') {
+        this.postForm.seller[0] = { id: '5a531f46418f6102cc971035', data: {}}
+      }
     } else {
       this.postForm = Object.assign({}, defaultForm)
     }
+    this.postForm.seller.map(async x => {
+      x.data = await fetchUser(x.id)
+    })
+    console.log(this.postForm.seller)
     this.loading = false
   },
   computed: {
@@ -395,7 +442,9 @@ export default {
           this.imgList.push({ name: i, url: img })
         })
         this.categoryClass = [parseInt(this.postForm.info.type, 10), this.postForm.catalog]
-
+        this.postForm.seller = this.postForm.seller.map(x => {
+          return { id: x, data: {}}
+        })
         // 舊版商品格式處理
         if (this.postForm.spec === 0 || !this.postForm.spec[0].priceDefault) {
           this.postForm.spec.forEach((spec, i) => {
@@ -410,7 +459,6 @@ export default {
     async submitForm() {
       if (!await this.validateForm()) return
       const postData = JSON.parse(JSON.stringify(this.postForm))
-      // postData.seller = [this.userInfo.id]
       postData.related = this.$refs.RelatedPost.relatedItems.map(x => x.key)
       postData.related2 = this.$refs.RelatedStock.relatedItems.map(x => x.key)
       postData.catalog = this.categoryClass[1] !== -1 ? this.categoryClass[1] : -1
@@ -419,11 +467,8 @@ export default {
       postData.info = JSON.stringify(postData.info)
       postData.type = this.categoryClass[0] === 0 ? 3 : this.isTicket ? 3 : 1
       postData.img = []
+      postData.seller = this.postForm.seller.map(x => x.id)
       this.imgList.map(x => postData.img.push(x.url))
-      // 舊版商品格式處理
-      // if (!postData.price) {
-      //   postData.price = { common: 99999 }
-      // }
       try {
         if (this.isEdit) {
           await updateStock(this.$route.params.id, postData)
@@ -442,7 +487,6 @@ export default {
       if (!await this.validateForm()) return
       const postData = Object.assign({}, this.postForm)
       this.isDraft = true
-      // postData.seller = [this.userInfo.id]
       postData.related = this.$refs.RelatedPost.relatedItems.map(x => x.key)
       postData.catalog = this.categoryClass[1] !== -1 ? this.categoryClass[1] : -1
       postData.status = 0
@@ -450,11 +494,8 @@ export default {
       postData.info = JSON.stringify(this.postForm.info)
       postData.type = this.categoryClass[0] === 0 ? 3 : this.isTicket ? 3 : 1
       postData.img = []
+      postData.seller = this.postForm.seller.forEach(x => x.id)
       this.imgList.map(x => postData.img.push(x.url))
-      // 舊版商品格式處理
-      // if (!postData.price) {
-      //   postData.price = { common: 99999 }
-      // }
       try {
         await updateStock(this.$route.params.id, postData)
         this.$notify({ title: '成功', message: '發布成功', type: 'success', duration: 2000 })
@@ -524,23 +565,49 @@ export default {
         this.postForm.img.push(res.data.url)
       }, 5000)
     },
+    async addVendor() {
+      if (this.postForm.seller.some(x => x.data.username === this.newVendor.username)) {
+        this.$message.error('錯誤：該廠商已在列表中！')
+        this.newVendor.username = ''
+        return
+      }
+      try {
+        const [user] = await fetchUserQuery(`where={"username":["${this.newVendor.username}"]}`)
+        if (user.role !== 3) {
+          this.$message.error('錯誤：該會員不是 Decade 簽約廠商！')
+          this.newVendor.username = ''
+          return
+        }
+        this.postForm.seller.push({ id: user.id, data: user })
+      } catch (error) {
+        this.$message.error('錯誤：查無該廠商！')
+      } finally {
+        this.newVendor.username = ''
+      }
+    },
+    removeVendor(key) {
+      const index = this.postForm.seller.findIndex(x => x.id === key)
+      if (index !== -1) {
+        this.postForm.seller.splice(index, 1)
+      }
+    },
     async handleDeleteUser(item) {
-      if (this.postForm.seller.length > 1 && item.value === '5a82af4d53645f57ee68d0c3') {
+      if (this.postForm.seller.length > 1 && item.value === '5a531f46418f6102cc971035') {
         this.$message.error('錯誤：無法移除 Decade 預設賣家！')
-        this.postForm.seller.unshift('5a82af4d53645f57ee68d0c3')
+        this.postForm.seller.unshift('5a531f46418f6102cc971035')
       }
     },
     async remoteUser(list) {
       this.loadingUser = true
       const uid = list[list.length - 1]
-      if (!uid || uid === '5a82af4d53645f57ee68d0c3') {
+      if (!uid || uid === '5a531f46418f6102cc971035') {
         this.$message.error('錯誤：無法移除 Decade 預設賣家！')
-        this.postForm.seller = ['5a82af4d53645f57ee68d0c3']
+        this.postForm.seller = ['5a531f46418f6102cc971035']
         this.loadingUser = false
         return
       }
       try {
-        const user = await fetchUser(uid)
+        const [user] = await fetchUserQuery(`where={"username":["${uid}"]}`)
         if (user.role !== 3) {
           this.$message.error('錯誤：該會員不是 Decade 簽約廠商！')
           this.postForm.seller.splice(-1, 1)
@@ -567,7 +634,13 @@ export default {
     font-size: 1.2rem;
     letter-spacing: 3px;
   }
-
+  .new-vendor{
+    display: flex;
+    margin: 1rem 0;
+    .vendor-input{
+      margin-right: 1rem;
+    }
+  }
   .tooltip-btn{
     cursor: pointer;
     border: 1px solid #ccc;
