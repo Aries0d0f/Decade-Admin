@@ -212,8 +212,10 @@ export default {
     async submitForm(status) {
       this.postForm.region = 0
       this.postForm.status = status
-      this.postForm.related = this.$refs.RelatedStock.relatedItems.map(x => x.key)
-      this.postForm.related2 = this.$refs.RelatedPost.relatedItems.map(x => x.key)
+      if (this.userInfo.role === 0) {
+        this.postForm.related = this.$refs.RelatedStock.relatedItems.map(x => x.key)
+        this.postForm.related2 = this.$refs.RelatedPost.relatedItems.map(x => x.key)
+      }
       this.loading = true
       try {
         if (this.isEdit) {
