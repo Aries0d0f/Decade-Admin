@@ -94,8 +94,9 @@
 </template>
 
 <script>
-import { fetchOrderList, updateOrder } from '@/api/order'
+import { fetchOrderList, updateOrder, fetchOrderByVendor } from '@/api/order'
 import { fetchStockQuery } from '@/api/stock'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Order-List',
@@ -134,6 +135,7 @@ export default {
     await this.getList()
   },
   computed: {
+    ...mapGetters(['userInfo']),
     pager: function() {
       const page = this.listQuery.page
       const limit = this.listQuery.limit
@@ -147,7 +149,13 @@ export default {
     async getList(query) {
       this.listLoading = true
       this.currentList = []
-      const list = await fetchOrderList(query || '')
+      let list = []
+      if (this.userInfo.role === 0) {
+        list = await fetchOrderList(query || '')
+      } else {
+        list = await fetchOrderByVendor(this.userInfo.id, query || '')
+      }
+      console.log(list)
       this.total = list.length
       if (list.length === 0) {
         this.currentList = []
