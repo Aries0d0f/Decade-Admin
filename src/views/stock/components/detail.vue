@@ -48,26 +48,6 @@
           <span>(已輸入 {{postForm.tag.length || 0}} 組，還可以增加 {{ 5 - (postForm.tag.length || 0)}} 組)</span>
         </el-form-item>
 
-        <!-- <el-form-item style="margin-bottom: 40px;" label-width="60px" label="廠商">
-          <el-select 
-            v-model="postForm.seller"
-            style="width: 100%"
-            @remove-tag="handleDeleteUser"
-            @change="remoteUser"
-            loading-text="檢查會員中..."
-            multiple
-            filterable
-            default-first-option
-            v-loading="loadingUser"
-            :loading="loadingUser"
-            :allow-create="!loadingUser"
-            placeholder="請輸入廠商編號"
-            no-data-text="請輸入廠商編號"
-            no-match-text="查無廠商">
-            <el-option v-for="item in postForm.seller" :key="item.value" :label="item.value" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item> -->
-
         <el-form-item style="margin-bottom: 40px;">
           <h4 class="form-subtitle">商品規格</h4>
           <el-collapse class="spec-collapse">
@@ -183,7 +163,7 @@
 
           <el-table-column label="" class-name="small-padding fixed-width" width="100">
             <template slot-scope="scope">
-              <el-button v-if="scope.row.id !== '5a531f46418f6102cc971035'" size="mini" @click="removeVendor(scope.row.id)">刪除</el-button>
+              <el-button size="mini" @click="removeVendor(scope.row.id)">刪除</el-button>
             </template>
           </el-table-column>                
         </el-table>
@@ -247,7 +227,7 @@ const defaultForm = {
   ],
   related: [],
   related2: [],
-  seller: [{ id: '5a531f46418f6102cc971035', data: {}}]
+  seller: []
 }
 
 export default {
@@ -398,10 +378,6 @@ export default {
   async created() {
     if (this.isEdit) {
       await this.fetchData()
-      // 兼容舊格式
-      if (this.postForm.seller[0].id !== '5a531f46418f6102cc971035') {
-        this.postForm.seller[0] = { id: '5a531f46418f6102cc971035', data: {}}
-      }
     } else {
       this.postForm = Object.assign({}, defaultForm)
     }
@@ -590,33 +566,6 @@ export default {
       if (index !== -1) {
         this.postForm.seller.splice(index, 1)
       }
-    },
-    async handleDeleteUser(item) {
-      if (this.postForm.seller.length > 1 && item.value === '5a531f46418f6102cc971035') {
-        this.$message.error('錯誤：無法移除 Decade 預設賣家！')
-        this.postForm.seller.unshift('5a531f46418f6102cc971035')
-      }
-    },
-    async remoteUser(list) {
-      this.loadingUser = true
-      const uid = list[list.length - 1]
-      if (!uid || uid === '5a531f46418f6102cc971035') {
-        this.$message.error('錯誤：無法移除 Decade 預設賣家！')
-        this.postForm.seller = ['5a531f46418f6102cc971035']
-        this.loadingUser = false
-        return
-      }
-      try {
-        const [user] = await fetchUserQuery(`where={"username":["${uid}"]}`)
-        if (user.role !== 3) {
-          this.$message.error('錯誤：該會員不是 Decade 簽約廠商！')
-          this.postForm.seller.splice(-1, 1)
-        }
-      } catch (error) {
-        this.postForm.seller.splice(-1, 1)
-        this.$message.error('錯誤：查無該廠商！')
-      }
-      this.loadingUser = false
     }
   }
 }
