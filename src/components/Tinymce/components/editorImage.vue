@@ -48,6 +48,7 @@ export default {
     },
     handleSubmit() {
       const arr = Object.keys(this.listObj).map(v => this.listObj[v])
+      console.log(arr)
       if (!this.checkAllSuccess()) {
         this.$message('請等待所有圖片上傳成功！')
         return

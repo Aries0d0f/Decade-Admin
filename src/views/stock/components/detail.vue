@@ -22,23 +22,10 @@
         </el-form-item>
 
         <el-form-item style="margin-bottom: 40px;" label-width="60px" label="分類" prop="category">
-          <el-cascader :options="options" placeholder="請選擇分類" v-model="categoryClass" @change="handleSelectCategort"></el-cascader>
+          <el-cascader :options="options" :props="props" placeholder="請選擇分類" v-model="categoryClass" @change="handleSelectCategort"></el-cascader>
         </el-form-item>
         <el-form-item style="margin-bottom: 40px;" label-width="60px" label="照片" prop="img">
-          <el-upload
-            :action="`${uploadUrl}/upload`"
-            list-type="picture-card"
-            name="image"
-            :on-success="handleImageScucess"
-            :file-list="imgList"
-            v-model="postForm.img"
-            :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove">
-            <i class="el-icon-plus"></i>
-          </el-upload>
-          <el-dialog :visible.sync="dialogVisible" size="tiny">
-            <img width="100%" :src="dialogImageUrl" alt="">
-          </el-dialog>
+          <MultipleUpload v-model="postForm.img" :defaultImg="postForm.img"></MultipleUpload>
         </el-form-item>
 
         <el-form-item style="margin-bottom: 40px;" label-width="60px" label="關鍵字">
@@ -189,6 +176,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import Tinymce from '@/components/Tinymce'
+import MultipleUpload from '@/components/Upload/multipleImage'
 import Upload from '@/components/Upload/singleImage2'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky'
@@ -231,8 +219,8 @@ const defaultForm = {
 }
 
 export default {
-  name: 'articleDetail',
-  components: { Tinymce, MDinput, Upload, Sticky, RelatedStock, RelatedPost },
+  name: 'StockDetail',
+  components: { Tinymce, MDinput, Upload, Sticky, RelatedStock, RelatedPost, MultipleUpload },
   props: {
     isEdit: {
       type: Boolean,
@@ -245,6 +233,7 @@ export default {
       isDraft: true,
       fetchSuccess: true,
       loading: true,
+      imgUploading: false,
       dialogImageUrl: '',
       isTicket: false,
       dialogVisible: false,
@@ -331,51 +320,16 @@ export default {
         },
         trigger: 'change'
       },
-      options: [
-        {
-          value: 0,
-          name: 'theme',
-          label: '服務體驗',
-          children: [
-            { label: '課程活動', name: 'lecture', value: 0 }
-          ]
-        },
-        {
-          value: 1,
-          name: 'life',
-          label: '居家空間',
-          children: [
-            { label: '家飾', name: 'furnishings', value: 0 },
-            { label: '家具', name: 'furniture', value: 1 },
-            { label: '家電', name: 'appliances', value: 2 }
-          ]
-        },
-        {
-          value: 2,
-          name: 'brands',
-          label: '生活質感',
-          children: [
-            { label: '3C周邊', name: 'eletronics', value: 0 },
-            { label: '個人用品', name: 'personal', value: 1 },
-            { label: '肌膚保養', name: 'skin_care', value: 2 },
-            { label: '時尚配飾', name: 'fashion', value: 3 }
-          ]
-        },
-        {
-          value: 3,
-          name: 'food',
-          label: '美食品味',
-          children: [
-            { label: '美食', name: 'ingredinents', value: 0 },
-            { label: '餐具', name: 'tableware', value: 1 },
-            { label: '廚具', name: 'kitchenware', value: 2 },
-            { label: '茶具酒器', name: 'tea_set', value: 3 }
-          ]
-        }
-      ]
+      options: [],
+      props: {
+        value: 'type',
+        children: 'children',
+        label: 'title'
+      }
     }
   },
   async created() {
+    this.options = this.StockClass
     if (this.isEdit) {
       await this.fetchData()
     } else {
@@ -384,11 +338,10 @@ export default {
     this.postForm.seller.map(async x => {
       x.data = await fetchUser(x.id)
     })
-    console.log(this.postForm.seller)
     this.loading = false
   },
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo', 'StockClass'])
   },
   watch: {
     'postForm.spec': {
@@ -528,18 +481,9 @@ export default {
     removeSpecInfo(index) {
       this.postForm.info.specInfo.splice(index, 1)
     },
-    handleRemove(file, fileList) {
-      this.imgList = fileList
-    },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url
-      this.dialogVisible = true
-    },
-    handleImageScucess(res) {
-      setTimeout(() => {
-        this.imgList.push({ name: this.imgList.length, url: res.data.url })
-        this.postForm.img.push(res.data.url)
-      }, 5000)
+    handleImageError() {
+      this.$message.error('錯誤：圖片上傳失敗，請重試！')
+      this.imgUploading = false
     },
     async addVendor() {
       if (this.postForm.seller.some(x => x.data.username === this.newVendor.username)) {

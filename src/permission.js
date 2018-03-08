@@ -11,6 +11,7 @@ const whiteList = ['/login', '/authredirect']// no redirect whitelist
 
 router.beforeEach(async(to, from, next) => {
   NProgress.start()
+  await Promise.all([store.dispatch('setStockClass'), store.dispatch('setPostClass')])
   next()
   if (getToken()) {
     if (to.name === 'login') {

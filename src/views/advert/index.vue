@@ -50,7 +50,6 @@
         // 兼容神奇的後端
         res.data.data.main.vendor.map(x => x.delete = false)
         res.data.data.shop.main[0].vendor.map(x => x.delete = false)
-        
         this.adData = res.data.data
         this.indexData = { ...res.data.data.main }
         this.shopMainData = { ...res.data.data.shop }

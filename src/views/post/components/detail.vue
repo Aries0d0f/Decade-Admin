@@ -39,7 +39,7 @@
           </el-col>
           <el-col :span="18">
             <el-form-item style="margin-bottom: 40px;" label-width="60px" label="分類" prop="category">
-              <el-cascader :options="options" v-model="categoryTypes" placeholder="請選擇分類" @change="handleSelectCategory"></el-cascader>
+              <el-cascader :options="options" :props="props" v-model="categoryTypes" placeholder="請選擇分類" @change="handleSelectCategory"></el-cascader>
             </el-form-item>
             <el-form-item style="margin-bottom: 40px;" label-width="60px" label="關鍵字" prop="keyword">
               <el-select v-model="postForm.tag" style="width: 100%" multiple filterable :allow-create="postForm.tag && postForm.tag.length < 5" default-first-option placeholder="請輸入關鍵字" no-data-text="請輸入關鍵字" no-match-text="已達 5 組關鍵字">
@@ -100,7 +100,7 @@ const defaultForm = {
 }
 
 export default {
-  name: 'articleDetail',
+  name: 'PostDetail',
   components: { Tinymce, MDinput, Upload, Sticky, RelatedStock, RelatedPost },
   props: {
     isEdit: {
@@ -116,76 +116,16 @@ export default {
       categoryTypes: [],
       relatedItems: [],
       rules: {},
-      options: [
-        {
-          value: 0,
-          name: 'news',
-          label: '專題',
-          children: [
-            { value: 0, label: '經典人物', name: 'character' },
-            { value: 1, label: '特別企劃', name: 'special' },
-            { value: 2, label: '活動專訪', name: 'interview' }
-          ]
-        },
-        {
-          value: 1,
-          name: 'beauty',
-          label: '保養',
-          children: [
-            { value: 0, name: 'body', label: '美體' },
-            { value: 1, name: 'fragrance', label: '香氛' },
-            { value: 2, name: 'share', label: '專業分享' }
-          ]
-        },
-        { value: 2,
-          name: 'life',
-          label: '生活',
-          children: [
-            { value: 0, name: 'art_tech', label: '藝術科技' },
-            { value: 1, name: 'home', label: '家居' },
-            { value: 2, name: 'travel', label: '旅行' },
-            { value: 3, name: 'story', label: '心情寫照' }
-          ]
-        },
-        {
-          value: 3,
-          name: 'feature',
-          label: '味蕾',
-          children: [
-            { value: 0, name: 'gourmet', label: '美食' },
-            { value: 1, name: 'vintage', label: '佳釀' },
-            { value: 2, name: 'coffee', label: '品茗咖啡' },
-            { value: 3, name: 'ingredinents', label: '食材' },
-            { value: 4, name: 'food_diary', label: '食記分享' }
-          ]
-        },
-        {
-          value: 4,
-          name: 'classic',
-          label: '經典',
-          children: [
-            { value: 0, name: 'art', label: '藝術' },
-            { value: 1, name: 'exhibition', label: '展覽' },
-            { value: 2, name: 'livehouse', label: '空間' },
-            { value: 3, name: 'brands', label: '品牌' },
-            { value: 4, name: 'classic_creation', label: '文。創作' }
-          ]
-        },
-        {
-          value: 5,
-          name: 'music',
-          label: '音樂',
-          children: [
-            { value: 0, name: 'vinyl', label: '黑膠' },
-            { value: 1, name: 'melody', label: '音律' },
-            { value: 2, name: 'activity', label: '活動' },
-            { value: 3, name: 'music_review', label: '樂。點評' }
-          ]
-        }
-      ]
+      options: [],
+      props: {
+        value: 'type',
+        children: 'children',
+        label: 'title'
+      }
     }
   },
   async created() {
+    this.options = this.PostClass
     this.loading = true
     if (this.isEdit) {
       await this.fetchData()
@@ -196,7 +136,7 @@ export default {
     this.loading = false
   },
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo', 'PostClass'])
   },
   methods: {
     async fetchData() {
