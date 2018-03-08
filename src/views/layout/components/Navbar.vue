@@ -6,8 +6,10 @@
 
     <div class="right-menu">
       <el-dropdown class="avatar-container right-menu-item" trigger="click">
-        <div class="avatar-wrapper">
-          <i class="el-icon-caret-bottom">{{userInfo.username}}</i>
+        <div class="avatar-wrapper" style="display: flex">
+          <img class="user-avatar" v-if="userInfo.udata.photo" :src="userInfo.udata.photo">
+          <span style="margin-left:.5rem;">{{userInfo.udata.name}}</span>
+          <i class="el-icon-caret-bottom"></i>
         </div>
         <el-dropdown-menu slot="dropdown">
           <router-link to="/">

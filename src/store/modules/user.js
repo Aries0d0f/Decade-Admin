@@ -1,4 +1,5 @@
 import { loginByUsername, fetchUser, createUserData, patchUser } from '@/api/user'
+import { fetchUData } from '@/api/udata'
 import { setToken, removeToken } from '@/utils/auth'
 const user = {
   state: {
@@ -6,7 +7,8 @@ const user = {
     cid: '',
     role: '',
     state: '',
-    username: ''
+    username: '',
+    udata: {}
   },
 
   mutations: {
@@ -24,6 +26,9 @@ const user = {
     },
     SET_USERNAME: (state, username) => {
       state.username = username
+    },
+    SET_UDATA: (state, udata) => {
+      state.udata = udata
     }
   },
 
@@ -61,11 +66,13 @@ const user = {
           await patchUser(res.id, { cid: udata.id })
           res.cid = udata.id
         }
+        const uData = await fetchUData(res.cid)
         commit('SET_ID', res.id)
         commit('SET_CID', res.cid)
         commit('SET_ROLE', res.role)
         commit('SET_STATE', res.state)
         commit('SET_USERNAME', res.username)
+        commit('SET_UDATA', uData)
         return true
       } catch (err) {
         console.log(err)

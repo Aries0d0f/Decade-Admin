@@ -1,7 +1,6 @@
 <template>
   <div class="dashboard-container">
-    <!-- <component :is="currentRole"></component> -->
-    <h2>歡迎, {{userInfo.username}}</h2>
+    <h2>歡迎, {{userInfo.udata.name}}</h2>
     目前的權限為: {{userInfo.role | UserRoleLabel}}
   </div>
 </template>
