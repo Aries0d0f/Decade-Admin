@@ -58,15 +58,19 @@
       <el-col :span="14">
         <div class="grid-content bg-purple">
           <el-card class="box-card">
-            <el-table :data="stocks" v-if="stocks.length > 0" stripe style="width: 100%" header-row-style="background-color: #ebeef5;">
+            <el-table :data="stocks" v-if="stocks.length > 0" stripe style="width: 100%" :header-row-style="{'background-color': '#ebeef5'}">
               <el-table-column align="left" prop="id" label="商品編號" width="220"></el-table-column>
               <el-table-column align="left" prop="name" label="品名"></el-table-column>
               <el-table-column align="center" prop="count" label="數量" width="100"></el-table-column>
             </el-table>
-            <el-table :data="tickets" v-if="tickets.length > 0" stripe style="margin-top:1rem;width: 100%" header-row-style="background-color: #ebeef5;">
+            <el-table :data="tickets" v-if="tickets.length > 0" stripe style="margin-top:1rem;width: 100%" :header-row-style="{'background-color': '#ebeef5'}">
               <el-table-column align="left" prop="id" label="票券編號" width="220"></el-table-column>
               <el-table-column align="left" prop="name" label="品名"></el-table-column>
-              <el-table-column align="center" prop="price" label="金額" width="100"></el-table-column>
+              <el-table-column align="center" label="使用狀況" width="100">
+                <template slot-scope="scope">
+                  {{scope.row.used ? '已使用' : '未使用'}}
+                </template>
+              </el-table-column>
               <el-table-column align="center" prop="code" label="代碼" width="100"></el-table-column>
             </el-table>
             
