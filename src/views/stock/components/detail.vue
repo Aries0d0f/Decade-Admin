@@ -344,18 +344,18 @@ export default {
     ...mapGetters(['userInfo', 'StockClass'])
   },
   watch: {
-    'postForm.spec': {
-      handler: function(val) {
-        val.map(item => {
-          const imgUrl = item.imageURL || undefined
-          if (imgUrl && !this.postForm.img.some(x => x === imgUrl)) {
-            // this.postForm.img.push(imgUrl)
-            // this.imgList.push({ name: new Date().getTime(), url: imgUrl })
-          }
-        })
-      },
-      deep: true
-    }
+    // 'postForm.spec': {
+    //   handler: function(val) {
+    //     val.map(item => {
+    //       const imgUrl = item.imageURL || undefined
+    //       if (imgUrl && !this.postForm.img.some(x => x === imgUrl)) {
+    //         // this.postForm.img.push(imgUrl)
+    //         // this.imgList.push({ name: new Date().getTime(), url: imgUrl })
+    //       }
+    //     })
+    //   },
+    //   deep: true
+    // }
   },
   methods: {
     async fetchData() {

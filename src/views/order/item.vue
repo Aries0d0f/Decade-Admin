@@ -61,6 +61,11 @@
             <el-table :data="stocks" v-if="stocks.length > 0" stripe style="width: 100%" :header-row-style="{'background-color': '#ebeef5'}">
               <el-table-column align="left" prop="id" label="商品編號" width="220"></el-table-column>
               <el-table-column align="left" prop="name" label="品名"></el-table-column>
+              <el-table-column align="center" label="使用狀況" width="100">
+                <template slot-scope="scope" v-if="scope.row.specSelect">
+                  {{scope.row.spec[scope.row.specSelect].name || 'unknown'}}
+                </template>
+              </el-table-column>
               <el-table-column align="center" prop="count" label="數量" width="100"></el-table-column>
             </el-table>
             <el-table :data="tickets" v-if="tickets.length > 0" stripe style="margin-top:1rem;width: 100%" :header-row-style="{'background-color': '#ebeef5'}">
@@ -179,7 +184,7 @@
           const stocks = []
           data.content.stock.map(async item => {
             const stock = await fetchStock(item.sid)
-            stocks.push({ ...stock, count: item.count })
+            stocks.push({ ...stock, count: item.count, specSelect: item.specSelect })
           })
           this.stocks = stocks
         }
