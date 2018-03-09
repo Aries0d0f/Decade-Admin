@@ -349,8 +349,8 @@ export default {
         val.map(item => {
           const imgUrl = item.imageURL || undefined
           if (imgUrl && !this.postForm.img.some(x => x === imgUrl)) {
-            this.postForm.img.push(imgUrl)
-            this.imgList.push({ name: new Date().getTime(), url: imgUrl })
+            // this.postForm.img.push(imgUrl)
+            // this.imgList.push({ name: new Date().getTime(), url: imgUrl })
           }
         })
       },
@@ -395,9 +395,12 @@ export default {
       postData.info.type = this.categoryClass[0]
       postData.info = JSON.stringify(postData.info)
       postData.type = this.categoryClass[0] === 0 ? 3 : this.isTicket ? 3 : 1
-      postData.img = []
       postData.seller = this.postForm.seller.map(x => x.id)
-      this.imgList.map(x => postData.img.push(x.url))
+      postData.spec.forEach(x => {
+        if (!postData.img.some(img => img === x.imageURL)) {
+          postData.img.push(x.imageURL)
+        }
+      })
       try {
         if (this.isEdit) {
           await updateStock(this.$route.params.id, postData)
@@ -422,9 +425,12 @@ export default {
       postData.info.type = this.categoryClass[0]
       postData.info = JSON.stringify(this.postForm.info)
       postData.type = this.categoryClass[0] === 0 ? 3 : this.isTicket ? 3 : 1
-      postData.img = []
       postData.seller = this.postForm.seller.forEach(x => x.id)
-      this.imgList.map(x => postData.img.push(x.url))
+      postData.spec.forEach(x => {
+        if (!postData.img.some(img => img === x.imageURL)) {
+          postData.img.push(x.imageURL)
+        }
+      })
       try {
         await updateStock(this.$route.params.id, postData)
         this.$notify({ title: '成功', message: '發布成功', type: 'success', duration: 2000 })

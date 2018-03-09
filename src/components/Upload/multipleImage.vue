@@ -39,9 +39,11 @@ export default {
           name: new Date().getTime(),
           status: 'success',
           uid: new Date().getTime(),
-          url: img
+          url: img,
+          remoteUrl: img,
         }
       })
+      this.imgList = this.localImgList.map(x => x.remoteUrl)
     }
   },
   methods: {
@@ -51,6 +53,11 @@ export default {
     },
     handleRemove(file, fileList) {
       this.localImgList = fileList
+      const delIndex = this.imgList.findIndex(x => x === file.remoteUrl)
+      if (delIndex !== -1) {
+        this.imgList.splice(delIndex, 1)
+      }
+      this.$emit('input', this.imgList)
     },
     handleImageError() {
       this.$message.error('錯誤：圖片上傳失敗，請重試！')
@@ -58,7 +65,7 @@ export default {
     },
     handleImageScucess(res, file) {
       this.imgUploading = false
-      this.localImgList.push({ name: this.localImgList.length, url: file.url })
+      this.localImgList.push({ name: this.localImgList.length, url: file.url, remoteUrl: res.data.url})
       this.imgList.push(res.data.url)
       this.$emit('input', this.imgList)
     },
