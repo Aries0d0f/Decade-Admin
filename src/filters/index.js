@@ -105,7 +105,7 @@ export const UserRoleLabel = (role) => {
     { value: 4, label: '簽約編輯' },
     { value: 999, label: '一般會員' }
   ]
-  return roleList.find(x => x.value === role).label
+  return roleList.find(x => x.value === role).label || 'unknown'
 }
 
 export const OrderStatusLabel = (status) => {

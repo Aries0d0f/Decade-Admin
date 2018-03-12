@@ -213,7 +213,6 @@ export default {
     },
     handleSelectCategory(type) {
       this.postForm.category = type[0]
-      this.postForm.subCategory = type[1]
     }
   }
 }

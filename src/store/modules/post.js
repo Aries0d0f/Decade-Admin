@@ -19,14 +19,7 @@ const app = {
         return {
           name: item.name,
           title: item.title,
-          type: item.type,
-          children: item.children.map(subItem => {
-            return {
-              name: subItem.name,
-              title: subItem.title,
-              type: subItem.type
-            }
-          })
+          type: item.type
         }
       })
       commit('SET_POST_CLASS', classList)
