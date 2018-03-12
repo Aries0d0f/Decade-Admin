@@ -46,7 +46,7 @@
       </el-table-column> -->
       <el-table-column label="分類" width="200">
         <template slot-scope="scope">
-          <span>{{categoryLabel(scope.row.info.type, scope.row.catalog)}}</span>
+          <span>{{categoryLabel(scope.row.catalog, scope.row.catalog)}}</span>
         </template>
       </el-table-column>
       <el-table-column label="狀態" width="80">
@@ -70,7 +70,7 @@
     </el-table>
 
     <div class="pagination-container">      
-      <el-pagination background @current-change="handleCurrentChange" :current-page.sync="listQuery.page"
+      <el-pagination background :current-page.sync="listQuery.page"
         :page-sizes="[listQuery.limit]" :page-size="listQuery.limit" layout="prev, pager, next, jumper" :total="total">
       </el-pagination>
     </div>
@@ -97,49 +97,49 @@ export default {
         limit: 30,
         name: '',
         sort: '+id'
-      },
-      stockClass: [
-        {
-          value: 0,
-          name: 'theme',
-          label: '服務體驗',
-          children: [
-            { label: '課程活動', name: 'lecture', value: 0 }
-          ]
-        },
-        {
-          value: 1,
-          name: 'life',
-          label: '居家空間',
-          children: [
-            { label: '家飾', name: 'furnishings', value: 0 },
-            { label: '家具', name: 'furniture', value: 1 },
-            { label: '家電', name: 'appliances', value: 2 }
-          ]
-        },
-        {
-          value: 2,
-          name: 'brands',
-          label: '生活質感',
-          children: [
-            { label: '3C周邊', name: 'eletronics', value: 0 },
-            { label: '個人用品', name: 'personal', value: 1 },
-            { label: '肌膚保養', name: 'skin_care', value: 2 },
-            { label: '時尚配飾', name: 'fashion', value: 3 }
-          ]
-        },
-        {
-          value: 3,
-          name: 'food',
-          label: '美食品味',
-          children: [
-            { label: '美食', name: 'ingredinents', value: 0 },
-            { label: '餐具', name: 'tableware', value: 1 },
-            { label: '廚具', name: 'kitchenware', value: 2 },
-            { label: '茶具酒器', name: 'tea_set', value: 3 }
-          ]
-        }
-      ]
+      }
+      // stockClass: [
+      //   {
+      //     value: 0,
+      //     name: 'theme',
+      //     label: '服務體驗',
+      //     children: [
+      //       { label: '課程活動', name: 'lecture', value: 0 }
+      //     ]
+      //   },
+      //   {
+      //     value: 1,
+      //     name: 'life',
+      //     label: '居家空間',
+      //     children: [
+      //       { label: '家飾', name: 'furnishings', value: 0 },
+      //       { label: '家具', name: 'furniture', value: 1 },
+      //       { label: '家電', name: 'appliances', value: 2 }
+      //     ]
+      //   },
+      //   {
+      //     value: 2,
+      //     name: 'brands',
+      //     label: '生活質感',
+      //     children: [
+      //       { label: '3C周邊', name: 'eletronics', value: 0 },
+      //       { label: '個人用品', name: 'personal', value: 1 },
+      //       { label: '肌膚保養', name: 'skin_care', value: 2 },
+      //       { label: '時尚配飾', name: 'fashion', value: 3 }
+      //     ]
+      //   },
+      //   {
+      //     value: 3,
+      //     name: 'food',
+      //     label: '美食品味',
+      //     children: [
+      //       { label: '美食', name: 'ingredinents', value: 0 },
+      //       { label: '餐具', name: 'tableware', value: 1 },
+      //       { label: '廚具', name: 'kitchenware', value: 2 },
+      //       { label: '茶具酒器', name: 'tea_set', value: 3 }
+      //     ]
+      //   }
+      // ]
     }
   },
   async created() {
@@ -151,7 +151,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo']),
+    ...mapGetters(['userInfo', 'StockClass']),
     pager: function() {
       const page = this.listQuery.page
       const limit = this.listQuery.limit
@@ -213,23 +213,23 @@ export default {
       //   await this.getList(`?where={"author":["${this.userInfo.id}"]}`)
       // }
     },
-    handleCurrentChange() {
-    },
-    categoryLabel(cate, subCate = -1) {
+    categoryLabel(cate, cate2 = undefined, cate3 = undefined) {
       try {
-        const labelClass = this.stockClass.filter(x => cate === x.value)
-        const label = labelClass[0].label
-        if (labelClass[0].children) {
-          const subLabel = labelClass[0].children.filter(x => subCate === x.value)
-          if (subLabel.length > 0) {
-            return label + '/' + subLabel[0].label
-          } else {
-            return label
-          }
-        }
-        return label
+        const cateLabel = this.StockClass.find(x => x.type === cate)
+        console.log(cateLabel, cate)
+        // const labelClass = this.stockClass.filter(x => cate === x.value)
+        // const label = labelClass[0].label
+        // if (labelClass[0].children) {
+        //   const subLabel = labelClass[0].children.filter(x => subCate === x.value)
+        //   if (subLabel.length > 0) {
+        //     return label + '/' + subLabel[0].label
+        //   } else {
+        //     return label
+        //   }
+        // }
+        // return label
       } catch (error) {
-        return 'Unknown'
+        return 'unknown'
       }
     },
     async queryUid(uidList) {

@@ -24,7 +24,14 @@ const app = {
             return {
               name: subItem.name,
               title: subItem.title,
-              type: subItem.type
+              type: subItem.type,
+              children: subItem.children.map(subItem3 => {
+                return {
+                  name: subItem3.name,
+                  title: subItem3.title,
+                  type: subItem3.type
+                }
+              })
             }
           })
         }
