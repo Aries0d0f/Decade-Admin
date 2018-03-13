@@ -98,48 +98,6 @@ export default {
         name: '',
         sort: '+id'
       }
-      // stockClass: [
-      //   {
-      //     value: 0,
-      //     name: 'theme',
-      //     label: '服務體驗',
-      //     children: [
-      //       { label: '課程活動', name: 'lecture', value: 0 }
-      //     ]
-      //   },
-      //   {
-      //     value: 1,
-      //     name: 'life',
-      //     label: '居家空間',
-      //     children: [
-      //       { label: '家飾', name: 'furnishings', value: 0 },
-      //       { label: '家具', name: 'furniture', value: 1 },
-      //       { label: '家電', name: 'appliances', value: 2 }
-      //     ]
-      //   },
-      //   {
-      //     value: 2,
-      //     name: 'brands',
-      //     label: '生活質感',
-      //     children: [
-      //       { label: '3C周邊', name: 'eletronics', value: 0 },
-      //       { label: '個人用品', name: 'personal', value: 1 },
-      //       { label: '肌膚保養', name: 'skin_care', value: 2 },
-      //       { label: '時尚配飾', name: 'fashion', value: 3 }
-      //     ]
-      //   },
-      //   {
-      //     value: 3,
-      //     name: 'food',
-      //     label: '美食品味',
-      //     children: [
-      //       { label: '美食', name: 'ingredinents', value: 0 },
-      //       { label: '餐具', name: 'tableware', value: 1 },
-      //       { label: '廚具', name: 'kitchenware', value: 2 },
-      //       { label: '茶具酒器', name: 'tea_set', value: 3 }
-      //     ]
-      //   }
-      // ]
     }
   },
   async created() {
@@ -215,19 +173,10 @@ export default {
     },
     categoryLabel(cate, cate2 = undefined, cate3 = undefined) {
       try {
-        const cateLabel = this.StockClass.find(x => x.type === cate)
-        console.log(cateLabel, cate)
-        // const labelClass = this.stockClass.filter(x => cate === x.value)
-        // const label = labelClass[0].label
-        // if (labelClass[0].children) {
-        //   const subLabel = labelClass[0].children.filter(x => subCate === x.value)
-        //   if (subLabel.length > 0) {
-        //     return label + '/' + subLabel[0].label
-        //   } else {
-        //     return label
-        //   }
-        // }
-        // return label
+        const catelog = this.StockClass.find(x => x.type === cate)
+        const subCatalog = catelog.children.find(x => x.type === cate2)
+        const subCubCatalog = subCatalog.children.find(x => x.type === cate2)
+        return `${catelog.title}/${subCatalog.title}/${subCubCatalog.title}`
       } catch (error) {
         return 'unknown'
       }

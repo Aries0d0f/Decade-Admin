@@ -21,8 +21,15 @@
           </MDinput>
         </el-form-item>
 
-        <el-form-item style="margin-bottom: 40px;" label-width="60px" label="分類" prop="category">
-          <el-cascader :options="options" :props="props" placeholder="請選擇分類" v-model="categoryClass" @change="handleSelectCategort"></el-cascader>
+        <el-form-item style="margin-bottom: 40px" label-width="60px" label="分類" prop="category">
+          <el-cascader
+            :options="options"
+            style="width:20rem;"
+            :props="props"
+            placeholder="請選擇分類"
+            v-model="categoryClass"
+            @change="handleSelectCategort">
+          </el-cascader>
         </el-form-item>
         <el-form-item style="margin-bottom: 40px;" label-width="60px" label="照片" prop="img">
           <MultipleUpload v-model="postForm.img" :defaultImg="postForm.img"></MultipleUpload>
@@ -280,7 +287,7 @@ export default {
         category: [
           {
             validator: (rule, value, callback) => {
-              if (this.categoryClass.length !== 2) {
+              if (this.categoryClass.length !== 3) {
                 return callback('請選擇分類')
               }
               callback()
@@ -362,15 +369,14 @@ export default {
       try {
         const stock = await fetchStock(this.$route.params.id)
         Object.assign(this.postForm, stock)
-        // this.postForm = stock
         this.postForm.info = JSON.parse(stock.info)
         // eslint-disable-next-line
         this.isDraft = this.postForm.status === 1 ? false : true
-        this.isTicket = this.postForm.info.type === 0 ? true : this.postForm.type === 3 ? 1 : 0
+        this.isTicket = this.postForm.type === 3 ? 1 : 0
         this.postForm.img.map((img, i) => {
           this.imgList.push({ name: i, url: img })
         })
-        this.categoryClass = [parseInt(this.postForm.info.type, 10), this.postForm.catalog]
+        this.categoryClass = [this.postForm.catalog, this.postForm.subCatalog, this.postForm.subSubCatalog]
         this.postForm.seller = this.postForm.seller.map(x => {
           return { id: x, data: {}}
         })
@@ -390,14 +396,14 @@ export default {
       const postData = JSON.parse(JSON.stringify(this.postForm))
       postData.related = this.$refs.RelatedPost.relatedItems.map(x => x.key)
       postData.related2 = this.$refs.RelatedStock.relatedItems.map(x => x.key)
-      postData.catalog = this.categoryClass[1] !== -1 ? this.categoryClass[1] : -1
+      // postData.catalog = this.categoryClass[1] !== -1 ? this.categoryClass[1] : -1
       postData.status = this.isDraft ? 0 : 1
-      postData.info.type = this.categoryClass[0]
+      // postData.info.type = this.categoryClass[0]
       postData.info = JSON.stringify(postData.info)
-      postData.type = this.categoryClass[0] === 0 ? 3 : this.isTicket ? 3 : 1
+      postData.type = this.isTicket ? 3 : 1
       postData.seller = this.postForm.seller.map(x => x.id)
       postData.spec.forEach(x => {
-        if (!postData.img.some(img => img === x.imageURL)) {
+        if (!postData.img.some(img => img === x.imageURL) && x.imageURL) {
           postData.img.push(x.imageURL)
         }
       })
@@ -420,11 +426,9 @@ export default {
       const postData = Object.assign({}, this.postForm)
       this.isDraft = true
       postData.related = this.$refs.RelatedPost.relatedItems.map(x => x.key)
-      postData.catalog = this.categoryClass[1] !== -1 ? this.categoryClass[1] : -1
       postData.status = 0
-      postData.info.type = this.categoryClass[0]
       postData.info = JSON.stringify(this.postForm.info)
-      postData.type = this.categoryClass[0] === 0 ? 3 : this.isTicket ? 3 : 1
+      postData.type = this.isTicket ? 3 : 1
       postData.seller = this.postForm.seller.forEach(x => x.id)
       postData.spec.forEach(x => {
         if (!postData.img.some(img => img === x.imageURL)) {
@@ -454,8 +458,9 @@ export default {
       })
     },
     handleSelectCategort(category) {
-      this.postForm.info.type = category[0]
-      this.postForm.catalog = category[1]
+      this.postForm.catalog = category[0]
+      this.postForm.subCatalog = category[1]
+      this.postForm.subSubCatalog = category[2]
     },
     addSpec() {
       this.postForm.spec.push({
