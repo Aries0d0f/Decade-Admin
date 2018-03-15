@@ -61,7 +61,7 @@
             <el-table :data="stocks" v-if="stocks.length > 0" stripe style="width: 100%" :header-row-style="{'background-color': '#ebeef5'}">
               <el-table-column align="left" prop="id" label="商品編號" width="220"></el-table-column>
               <el-table-column align="left" prop="name" label="品名"></el-table-column>
-              <el-table-column align="center" label="使用狀況" width="100">
+              <el-table-column align="center" label="規格" width="100">
                 <template slot-scope="scope" v-if="scope.row.specSelect">
                   {{scope.row.spec[scope.row.specSelect].name || 'unknown'}}
                 </template>
