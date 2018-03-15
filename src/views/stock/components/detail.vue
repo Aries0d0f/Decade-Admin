@@ -20,7 +20,9 @@
             商品名稱
           </MDinput>
         </el-form-item>
-
+        <el-form-item style="margin-bottom: 40px" label-width="60px" label="票券">
+          <el-switch v-model="isTicket"></el-switch>
+        </el-form-item>
         <el-form-item style="margin-bottom: 40px" label-width="60px" label="分類" prop="category">
           <el-cascader
             :options="options"

@@ -14,7 +14,7 @@
               <el-input v-model="adData.main[i].ad.banner.btnLink" placeholder="路由"></el-input>
             </el-col>
 
-            <el-col :span="24" style="margin-top: 1rem;">
+            <!-- <el-col :span="24" style="margin-top: 1rem;">
               <el-card class="box-card" header="分類 Banner" :body-style="{ padding: '0px' }">    
                 <el-tabs type="border-card">
                   <el-tab-pane :label="subClassType.title" v-for="(subClassType, j) in classType.children" :key="j">
@@ -42,7 +42,7 @@
                   </el-tab-pane>
                 </el-tabs>
               </el-card>
-            </el-col>
+            </el-col> -->
           </el-row>
         </el-tab-pane>
       </el-tabs>
