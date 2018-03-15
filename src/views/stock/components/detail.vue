@@ -53,7 +53,7 @@
             >
               <el-collapse-item :title="`#${index + 1}. ${item.name}` || `規格 ${index + 1}`" :name="index">
                 <div class="spec-container">
-                  <el-form-item>
+                  <el-form-item prop="imageUrl">
                     <Upload style="height: 100%;margin: 1rem 1rem 0 0" v-model="item.imageURL" :defaultImg="item.imageURL"></Upload>
                   </el-form-item> 
                   
@@ -275,7 +275,7 @@ export default {
           {
             validator: (rule, value, callback) => {
               this.postForm.spec.map(item => {
-                if (item.imageURL.length === 0) {
+                if (!item.imageURL || item.imageURL.length === 0) {
                   callback('請上傳圖片')
                 }
               })
@@ -386,6 +386,12 @@ export default {
             this.postForm.spec[i] = { name: spec.name, count: spec.count, priceDefault: undefined, priceOnsale: undefined, imageURL: spec.imageURL || undefined }
           })
         }
+        // 舊版商品圖片格式處理
+        this.postForm.img.forEach((img, i) => {
+          if (!img) {
+            this.postForm.img.splice(i, 1)
+          }
+        })
       } catch (err) {
         this.fetchSuccess = false
         console.log(err)

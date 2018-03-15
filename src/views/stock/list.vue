@@ -46,7 +46,7 @@
       </el-table-column> -->
       <el-table-column label="分類" width="200">
         <template slot-scope="scope">
-          <span>{{categoryLabel(scope.row.catalog, scope.row.catalog)}}</span>
+          <span>{{categoryLabel(scope.row.catalog, scope.row.subCatalog, scope.row.subSubCatalog)}}</span>
         </template>
       </el-table-column>
       <el-table-column label="狀態" width="80">
@@ -175,7 +175,7 @@ export default {
       try {
         const catelog = this.StockClass.find(x => x.type === cate)
         const subCatalog = catelog.children.find(x => x.type === cate2)
-        const subCubCatalog = subCatalog.children.find(x => x.type === cate2)
+        const subCubCatalog = subCatalog.children.find(x => x.type === cate3)
         return `${catelog.title}/${subCatalog.title}/${subCubCatalog.title}`
       } catch (error) {
         return 'unknown'
