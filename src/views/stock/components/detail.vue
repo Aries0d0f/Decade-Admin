@@ -55,7 +55,7 @@
             >
               <el-collapse-item :title="`#${index + 1}. ${item.name}` || `規格 ${index + 1}`" :name="index">
                 <div class="spec-container">
-                  <el-form-item prop="imageUrl">
+                  <el-form-item>
                     <Upload style="height: 100%;margin: 1rem 1rem 0 0" v-model="item.imageURL" :defaultImg="item.imageURL"></Upload>
                   </el-form-item> 
                   
@@ -374,7 +374,8 @@ export default {
         this.postForm.info = JSON.parse(stock.info)
         // eslint-disable-next-line
         this.isDraft = this.postForm.status === 1 ? false : true
-        this.isTicket = this.postForm.type === 3 ? 1 : 0
+        // eslint-disable-next-line
+        this.isTicket = this.postForm.type === 3 ? true : false
         this.postForm.img.map((img, i) => {
           this.imgList.push({ name: i, url: img })
         })
@@ -385,7 +386,7 @@ export default {
         // 舊版商品格式處理
         if (this.postForm.spec === 0 || !this.postForm.spec[0].priceDefault) {
           this.postForm.spec.forEach((spec, i) => {
-            this.postForm.spec[i] = { name: spec.name, count: spec.count, priceDefault: undefined, priceOnsale: undefined, imageURL: spec.imageURL || undefined }
+            this.postForm.spec[i] = { name: spec.name, count: spec.count, priceDefault: undefined, priceOnsale: undefined, imageURL: spec.imageURL || '' }
           })
         }
         // 舊版商品圖片格式處理
