@@ -25,7 +25,7 @@ export default {
       type: Array,
       required: false,
       default() {
-        return ['removeformat undo redo |  bullist numlist | outdent indent | forecolor | fullscreen code', 'bold italic blockquote | h2 p  media link | alignleft aligncenter alignright table']
+        return ['removeformat undo redo |  bullist numlist | outdent indent | forecolor | fullscreen code', 'formatselect bold italic blockquote | h2 p  media link | alignleft aligncenter alignright table']
       }
     },
     menubar: {
@@ -117,21 +117,33 @@ export default {
 }
 </script>
 
-<style scoped>
-.tinymce-container {
-  position: relative
-}
-.tinymce-textarea {
-  visibility: hidden;
-  z-index: -1;
-}
-.editor-custom-btn-container {
-  position: absolute;
-  right: 15px;
-  /*z-index: 2005;*/
-  top: 18px;
-}
-.editor-upload-btn {
-  display: inline-block;
-}
+<style lang="scss">
+  .panel-body h1, .panel-body h2, .panel-body h3, .panel-body h4, .panel-body h5, .panel-body h6 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #e8e8e8;
+    border-left: 5px solid #1478f0;
+    padding-left: 10px;
+    margin: 30px 0;
+  }
+</style>
+
+
+<style scoped lang="scss">
+  .tinymce-container {
+    position: relative
+  }
+  .tinymce-textarea {
+    visibility: hidden;
+    z-index: -1;
+  }
+  .editor-custom-btn-container {
+    position: absolute;
+    right: 15px;
+    /*z-index: 2005;*/
+    top: 18px;
+  }
+  .editor-upload-btn {
+    display: inline-block;
+  }
 </style>

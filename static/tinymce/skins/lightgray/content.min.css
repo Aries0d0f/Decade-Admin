@@ -480,8 +480,8 @@ b, strong {
 .panel-body h6 {
   font-size: 18px;
   font-weight: 700;
-  color: #1478f0;
-  border-left: 5px solid #1478f0;
+  color: #606266;
+  /* border-left: 5px solid #1478f0; */
   padding-left: 10px;
   margin: 30px 0;
 }
