@@ -80,6 +80,7 @@ export default {
         imagetools_cors_hosts: ['wpimg.wallstcn.com', 'wallstreetcn.com'],
         imagetools_toolbar: 'watermark',
         default_link_target: '_blank',
+        block_formats: '內文=p;小標題=h3',
         link_title: false,
         init_instance_callback: editor => {
           if (_this.value) {
@@ -118,13 +119,33 @@ export default {
 </script>
 
 <style lang="scss">
-  .panel-body h1, .panel-body h2, .panel-body h3, .panel-body h4, .panel-body h5, .panel-body h6 {
-    font-size: 18px;
-    font-weight: 700;
-    color: #e8e8e8;
-    border-left: 5px solid #1478f0;
-    padding-left: 10px;
-    margin: 30px 0;
+  // .panel-body h1, .panel-body h2, .panel-body h3, .panel-body h4, .panel-body h5, .panel-body h6 {
+  //   font-size: 18px;
+  //   font-weight: 700;
+  //   color: #e8e8e8;
+  //   border-left: 5px solid #1478f0;
+  //   padding-left: 10px;
+  //   margin: 30px 0;
+  // }
+
+  .panel-body h3{
+    border-left: 3px solid #b17536;
+    padding-left: 1rem;
+    font-size: 1.2rem;
+    margin: 1rem 0;
+    margin-right: auto;
+  }
+
+  .panel-body p{
+    display: flex;
+    width: 100%;
+    margin: 1rem 0;
+    line-height: 32px;
+    text-align: justify;
+    letter-spacing: 2px;
+    text-justify: inter-ideograph;
+    margin-right: auto;
+    color: #6b6b6a;
   }
 </style>
 

@@ -599,3 +599,27 @@ b, strong {
 .panel-body .typo-table thead th {
   background: #f1f1f1;
 }
+
+.panel-body h3{
+  border-left: 3px solid #b17536;
+  padding-left: 1rem;
+  font-size: 1.2rem;
+  margin: 1rem 0;
+  margin-right: auto;
+  font-family: jf-jinxuan,sans-serif;
+  font-weight: 200;
+  text-align: justify;
+  letter-spacing: 2px;
+}
+
+.panel-body p{
+  display: flex;
+  width: 100%;
+  margin: 1rem 0;
+  line-height: 32px;
+  text-align: justify;
+  letter-spacing: 2px;
+  text-justify: inter-ideograph;
+  margin-right: auto;
+  color: #6b6b6a;
+}
