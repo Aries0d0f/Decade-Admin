@@ -80,7 +80,7 @@ export default {
         imagetools_cors_hosts: ['wpimg.wallstcn.com', 'wallstreetcn.com'],
         imagetools_toolbar: 'watermark',
         default_link_target: '_blank',
-        block_formats: '內文=p;小標題=h3',
+        block_formats: '段落=p;標題=h3',
         link_title: false,
         init_instance_callback: editor => {
           if (_this.value) {
