@@ -8,7 +8,7 @@
         <IndexTab ref="indexTab" :props-data="indexData"></IndexTab>
       </el-tab-pane>
       <el-tab-pane label="商店推薦">
-        <ShopMainTab ref="shopMainTab" :props-data="shopMainData"></ShopMainTab>
+        <shopPageTab ref="shopPageTab" :props-data="shopPage"></shopPageTab>
       </el-tab-pane>
       <el-tab-pane label="生活誌推薦">
         <PostMainTab ref="magazineMainTab" :props-data="magazineMainData"></PostMainTab>
@@ -24,7 +24,7 @@
 </template>
 <script>
   import IndexTab from './layout/indexTab'
-  import ShopMainTab from './layout/shopMainTab'
+  import shopPageTab from './layout/shopPageTab'
   import PostMainTab from './layout/postMainTab'
   import StockTab from './layout/stockTab'
   import PostTab from './layout/postTab'
@@ -36,7 +36,7 @@
         loading: true,
         adData: {},
         indexData: {},
-        shopMainData: {},
+        shopPage: {},
         stockData: {},
         postData: {}
       }
@@ -47,12 +47,13 @@
     methods: {
       async getAdData() {
         const res = await request.get('/ad')
-        // 兼容神奇的後端
+        // eslint-disable-next-line
         res.data.data.main.vendor.map(x => x.delete = false)
+        // eslint-disable-next-line
         res.data.data.shop.main[0].vendor.map(x => x.delete = false)
         this.adData = res.data.data
-        this.indexData = { ...res.data.data.main }
-        this.shopMainData = { ...res.data.data.shop }
+        this.indexData = this.adData.data.find(x => x.name === 'index-setting')
+        this.shopPage = this.adData.data.find(x => x.name === 'shop-page')
         this.magazineMainData = { ...res.data.data.magazine }
         this.stockData = { ...res.data.data.stock }
         this.postData = { ...res.data.data.post }
@@ -60,8 +61,11 @@
       },
       async handleUpdate() {
         const data = {
+          data: [
+            ...this.adData.data
+          ],
           main: this.$refs.indexTab.adData,
-          shop: this.$refs.shopMainTab.adData,
+          shop: this.$refs.shopPageTab.adData,
           magazine: this.$refs.magazineMainTab.adData,
           stock: this.$refs.stockTab.adData,
           post: this.$refs.postTab.adData
@@ -71,7 +75,7 @@
         data.shop.main[0].vendor.map(x => delete x.delete)
         try {
           this.loading = true
-          await request.post('/ad', { config: data })
+          // await request.post('/ad', { config: data })
           this.loading = false
         } catch (err) {
           console.log(err)
@@ -80,7 +84,7 @@
     },
     components: {
       IndexTab,
-      ShopMainTab,
+      shopPageTab,
       StockTab,
       PostTab,
       PostMainTab

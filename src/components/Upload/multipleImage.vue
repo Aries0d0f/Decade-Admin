@@ -40,7 +40,7 @@ export default {
           status: 'success',
           uid: new Date().getTime(),
           url: img,
-          remoteUrl: img,
+          remoteUrl: img
         }
       })
       this.imgList = this.localImgList.map(x => x.remoteUrl)
@@ -65,7 +65,7 @@ export default {
     },
     handleImageScucess(res, file) {
       this.imgUploading = false
-      this.localImgList.push({ name: this.localImgList.length, url: file.url, remoteUrl: res.data.url})
+      this.localImgList.push({ name: this.localImgList.length, url: file.url, remoteUrl: res.data.url })
       this.imgList.push(res.data.url)
       this.$emit('input', this.imgList)
     },

@@ -50,7 +50,6 @@ export default {
         this.postCard = { meta: { image: '' }, title: '' }
         this.postData.value = undefined
         this.edit = true
-        console.log(error)
       }
     }
   },

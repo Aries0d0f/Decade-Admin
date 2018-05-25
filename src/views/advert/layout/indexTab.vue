@@ -3,12 +3,17 @@
     <el-card class="box-card" header="首頁標語">
       <el-input v-model="adData.banner.title" placeholder="請輸入內容"></el-input>
       <el-input v-model="adData.banner.subtitle" placeholder="請輸入內容"></el-input>
+      <el-input v-model="adData.banner.image" placeholder="手機版圖片"></el-input>
+      <el-input v-model="adData.banner.video" placeholder="桌機版影片"></el-input>
     </el-card>
 
-    <el-card class="box-card" header="經典推薦" :body-style="{ padding: '0px' }">
+    <el-card class="box-card" header="文章推薦" :body-style="{ padding: '0px' }">
+      <div style="padding:20px">
+        <el-input v-model="adData.spotlight.label" placeholder="欄位名稱"></el-input>
+      </div>
       <el-tabs type="border-card">
         <el-tab-pane v-for="i in 3" :key="i" :label="`分頁 ${i}`">
-          <PostSelect v-for="j in 5" v-model="adData.topPost[((i - 1) * 5 + j) - 1]" :prop-data="adData.topPost[((i - 1) * 5 + j) - 1]" :key="j" class="post-select"></PostSelect>
+          <PostSelect v-for="j in 5" v-model="adData.spotlight.list[((i - 1) * 5 + j) - 1]" :prop-data="adData.spotlight.list[((i - 1) * 5 + j) - 1]" :key="j" class="post-select"></PostSelect>
         </el-tab-pane>
       </el-tabs>
     </el-card>
@@ -70,7 +75,7 @@ export default {
     }
   },
   created() {
-    this.adData = Object.assign({}, this.propsData)
+    this.adData = Object.assign({}, this.propsData.data)
   },
   methods: {
     removeVendor(i) {

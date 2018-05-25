@@ -17,7 +17,7 @@ router.beforeEach(async(to, from, next) => {
     if (to.name === 'login') {
       next({ name: 'dashboard' })
       NProgress.done()
-    } else {
+    } else if (store.getters.userInfo.role === '') {
       const status = await store.dispatch('checkAuth')
       if (status) {
         const role = store.getters.userInfo.role

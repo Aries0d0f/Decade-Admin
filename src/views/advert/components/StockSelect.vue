@@ -47,10 +47,10 @@ export default {
         this.stockCard = res
         this.stockData.value = res.id
       } catch (error) {
+        // this.$emit('input', '')
         this.stockCard = { img: [''], name: '' }
         this.stockData.value = undefined
         this.edit = true
-        console.log(error)
       }
     }
   },
