@@ -64,8 +64,8 @@
           data: [
             ...this.adData.data
           ],
-          main: this.$refs.indexTab.adData,
-          shop: this.$refs.shopPageTab.adData,
+          main: this.adData.main,
+          shop: this.adData.shop,
           magazine: this.$refs.magazineMainTab.adData,
           stock: this.$refs.stockTab.adData,
           post: this.$refs.postTab.adData
@@ -75,7 +75,7 @@
         data.shop.main[0].vendor.map(x => delete x.delete)
         try {
           this.loading = true
-          // await request.post('/ad', { config: data })
+          await request.post('/ad', { config: data })
           this.loading = false
         } catch (err) {
           console.log(err)

@@ -3,6 +3,7 @@ import Vue from 'vue'
 import 'normalize.css/normalize.css'
 
 import Element from 'element-ui'
+import locale from 'element-ui/lib/locale/lang/zh-TW'
 import 'element-ui/lib/theme-chalk/index.css'
 
 import '@/styles/index.scss'
@@ -17,7 +18,8 @@ import './icons'
 import * as filters from './filters'
 
 Vue.use(Element, {
-  size: 'medium'
+  size: 'medium',
+  locale
 })
 
 Object.keys(filters).forEach(key => {

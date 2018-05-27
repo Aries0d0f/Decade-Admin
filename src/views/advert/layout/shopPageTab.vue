@@ -30,9 +30,29 @@
       <div class="brand-item add-brand" @click="addVendor">+</div>      
     </el-card>
 
-    <el-card class="box-card" header="主題推薦">
-      <el-tabs type="border-card">
-        <el-tab-pane v-for="(block, i) in adData.blockArea" :key="i" :label="block.title">
+    <el-card class="box-card" header="特殊商品" :body-style="{ padding: '0px' }">
+      <el-button type="success" @click="addStockCard" style="margin:10px 20px">新增</el-button>
+      <el-tabs type="border-card" closable @tab-remove="removeStockCard">
+        <el-tab-pane v-for="(block, i) in adData.stockCard" :key="i" :label="`特殊商品 #${i+1}`" :name="`${i}`">
+          <el-row :gutter="20">
+            <el-col :span="5">
+              <Upload v-model="adData.stockCard[i].img" :defaultImg="adData.stockCard[i].img"></Upload>
+            </el-col>
+            <el-col :span="15">
+              <el-input v-model="adData.stockCard[i].title" placeholder="標題"></el-input>
+              <el-input v-model="adData.stockCard[i].btnTitle" placeholder="按鈕標題"></el-input>
+              <el-input v-model="adData.stockCard[i].brnLink" placeholder="按鈕連結"></el-input>
+              <el-input v-model="adData.stockCard[i].content" type="textarea" :autosize="{ minRows: 4, maxRows: 4}" placeholder="內文"></el-input>
+            </el-col>
+          </el-row>
+        </el-tab-pane>
+      </el-tabs>
+    </el-card>
+
+    <el-card class="box-card" header="主題推薦" :body-style="{ padding: '0px' }">
+      <el-button type="success" @click="addBlockArea" style="margin:10px 20px">新增</el-button>
+      <el-tabs type="border-card" closable @tab-remove="removeBlockArea">
+        <el-tab-pane v-for="(block, i) in adData.blockArea" :key="i" :label="`主題推薦 #${i+1}`" :name="`${i}`">
           <el-row :gutter="20">
             <el-col :span="5">
               <Upload v-model="adData.blockArea[i].background" :defaultImg="adData.blockArea[i].background"></Upload>
@@ -41,9 +61,9 @@
               <el-input v-model="adData.blockArea[i].title" placeholder="標題"></el-input>
               <el-input v-model="adData.blockArea[i].subTitle" placeholder="子標題"></el-input>
             </el-col>
-            <!-- <el-col :span="24">
+            <el-col :span="24">
               <el-tabs type="border-card">
-                <el-tab-pane v-for="(button, j) in adData.blockArea[i].button" :key="j" :label="button.title || `#${j}`">
+                <el-tab-pane v-for="(button, j) in adData.blockArea[i].button" :key="j" :label="button.title || `#${j+1}`">
                   <el-row :gutter="20">
                     <el-col :span="8">
                       <Upload v-model="adData.blockArea[i].button[j].img" :defaultImg="adData.blockArea[i].button[j].img"></Upload>
@@ -53,18 +73,15 @@
                       <el-input type="textarea" v-model="adData.blockArea[i].button[j].content" placeholder="子標題"></el-input>
                     </el-col>
                     <el-col :span="24" class="stock-block">
-                      <StockSelect v-for="(item, i) in adData.blockArea[i].button[j].stock" v-model="adData.blockArea[i].button[j].stock[i]" :prop-data="item" :key="i" style="margin-bottom:1rem;width:45%"></StockSelect>
+                      <StockSelect v-for="(item, k) in adData.blockArea[i].button[j].stock" v-model="adData.blockArea[i].button[j].stock[k]" :prop-data="item" :key="k" style="margin-bottom:1rem;width:45%"></StockSelect>
                     </el-col>
                   </el-row>
                 </el-tab-pane>
               </el-tabs>
-
-            </el-col> -->
+            </el-col>
           </el-row>
-
         </el-tab-pane>
       </el-tabs>
-
     </el-card>
 
     <el-card class="box-card" header="推薦獨家商品" :body-style="{ padding: '0px' }">    
@@ -101,6 +118,34 @@ export default {
     },
     addVendor() {
       this.adData.vendor.push({ label: '', name: '', logo: '', delete: false })
+    },
+    addStockCard() {
+      this.adData.stockCard.push({
+        img: '',
+        title: '',
+        content: '',
+        btnTitle: '',
+        btnLink: '',
+      })
+    },
+    removeStockCard(i) {
+      this.adData.stockCard.splice(i, 1);
+    },
+    addBlockArea() {
+      this.adData.blockArea.push({
+        background: '',
+        title: '',
+        subTitle: '',
+        button: [
+          { title: '', link: '', img: '', content: '', stock: ['', '', '', '', '', '', '', ''] },
+          { title: '', link: '', img: '', content: '', stock: ['', '', '', '', '', '', '', ''] },
+          { title: '', link: '', img: '', content: '', stock: ['', '', '', '', '', '', '', ''] },
+          { title: '', link: '', img: '', content: '', stock: ['', '', '', '', '', '', '', ''] }
+        ]
+      })
+    },
+    removeBlockArea(i) {
+      this.adData.blockArea.splice(i, 1);
     }
   },
   components: {
