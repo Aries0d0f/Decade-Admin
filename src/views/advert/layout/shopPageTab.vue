@@ -125,11 +125,11 @@ export default {
         title: '',
         content: '',
         btnTitle: '',
-        btnLink: '',
+        btnLink: ''
       })
     },
     removeStockCard(i) {
-      this.adData.stockCard.splice(i, 1);
+      this.adData.stockCard.splice(i, 1)
     },
     addBlockArea() {
       this.adData.blockArea.push({
@@ -145,7 +145,7 @@ export default {
       })
     },
     removeBlockArea(i) {
-      this.adData.blockArea.splice(i, 1);
+      this.adData.blockArea.splice(i, 1)
     }
   },
   components: {
