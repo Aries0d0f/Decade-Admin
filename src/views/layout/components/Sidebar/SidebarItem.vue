@@ -21,7 +21,14 @@
           <router-link v-else :to="item.path+'/'+child.path" :key="child.name">
             <el-menu-item :index="item.path+'/'+child.path">
               <svg-icon v-if="child.meta&&child.meta.icon" :icon-class="child.meta.icon"></svg-icon>
-              <span v-if="child.meta&&child.meta.title">{{child.meta.title}}</span>
+              <template v-if="child.meta.title === '訂單列表'">
+                <el-badge :value="orders" class="order-dot" :max="10">
+                  <span v-if="child.meta&&child.meta.title">{{child.meta.title}}</span>
+                </el-badge>
+              </template>
+              <template v-else>
+                <span v-if="child.meta&&child.meta.title">{{child.meta.title}}</span>
+              </template>
             </el-menu-item>
           </router-link>
         </template>
@@ -32,6 +39,9 @@
 </template>
 
 <script>
+import { fetchOrderByVendor } from '@/api/order'
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'SidebarItem',
   props: {
@@ -42,7 +52,32 @@ export default {
       type: Boolean,
       default: false
     }
+  },
+  data() {
+    return {
+      orders: 0
+    }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  async created() {
+    try {
+      const res = await fetchOrderByVendor(this.userInfo.id, '?where={"status":["0"]')
+      this.orders = res.length
+    } catch (error) {
+      this.orders = 0
+    }
   }
 }
 </script>
+
+<style lang="scss">
+  .order-dot{
+    sup{
+      margin-top: .5rem;
+      margin-right: -0.5rem
+    }
+  }
+</style>
 

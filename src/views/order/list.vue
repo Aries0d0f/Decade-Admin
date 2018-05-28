@@ -155,7 +155,6 @@ export default {
       } else {
         list = await fetchOrderByVendor(this.userInfo.id, query || '')
       }
-      console.log(list)
       this.total = list.length
       if (list.length === 0) {
         this.currentList = []
