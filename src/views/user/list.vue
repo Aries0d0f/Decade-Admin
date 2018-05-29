@@ -169,7 +169,7 @@ export default {
       if (!this.listQuery.name || this.listQuery.name === '') {
         await this.getList()
       } else {
-        await this.getList(`where={"id":["${this.listQuery.name}"]}`)
+        await this.getList(`where={"username":["${this.listQuery.name}"]}`)
       }
     },
     createUser() {
