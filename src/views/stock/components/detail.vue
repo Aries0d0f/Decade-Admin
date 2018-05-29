@@ -65,7 +65,7 @@
                     </el-form-item> 
                     
                     <el-form-item label="數量" prop="specCount">
-                      <el-input-number v-model.number="item.count" controls-position="right" :min="1" :max="9999" style="width: 100%"></el-input-number>
+                      <el-input-number v-model.number="item.count" controls-position="right" :min="0" :max="9999" style="width: 100%"></el-input-number>
                     </el-form-item> 
                     
                     <el-form-item label="金額" prop="specPriceDefault">
