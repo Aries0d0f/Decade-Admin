@@ -65,11 +65,20 @@
     </el-card>
 
     <el-card class="box-card" header="推薦獨家商品" :body-style="{ padding: '0px' }">
-      <el-tabs type="border-card">
+      <!-- <el-tabs type="border-card">
         <el-tab-pane v-for="(stockType, j) in adData.classStock" :key="j" :label="stockType.title">
           <StockSelect v-for="(item, i) in stockType.item" v-model="adData.classStock[j].item[i]" :prop-data="item" :key="i" style="margin-bottom:1rem;width:45%"></StockSelect>
         </el-tab-pane>
-      </el-tabs>
+      </el-tabs> -->
+
+      <el-tabs type="border-card">
+        <el-tab-pane v-for="(stockType, j) in adData.classStock" :key="j" :label="stockType.title">
+          <div style="width:100%;margin-bottom:.5rem;">
+            <el-input v-model="adData.classStock[j].title" placeholder="欄位名稱"></el-input>
+          </div>
+          <StockSelect v-for="(item, i) in stockType.item" v-model="adData.classStock[j].item[i]" :prop-data="item" :key="i" style="margin-bottom:1rem;width:45%"></StockSelect>
+        </el-tab-pane>
+      </el-tabs>      
     </el-card>
 
   </div>
