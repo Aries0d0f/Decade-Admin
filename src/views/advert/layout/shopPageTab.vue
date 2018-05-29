@@ -1,21 +1,30 @@
 <template>
   <div class="ad-index-tab">
 
-    <el-card class="box-card" header="Banner 區塊" :body-style="{ padding: '0px' }">
-      <el-tabs type="border-card">
-        <el-tab-pane label="商店主頁">
-          <el-row :gutter="20">
-            <el-col :span="8">
-              <Upload v-model="adData.banner.background" :defaultImg="adData.banner.background"></Upload>
-            </el-col>
-            <el-col :span="15">
-              <el-input v-model="adData.banner.title" placeholder="標題"></el-input>
-              <el-input v-model="adData.banner.subTitle" placeholder="子標題"></el-input>
-              <el-input v-model="adData.banner.btnLink" placeholder="路由"></el-input>
-            </el-col>
-          </el-row>
-        </el-tab-pane>
-      </el-tabs>
+    <el-card class="box-card" header="Banner 區塊">
+      <el-row :gutter="20">
+        <el-col :span="6">
+          <Upload v-model="adData.banner.background" :defaultImg="adData.banner.background"></Upload>
+        </el-col>
+        <el-col :span="15">
+          <el-input v-model="adData.banner.title" placeholder="標題"></el-input>
+          <el-input v-model="adData.banner.subTitle" placeholder="子標題"></el-input>
+          <el-input v-model="adData.banner.btnLink" placeholder="路由"></el-input>
+        </el-col>
+      </el-row>
+    </el-card>
+
+    <el-card class="box-card" header="商店說明">
+      <el-row :gutter="20">
+        <el-col :span="6">
+          <Upload v-model="adData.intro.image" :defaultImg="adData.intro.image"></Upload>
+        </el-col>
+        <el-col :span="15">
+          <el-input v-model="adData.intro.title" placeholder="標題"></el-input>
+          <el-input v-model="adData.intro.subTitle" placeholder="子標題"></el-input>
+          <el-input v-model="adData.intro.content" placeholder="內文"></el-input>
+        </el-col>
+      </el-row>
     </el-card>
 
     <el-card class="box-card" header="進駐品牌" :body-style="{ display: 'flex', 'flex-wrap': 'wrap'}">

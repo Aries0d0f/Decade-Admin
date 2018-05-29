@@ -3,8 +3,21 @@
     <el-card class="box-card" header="首頁標語">
       <el-input v-model="adData.banner.title" placeholder="請輸入內容"></el-input>
       <el-input v-model="adData.banner.subtitle" placeholder="請輸入內容"></el-input>
-      <el-input v-model="adData.banner.image" placeholder="手機版圖片"></el-input>
       <el-input v-model="adData.banner.video" placeholder="桌機版影片"></el-input>
+      <el-row :gutter="20">
+        <el-col :span="10">
+          <p>手機版圖片</p>
+          <Upload v-model="adData.banner.image" :defaultImg="adData.banner.image"></Upload>
+        </el-col>
+        <!-- <el-col :span="10">
+          <p>桌機版影片</p>
+          <Upload v-model="adData.banner.video" :defaultImg="adData.banner.video"></Upload>
+        </el-col> -->
+      </el-row>
+
+    </el-card>
+    <el-card class="box-card" header="頁尾標語">
+      <el-input v-model="adData.copyright" placeholder="請輸入內容"></el-input>
     </el-card>
 
     <el-card class="box-card" header="文章推薦" :body-style="{ padding: '0px' }">
@@ -75,7 +88,7 @@ export default {
     }
   },
   created() {
-    this.adData = Object.assign({}, this.propsData.data)
+    this.adData = Object.assign({}, this.propsData)
   },
   methods: {
     removeVendor(i) {
@@ -120,6 +133,7 @@ export default {
       width: 178px;
       color: #6b6b6b;
       cursor: pointer;
+
       .delete-btn{
         width: 20px;
         height: 20px;
@@ -140,6 +154,7 @@ export default {
           background: #bdbdbd;
         }
       }
+      
       .brand-detail{
         margin-top: .5rem;
       }

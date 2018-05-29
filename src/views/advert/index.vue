@@ -52,7 +52,10 @@
         // eslint-disable-next-line
         res.data.data.shop.main[0].vendor.map(x => x.delete = false)
         this.adData = res.data.data
-        this.indexData = this.adData.data.find(x => x.name === 'index-setting')
+        this.indexData = {
+          ...this.adData.data.find(x => x.name === 'index-setting').data,
+          ...this.adData.data.find(x => x.name === 'copyright').data
+        }
         this.shopPage = this.adData.data.find(x => x.name === 'shop-page')
         this.magazineMainData = { ...res.data.data.magazine }
         this.stockData = { ...res.data.data.stock }

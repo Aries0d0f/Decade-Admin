@@ -1,7 +1,7 @@
 <template>
   <div class="stock-select">
     <span class="item-id" v-if="!edit" @click="edit = true">編號: {{postData.value}}</span>
-    <el-autocomplete v-else v-model="postData.value" class="autocomplete" :fetch-suggestions="queryStock" @select="handleSelectStock" popper-class="autocomplete-view" placeholder="請輸入商品名稱">
+    <el-autocomplete v-else v-model="postData.value" class="autocomplete" :fetch-suggestions="queryStock" @select="handleSelectStock" popper-class="autocomplete-view" placeholder="請輸入文章名稱">
       <template slot-scope="props">
         <div class="autocomplete-item">
           <div class="item-img" :style="`background-image:url(${props.item.data.meta.image})`"></div>
