@@ -63,6 +63,7 @@
         this.loading = false
       },
       async handleUpdate() {
+        this.adData.data.find(x => x.name === 'copyright').data.copyright = this.$refs.indexTab.adData.copyright
         const data = {
           data: [
             ...this.adData.data

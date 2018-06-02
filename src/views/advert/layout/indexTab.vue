@@ -78,7 +78,7 @@
           </div>
           <StockSelect v-for="(item, i) in stockType.item" v-model="adData.classStock[j].item[i]" :prop-data="item" :key="i" style="margin-bottom:1rem;width:45%"></StockSelect>
         </el-tab-pane>
-      </el-tabs>      
+      </el-tabs>
     </el-card>
 
   </div>
@@ -97,7 +97,7 @@ export default {
     }
   },
   created() {
-    this.adData = Object.assign({}, this.propsData)
+    this.adData = this.propsData
   },
   methods: {
     removeVendor(i) {
