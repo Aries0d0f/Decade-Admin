@@ -244,13 +244,13 @@ export const asyncRouterMap = [
     ]
   },
   {
-    path: '/advert',
+    path: '/setting',
     component: Layout,
-    redirect: '/advert/advert-list',
+    redirect: '/setting/advert-list',
     name: 'advert',
     meta: {
       auth: 0,
-      title: '廣告管理',
+      title: '平台管理',
       icon: 'star',
       noCache: true
     },
@@ -262,7 +262,16 @@ export const asyncRouterMap = [
         meta: {
           auth: 0,
           title: '廣告列表',
-          icon: 'star',
+          noCache: true
+        }
+      },
+      {
+        path: 'footer',
+        component: _import('setting/footer'),
+        name: 'Footer-List',
+        meta: {
+          auth: 0,
+          title: 'Footer 頁面',
           noCache: true
         }
       }
