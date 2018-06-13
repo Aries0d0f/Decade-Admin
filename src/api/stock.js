@@ -29,3 +29,8 @@ export const deleteStock = async(id) => {
   const res = await request({ url: `/stock/${id}`, method: 'DELETE' })
   return res.data
 }
+
+export const fetchStockBySeller = async(id) => {
+  const res = await request({ url: `/stock/seller/${id}`, method: 'GET' })
+  return res.data
+}

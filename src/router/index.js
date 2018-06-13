@@ -86,6 +86,16 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '/stock/inventory',
+    component: Layout,
+    children: [{
+      path: '',
+      component: _import('stock/inventory'),
+      name: 'Stock-Inventory',
+      meta: { title: '庫存管理', icon: 'people', noCache: true }
+    }]
+  },
+  {
     path: '/stock',
     component: Layout,
     redirect: '/stock/stock-list',
@@ -103,6 +113,7 @@ export const asyncRouterMap = [
         name: 'StockList',
         meta: {
           title: '商品列表',
+          auth: 0,
           noCache: true
         }
       },
@@ -112,6 +123,7 @@ export const asyncRouterMap = [
         name: 'StockCreate',
         meta: {
           title: '新增商品',
+          auth: 0,
           noCache: true
         }
       },
@@ -122,6 +134,7 @@ export const asyncRouterMap = [
         name: 'StockEdit',
         meta: {
           title: '商品編輯',
+          auth: 0,
           noCache: true
         }
       }
