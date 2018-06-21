@@ -186,19 +186,19 @@ export default {
       const res = await fetchUserQuery(`where={"id":[${idArrStr}""]}`)
       return res
     },
-    allSpacCount (specs) {
+    allSpacCount(specs) {
       const count = specs.reduce((a, b) => a + b.count, 0)
       return count
     },
-    async handleUpdateEdit () {
+    async handleUpdateEdit() {
       this.editLoading = true
       await updateStock(this.editItem.id, { spec: this.editItem.spec })
       this.$message.success('更新成功')
       this.editLoading = false
     },
-    handleOpenEdit (id) {
+    handleOpenEdit(id) {
       this.editItem = this.list.find(x => x.id === id)
-      this.isEdit = true;
+      this.isEdit = true
     },
     handleCloseEdit() {
       this.isEdit = false

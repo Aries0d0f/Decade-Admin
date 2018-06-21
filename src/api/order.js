@@ -5,9 +5,9 @@ export const fetchOrderList = async(query) => {
   return res.data
 }
 
-export const fetchOrderByVendor = async(uid, query) => {
-  const res = await request({ url: `/order/seller/${uid}?${query || ''}`, method: 'get' })
-  return res.data.data
+export const fetchOrderByVendor = async(uid) => {
+  const res = await request({ url: `/order/seller/${uid}`, method: 'get' })
+  return res.data.data || []
 }
 
 export const fetchOrder = async(id) => {
@@ -17,5 +17,5 @@ export const fetchOrder = async(id) => {
 
 export const updateOrder = async(id, data) => {
   const res = await request({ url: `/order/${id}`, method: 'patch', data })
-  return res.data
+  return res.data.data
 }
