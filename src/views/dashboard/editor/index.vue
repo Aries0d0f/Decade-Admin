@@ -1,73 +1,78 @@
 <template>
-  <div class="dashboard-editor-container">
-    <div class=" clearfix">
-      <pan-thumb style="float: left" :image="avatar"> Your roles:
-        <span class="pan-info-roles" :key='item' v-for="item in roles">{{item}}</span>
-      </pan-thumb>
-      <github-corner></github-corner>
-      <div class="info-container">
-        <span class="display_name">{{name}}</span>
-        <span style="font-size:20px;padding-top:20px;display:inline-block;">editor : dashboard</span>
-      </div>
-    </div>
-    <div>
-      <img class="emptyGif" :src="emptyGif">
-    </div>
-  </div>
+  <el-row :gutter="20" v-if="!loading">
+    <el-col :span="22">
+      <h3 class="title">系統通知</h3>
+      <el-card class="box-card">
+        即將上線
+      </el-card>            
+    </el-col>
+    <el-col :span="8">
+      <h3 class="title">文章動態</h3>
+      <BlockCard :pre-span="8" :label="['文章總數', '最新留言', '文章分享次數']" :data="[postList.length, 0, 0]" :itemLabel="['篇','篇','篇']"></BlockCard> 
+    </el-col>
+    <el-col :span="10" :offset="3">
+      <h3 class="title">我的人氣</h3>
+      <BlockCard :pre-span="8" :label="['追蹤人數', '點閱率', '喜好數']" :data="[0, postTotalView, 0]" :itemLabel="['篇','篇','篇']"></BlockCard> 
+    </el-col>
+    <el-col :span="22">
+      <h3 class="title">讀者動態分系</h3>
+      <el-card class="box-card">
+        即將上線
+      </el-card>  
+    </el-col>
+  </el-row>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import PanThumb from '@/components/PanThumb'
+import { fetchPostList } from '@/api/post'
+import BlockCard from '../components/BlockCard'
 
 export default {
-  name: 'dashboard-editor',
-  components: { PanThumb },
+  name: 'editor-dashboard',
+  components: { BlockCard },
   data() {
     return {
-      emptyGif: 'https://wpimg.wallstcn.com/0e03b7da-db9e-4819-ba10-9016ddfdaed3'
+      loading: true,
+      postList: []
     }
   },
+  async created() {
+    await this.initPage()
+  },
   computed: {
-    ...mapGetters([
-      'name',
-      'avatar',
-      'roles'
-    ])
+    ...mapGetters(['userInfo']),
+    postTotalView() {
+      return this.postList.reduce((a, b) => a + b.pageview, 0)
+    }
+  },
+  methods: {
+    async initPage() {
+      try {
+        const post = await fetchPostList(`?where={"author":["${this.userInfo.id}"]}`)
+        this.postList = post
+      } catch (error) {
+        console.log('error', error)
+      }
+      this.loading = false
+    }
   }
 }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
-	.emptyGif {
-		display: block;
-		width: 45%;
-		margin: 0 auto;
-	}
+<style lang="scss" scoped>
+  .title{
+    font-weight: normal;
+    font-size: 1rem;
+    margin-top: 1.5rem;
 
-	.dashboard-editor-container {
-		background-color: #e3e3e3;
-		min-height: 100vh;
-		margin-top: -50px;
-		padding: 100px 60px 0px;
-		.pan-info-roles {
-			font-size: 12px;
-			font-weight: 700;
-			color: #333;
-			display: block;
-		}
-		.info-container {
-			position: relative;
-			margin-left: 190px;
-			height: 150px;
-			line-height: 200px;
-			.display_name {
-				font-size: 48px;
-				line-height: 48px;
-				color: #212121;
-				position: absolute;
-				top: 25px;
-			}
-		}
-	}
+    &:after{
+      content: '';
+      height: 3px;
+      display: block;
+      width: 2.5rem;
+      background: #b27536;
+      margin-top: 1rem;
+    }
+  }
 </style>
