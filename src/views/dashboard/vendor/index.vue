@@ -29,7 +29,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { fetchOrderByVendor, fetchOrderList } from '@/api/order'
+import { fetchOrderByVendor } from '@/api/order'
 import { fetchStockBySeller } from '@/api/stock'
 import { fetchPostList } from '@/api/post'
 import BlockCard from '../components/BlockCard'

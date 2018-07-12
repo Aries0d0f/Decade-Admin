@@ -290,5 +290,39 @@ export const asyncRouterMap = [
       }
     ]
   },
+  {
+    path: '/support',
+    component: Layout,
+    redirect: '/support/list',
+    name: 'support',
+    meta: {
+      auth: 0,
+      title: '問題回覆',
+      icon: 'star',
+      noCache: true
+    },
+    children: [
+      {
+        path: 'list',
+        component: _import('support/list'),
+        name: 'supportList',
+        meta: {
+          auth: 0,
+          title: '問題列表',
+          noCache: true
+        }
+      },
+      {
+        path: 'footer',
+        component: _import('setting/footer'),
+        name: 'Footer-List',
+        meta: {
+          auth: 0,
+          title: 'Footer 頁面',
+          noCache: true
+        }
+      }
+    ]
+  },
   { path: '*', redirect: '/404', hidden: true, meta: { auth: false }}
 ]
