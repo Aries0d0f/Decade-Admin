@@ -118,3 +118,6 @@ export const OrderStatusLabel = (status) => {
   ]
   return list.find(x => x.value === status).label
 }
+
+export const SupportStatusLabel = (val) => ['已開啟', '已回答', '客戶已回覆', '處理中', '已關閉'][val - 1]
+export const SupportTypeLabel = (val) => ['意見申訴', '進駐商城', '創作平台', '廣告媒體', '公益基金', '提交問題'][val - 1]

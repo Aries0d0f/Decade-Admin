@@ -309,16 +309,7 @@ export const asyncRouterMap = [
         meta: {
           auth: 0,
           title: '問題列表',
-          noCache: true
-        }
-      },
-      {
-        path: 'footer',
-        component: _import('setting/footer'),
-        name: 'Footer-List',
-        meta: {
-          auth: 0,
-          title: 'Footer 頁面',
+          icon: 'star',
           noCache: true
         }
       }

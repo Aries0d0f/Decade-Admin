@@ -1,10 +1,10 @@
 <template>
   <div class="app-container calendar-list-container">
     <h3 class="form-title">問題列表</h3>
-    <div class="filter-container">
+    <!-- <div class="filter-container">
       <el-input style="width: 250px;" class="filter-item" placeholder="文章標題" v-model="listQuery.title"></el-input>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜尋</el-button>
-    </div>
+    </div> -->
     <el-table 
       :key='tableKey'
       :data="currentList.slice(pager.start, pager.end)"
@@ -15,22 +15,32 @@
       fit
       style="width: 100%"
       @selection-change="handleSelectionChange">
-      <el-table-column label="類型" class-name="small-padding fixed-width">
+      <el-table-column label="類型" class-name="small-padding fixed-width" width="120">
         <template slot-scope="scope">
-          {{scope.row.type | typeLabel}}
+          {{scope.row.type | SupportTypeLabel}}
         </template>
       </el-table-column>
-      <el-table-column label="姓名" prop="name" class-name="small-padding fixed-width"></el-table-column>
-      <el-table-column label="信箱" prop="mail" class-name="small-padding fixed-width"></el-table-column>
-      <el-table-column label="主旨" prop="subject" class-name="small-padding fixed-width"></el-table-column>
-      <el-table-column label="狀態" prop="status" class-name="small-padding fixed-width">
+      <el-table-column label="姓名" class-name="small-padding fixed-width" width="200">
         <template slot-scope="scope">
-          {{scope.row.status | statusLabel}}
+          <div> {{scope.row.name}}</div>
+          <div> {{scope.row.phone}}</div>
+          <div> {{scope.row.mail}}</div>
         </template>
       </el-table-column>
-      <el-table-column label="動作" class-name="small-padding fixed-width">
+      <el-table-column label="內容" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button size="mini" @click="openTo(scope.row.id || scope.row._id)">檢視</el-button>          
+          <div style="font-weight:bold"> {{scope.row.subject}}</div>
+          <div style="font-size: .5rem;color: #8e8e8e;"> {{scope.row.content}}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="狀態" prop="status" class-name="small-padding fixed-width" width="120">
+        <template slot-scope="scope">
+          {{scope.row.status | SupportStatusLabel}}
+        </template>
+      </el-table-column>
+      <el-table-column label="動作" class-name="small-padding fixed-width" width="150">
+        <template slot-scope="scope">
+          <el-button size="mini" @click="openDetail(scope.row)">檢視</el-button>          
         </template>
       </el-table-column>
     </el-table>
@@ -39,15 +49,19 @@
         :page-sizes="[listQuery.limit]" :page-size="listQuery.limit" layout="prev, pager, next, jumper" :total="total">
       </el-pagination>
     </div>
+
+    <TheForm :dialogVisible.sync="dialogVisible" :formData="dialogData"></TheForm>
   </div>
 </template>
 
 <script>
 import { fetchSupportList } from '@/api/support'
 import { mapGetters } from 'vuex'
+import TheForm from './components/TheForm'
 
 export default {
   name: 'Support-List',
+  components: { TheForm },
   data() {
     return {
       tableKey: 0,
@@ -55,6 +69,8 @@ export default {
       currentList: [],
       total: null,
       listLoading: true,
+      dialogVisible: false,
+      dialogData: {},
       multipleSelection: [],
       listQuery: {
         page: 1,
@@ -67,16 +83,6 @@ export default {
   },
   async created() {
     await this.getList()
-  },
-  filters: {
-    typeLabel: (value) => {
-      const label = ['意見申訴', '進駐商城', '創作平台', '廣告媒體', '公益基金', '提交問題']
-      return label[value - 1]
-    },
-    statusLabel: (value) => {
-      const label = ['已開啟', '已回答', '客戶已回覆', '處理中', '已關閉']
-      return label[value - 1]
-    }
   },
   computed: {
     ...mapGetters(['userInfo', 'PostClass']),
@@ -153,6 +159,10 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+    openDetail(data) {
+      this.dialogData = data
+      this.dialogVisible = true
     }
   }
 }
